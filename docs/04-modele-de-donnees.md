@@ -34,9 +34,10 @@ Traçabilité : StudentOverride, AuditLog
 ## Points de conception
 
 - **Apprentissage libre d'abord** : `User.institutionId`, `Classroom.levelId` et `Team.classroomId` sont optionnels. Un apprenant n'a besoin que d'un compte et d'une `TrackEnrollment`.
-- **Mode par parcours** : `TrackEnrollment.mode` dit si le planning d'une classe s'applique à ce parcours. Sans planning (`FREE`), un étage s'ouvre dès que le gardien précédent est vaincu.
+- **Mode par parcours** : `TrackEnrollment.mode` dit si le planning d'une classe s'applique à ce parcours. Sans planning (`FREE`), une notion s'ouvre dès que le gardien précédent est vaincu.
 - **Progression indépendante de la classe** : `NotionProgress`, `StageAttempt`, `XpEvent` sont rattachés à l'apprenant. Quitter ou rejoindre une classe ne fait rien perdre.
 - **Objectif hebdomadaire** : `User.weeklyGoalXp`, comparé aux `XpEvent` de la semaine.
+- **Collection de cartes** : `UserCard` (carte possédée, brillante ou non), `SkillHit` (bonnes réponses par compétence, pour la maîtrise), `BoosterOpening` (un coffre par semaine). Ajoutés avec les comptes.
 
 - **Salles à plusieurs épreuves** : une étape (`Stage`) contient une liste de rencontres, chacune avec son propre type de mini-jeu ; `Stage.config` stocke donc `{ encounters: [...] }` et `Stage.gameType` vaut `"encounters"`.
 - **Exercices génériques** : `Stage.config` et `Question.config` sont du JSON dont la forme dépend de `gameType`. Chaque moteur de jeu fournit son schéma Zod pour valider ce JSON.

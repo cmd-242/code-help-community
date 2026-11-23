@@ -25,12 +25,12 @@ export function getNotion(slug: string, trackSlug?: string): { track: Track; not
   return undefined;
 }
 
-/** Résumé d'étage envoyé aux composants client (sans le contenu des questions) */
-export function floorSummaries(track: Track) {
+/** Résumé de notion envoyé aux composants client (sans le contenu des questions) */
+export function notionSummaries(track: Track) {
   return track.notions.map((n) => ({
     slug: n.slug,
-    floor: n.floor,
-    room: n.room,
+    position: n.position,
+    place: n.place,
     concept: n.concept,
     summary: n.summary,
     guardian: n.guardian,
@@ -38,7 +38,7 @@ export function floorSummaries(track: Track) {
     hasGuardian: Boolean(n.challenge),
   }));
 }
-export type FloorSummary = ReturnType<typeof floorSummaries>[number];
+export type NotionSummary = ReturnType<typeof notionSummaries>[number];
 
 /** Étape jouable : les rencontres d'entraînement sont envoyées complètes (correction instantanée) */
 export function getStage(notionSlug: string, stageId: string) {
@@ -62,4 +62,9 @@ export function drawGuardianQuestions(notion: Notion, random: () => number = Mat
     [pool[i], pool[j]] = [pool[j], pool[i]];
   }
   return pool.slice(0, count).map(toPublicEncounter);
+}
+
+/** Cartes d'une notion (non secrètes : envoyées au navigateur) */
+export function cardsOfNotion(track: Track, notionSlug: string) {
+  return track.cards.filter((c) => c.notion === notionSlug);
 }

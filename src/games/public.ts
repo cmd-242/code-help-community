@@ -12,7 +12,8 @@ export type PublicEncounter =
   | { id: string; type: "fill"; prompt: string; template: string; bank: string[] }
   | { id: string; type: "predict"; prompt: string; code: string; placeholder?: string };
 
-export type CheckResult = { correct: boolean; explanation: string; solution: string };
+/** Verdict d'une réponse. `skill` sert à la maîtrise des cartes (ce n'est pas un secret). */
+export type CheckResult = { correct: boolean; explanation: string; solution: string; skill?: string };
 
 /** Mélange déterministe (même résultat côté serveur et client : pas d'écart d'hydratation) */
 export function seededShuffle<T>(items: readonly T[], seed: string): T[] {
@@ -71,5 +72,5 @@ export function solutionOf(e: Encounter): string {
 }
 
 export function check(e: Encounter, response: AnyResponse): CheckResult {
-  return { correct: grade(e, response), explanation: e.explanation, solution: solutionOf(e) };
+  return { correct: grade(e, response), explanation: e.explanation, solution: solutionOf(e), skill: e.skill };
 }

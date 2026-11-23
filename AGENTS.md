@@ -16,9 +16,9 @@ Ce fichier s'adresse aux développeurs **et** aux assistants IA (Claude, Copilot
 
 Plateforme **ouverte** d'apprentissage de l'informatique en jouant. **L'utilisateur de base est un apprenant libre (autodidacte), sans école ni enseignant** : il choisit ses parcours et progresse à son rythme. Les écoles, enseignants et mentors sont une **option** qui ajoute un rythme et un suivi, jamais une condition pour apprendre.
 
-Chaque notion (un « étage » du donjon) a :
+Chaque notion (une île de l'Archipel, plus tard une station de Néo-Métro) a :
 - un **côté ouvert** : un jeu en étapes (XP, étoiles, badges, séries) ;
-- un **côté fermé** : le cours (le grimoire) et les consignes ;
+- un **côté fermé** : le cours (le journal de bord) et les consignes ;
 - un **grand challenge** (le gardien) qui valide la notion et ouvre la suivante.
 
 Déblocage : **libre** par défaut (gardien précédent vaincu) ; **en classe** (option), le planning de l'enseignant s'ajoute.
@@ -32,12 +32,12 @@ Documentation détaillée dans `docs/` :
 3. `docs/03-architecture-nextjs.md` — pile technique et règles d'architecture
 4. `docs/04-modele-de-donnees.md` — schéma Prisma de référence
 5. `docs/05-roadmap.md` — phases et cases à cocher
-6. `docs/06-design-donjon.md` — univers visuel, son, animations
+6. `docs/06-univers.md` — univers de jeu (Archipel, Néo-Métro), design, son, animations
 
 ## Pile technique (ne pas en changer sans décision écrite)
 
 - **Next.js 16** App Router, **tout** se fait dans cette application (pas de back-end séparé).
-- TypeScript **strict**, React 19, Tailwind CSS v4, **système de design « Donjon » maison** (`docs/06-design-donjon.md`), Motion pour les animations. shadcn/ui seulement pour les futurs écrans d'administration.
+- TypeScript **strict**, React 19, Tailwind CSS v4, **univers de jeu maison** (Archipel, puis Néo-Métro : `docs/06-univers.md`), Motion pour les animations. shadcn/ui seulement pour les futurs écrans d'administration.
 - PostgreSQL + **Prisma 7** (`prisma.config.ts`, client généré dans `src/generated/prisma`).
 - Better Auth (e-mail + Google), Zod, React Hook Form, Zustand (état du jeu), next-intl.
 - Exécution du code étudiant **dans le navigateur** (Web Worker, Pyodide, PGlite, isomorphic-git, shell simulé).
@@ -83,7 +83,7 @@ pnpm lint && pnpm typecheck && pnpm test   # à lancer avant chaque commit
 16. Pas de `any`. Les types viennent de Prisma et de Zod (`z.infer`).
 17. Toute règle métier (déblocage, calcul de score, attribution de badge, série) a des **tests unitaires**.
 18. Mobile d'abord : tester chaque écran à 360 px de large. Accessibilité : navigation clavier, `aria-*`, contrastes.
-18 bis. Sons via `useSound()` uniquement (synthèse Web Audio, jamais de fichier audio) ; toujours respecter `prefers-reduced-motion`.
+18 bis. Couleurs via les jetons de rôle (`bg-surface`, `text-ink`, `bg-primary`…), jamais en dur hors de `src/universes/`. Code neutre : pas de « île » ni « étage » dans les noms de code (`place`, `position`). Sons via `useSound()` uniquement (synthèse Web Audio, jamais de fichier audio) ; toujours respecter `prefers-reduced-motion`.
 18 ter. Avec `cacheComponents`, ne jamais lire l'heure (`new Date()`) ni `Math.random()` pendant le rendu : le faire après hydratation, dans un gestionnaire d'événement ou dans une Server Action.
 
 ### Git
@@ -104,10 +104,11 @@ pnpm lint && pnpm typecheck && pnpm test   # à lancer avant chaque commit
 | Classe | `Classroom` | Groupe d'étudiants suivi par un ou plusieurs enseignants (optionnel) |
 | Domaine | `Domain` | Python, Linux, Git, Réseau, Sécurité, AWS… |
 | Parcours | `Track` | Suite ordonnée de notions dans un domaine |
-| Notion | `Notion` | Unité hebdomadaire : jeu + cours + grand challenge |
-| Étape | `Stage` | Un niveau du jeu (côté ouvert) |
-| Leçon | `Lesson` | Une page de cours (côté fermé) |
-| Grand challenge | `Challenge` | Test final qui valide la notion |
+| Notion | `Notion` | Unité : jeu + cours + grand challenge (une île dans l'Archipel) |
+| Étape | `Stage` | Une série d'épreuves du jeu (une crique dans l'Archipel) |
+| Leçon | `Lesson` | Une page de cours (le journal de bord dans l'Archipel) |
+| Univers | `Track.universe` | Habillage d'un parcours : `archipel` (débuts) ou `metro` (avancé) |
+| Grand challenge | `Challenge` | Test final qui valide la notion (le gardien) |
 | Déblocage | `NotionRelease` | Planning d'une notion pour une classe |
 | Dérogation | `StudentOverride` | Exception individuelle accordée par l'enseignant |
 | Équipe | `Team` (`CLASS_TEAM`) | 3 à 6 étudiants d'une classe, coachés par un mentor |

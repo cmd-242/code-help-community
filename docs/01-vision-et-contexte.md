@@ -22,9 +22,9 @@ Les écoles, les enseignants et les mentors sont une **option** qui s'ajoute par
 - l'enseignant ne sait pas qui décroche avant qu'il soit trop tard ;
 - les étudiants bloqués restent seuls et abandonnent.
 
-## 3. La réponse : un donjon à conquérir, seul ou en classe
+## 3. La réponse : un voyage à conquérir, seul ou en classe
 
-Chaque domaine est un **donjon** ; chaque **notion** est un étage. Pour chaque étage :
+Chaque domaine est une carte à explorer ; chaque **notion** est un lieu (une île de l'Archipel pour les débuts, une station de Néo-Métro pour les parcours avancés : voir `docs/06-univers.md`). Pour chaque notion :
 
 | | Côté **ouvert** : le jeu | Côté **fermé** : le cours |
 |---|---|---|
@@ -39,8 +39,8 @@ Chaque domaine est un **donjon** ; chaque **notion** est un étage. Pour chaque 
 |---|---|---|
 | Qui | Tout le monde, sans école | Étudiant inscrit dans une classe |
 | Choix du parcours | L'apprenant choisit ses royaumes et parcours | L'enseignant assigne des parcours à la classe (l'étudiant peut aussi en suivre d'autres librement) |
-| Ouverture d'un étage | Dès que le gardien précédent est vaincu | À la date prévue par l'enseignant **et** après le gardien précédent |
-| Gardien | Disponible dès que l'étage est exploré | Disponible pendant la fenêtre fixée par l'enseignant |
+| Ouverture d'une notion | Dès que le gardien précédent est vaincu | À la date prévue par l'enseignant **et** après le gardien précédent |
+| Gardien | Disponible dès que la notion est explorée | Disponible pendant la fenêtre fixée par l'enseignant |
 | Rythme | **Objectif hebdomadaire choisi par l'apprenant** (XP / semaine), série de jours, rappels | Planning hebdomadaire de l'enseignant |
 | Suivi | Tableau de bord personnel, mentors de la communauté | Enseignant et mentors de la classe |
 | Entraide | Forum, guildes (équipes ouvertes), ligues publiques | Équipes de classe, classement de classe |
@@ -52,10 +52,10 @@ Une même personne peut être les deux : un étudiant suit les parcours de sa cl
 ```
 Lundi            Pendant la semaine                         Fin de semaine
 ──────────────   ────────────────────────────────────────   ──────────────────────
-L'enseignant     L'étudiant explore l'étage :               LE GARDIEN
-ouvre un      →  • les salles du donjon (jeu)            →  (grand challenge)
-étage pour       • le grimoire (cours, consignes)               ├─ vaincu → étage validé,
-sa classe        L'enseignant voit qui avance                   │   l'escalier s'ouvre
+L'enseignant     L'étudiant explore la notion :             LE GARDIEN
+ouvre une     →  • les épreuves (jeu)                     →  (grand challenge)
+notion pour      • le cours (consignes)                         ├─ vaincu → notion validée,
+sa classe        L'enseignant voit qui avance                   │   la suite s'ouvre
                  et qui décroche                                └─ raté → rattrapage, 2e essai
 ```
 

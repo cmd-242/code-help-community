@@ -6,20 +6,22 @@ Plateforme web ouverte où chacun apprend l'informatique en jouant, à son rythm
 
 ## Le principe
 
-1. L'apprenant choisit un **royaume** (Linux, Python, Git, réseaux, cloud…) : chaque notion est un étage du donjon.
+1. L'apprenant choisit un **archipel** (Linux, Python, Git, réseaux, cloud…) : chaque notion est une île à conquérir.
 2. Il progresse :
    - côté **jeu** : des étapes à réussir, des étoiles, des XP, des badges, des séries de jours ;
-   - côté **cours** : le grimoire, avec les leçons et les consignes.
-3. Il affronte le **gardien** (grand challenge) de la notion. Vaincu : l'étage suivant s'ouvre. Raté : il révise et retente.
+   - côté **cours** : le journal de bord, avec les leçons et les consignes.
+3. Il affronte le **gardien** (grand challenge) de l'île. Vaincu : la route vers l'île suivante s'ouvre. Raté : il révise et retente.
+
+Les débuts se passent dans **l'Archipel** (lumineux et accueillant) ; les parcours avancés se dérouleront à **Néo-Métro**, la ville des experts.
 4. Il se fixe son propre **objectif hebdomadaire** ; série de jours, XP et niveaux entretiennent la motivation.
 
-**En option, avec une classe** : l'enseignant ouvre un étage par semaine, voit qui avance et qui décroche, et peut relancer. Des mentors coachent des équipes de classe ou des guildes d'autodidactes.
+**En option, avec une classe** : l'enseignant ouvre une île par semaine, voit qui avance et qui décroche, et peut relancer. Des mentors coachent des équipes de classe ou des guildes d'autodidactes.
 
 Domaines prévus : programmation (Python, JavaScript, Java, C, SQL…), Linux, Git, réseaux, sécurité, AWS, Google Cloud, et d'autres à venir.
 
 ## Technique
 
-Une seule application **Next.js 16** (App Router) pour le front, le back et l'API · TypeScript · PostgreSQL + Prisma 7 · Tailwind CSS + système de design « Donjon » · exécution du code des apprenants directement dans le navigateur.
+Une seule application **Next.js 16** (App Router) pour le front, le back et l'API · TypeScript · PostgreSQL + Prisma 7 · Tailwind CSS + univers de jeu Archipel · exécution du code des apprenants directement dans le navigateur.
 
 ## Documentation
 
@@ -31,7 +33,7 @@ Une seule application **Next.js 16** (App Router) pour le front, le back et l'AP
 | [Architecture Next.js](docs/03-architecture-nextjs.md) | Pile technique, organisation du code, règles |
 | [Modèle de données](docs/04-modele-de-donnees.md) | Schéma Prisma de référence |
 | [Feuille de route](docs/05-roadmap.md) | Phases et tâches |
-| [Univers Donjon](docs/06-design-donjon.md) | Design, son, animations |
+| [Univers de jeu](docs/06-univers.md) | Archipel et Néo-Métro : design, son, animations |
 
 ## Lancer le projet
 
@@ -45,4 +47,4 @@ La version actuelle fonctionne sans base de données : la progression est stock�
 
 ## État
 
-Phase 0 en cours : l'espace étudiant est jouable (accueil, carte du donjon, 3 étages Linux, mini-jeux, grimoire, combats de gardiens, son et animations). Prochaine étape : comptes, classes et base de données — voir la [feuille de route](docs/05-roadmap.md).
+Phase 0 en cours : l'espace apprenant est jouable dans l'univers Archipel (accueil, carte des îles, 3 îles Linux, mini-jeux, journal de bord, gardiens, sons et animations). Prochaine étape : comptes, classes et base de données — voir la [feuille de route](docs/05-roadmap.md).

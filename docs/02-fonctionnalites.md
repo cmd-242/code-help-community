@@ -12,13 +12,13 @@ Les éléments marqués ✨ sont des idées ajoutées au-delà de la vision de d
 - **[MVP]** Inscription / connexion par e-mail + mot de passe, et connexion Google. Aucune école requise.
 - **[MVP]** Profil : pseudonyme (affiché dans les classements), avatar, langue, fuseau horaire.
 - **[MVP]** Rôles cumulables : apprenant (tout le monde), mentor, enseignant, responsable d'établissement, super-admin.
-- **[V2]** ✨ **Test de positionnement** à l'inscription : quelques questions pour proposer le bon royaume et le bon étage de départ (un développeur confirmé ne recommence pas à zéro).
+- **[V2]** ✨ **Test de positionnement** à l'inscription : quelques questions pour proposer le bon parcours, le bon point de départ et le bon univers (Archipel ou Néo-Métro) (un développeur confirmé ne recommence pas à zéro).
 - **[MVP]** Données personnelles : consentement, export et suppression du compte.
 
 ## B. Apprentissage libre (autodidactes) : le mode par défaut
 
 - **[MVP]** Choisir librement ses royaumes et ses parcours, en suivre plusieurs en parallèle.
-- **[MVP]** Progression **sans planning** : un étage s'ouvre dès que le gardien précédent est vaincu.
+- **[MVP]** Progression **sans planning** : une notion s'ouvre dès que le gardien précédent est vaincu.
 - **[MVP]** **Objectif hebdomadaire personnel** choisi par l'apprenant (tranquille, régulier, acharné) avec jauge de la semaine. *(fait en démo)*
 - **[MVP]** Série de jours actifs, XP, niveaux, étoiles : la motivation ne dépend pas d'un enseignant.
 - **[V2]** ✨ Rappels doux choisis par l'apprenant (« ton objectif est à 60 %, il reste 2 jours ») par notification ou e-mail, avec heures de silence.
@@ -81,6 +81,8 @@ Chaque moteur est générique ; le contenu (JSON) dit quoi afficher et comment c
 - **[V2]** **Quêtes quotidiennes et hebdomadaires** (« Termine 3 étapes », « Aide un camarade sur le forum »).
 - **[V2]** ✨ **Ligues hebdomadaires** : groupes de 15 à 20 étudiants de niveau proche ; on monte ou descend chaque semaine. Évite que les plus faibles se comparent toujours aux meilleurs.
 - **[V2]** Classement de classe avec option **pseudonyme** et affichage du **progrès personnel** (« +40 % cette semaine »).
+- **[MVP]** ✨ **Collection de cartes** : chaque compétence réussie devient une carte (commune, rare, épique), qui monte en maîtrise (1 à 3) quand on la réussit encore ; chaque gardien vaincu donne sa carte légendaire ; le **coffre de la semaine** s'ouvre quand l'objectif hebdomadaire est atteint et rend une carte brillante. *(fait en démo)*
+- **[V2]** ✨ Duels de cartes entre apprenants et deck à composer.
 - **[V2]** ✨ Monnaie virtuelle (gemmes) pour personnaliser l'avatar, acheter des gels de série ou des indices. Aucune valeur réelle.
 - **[V3]** ✨ Événements : « semaine Linux », double XP le week-end, défis inter-classes.
 

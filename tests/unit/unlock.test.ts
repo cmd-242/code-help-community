@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { demoRelease, floorStatus, guardianGate, type FloorInput } from "@/features/progression/unlock";
+import { demoRelease, notionStatus, guardianGate, type NotionInput } from "@/features/progression/unlock";
 
 const now = new Date("2026-11-25T10:00:00");
 const release = {
@@ -7,35 +7,35 @@ const release = {
   challengeOpensAt: new Date("2026-11-27T08:00:00"),
   challengeClosesAt: new Date("2026-11-29T23:00:00"),
 };
-const base: FloorInput = { release, now, previousCleared: true, cleared: false, stagesTotal: 3, stagesDone: 0 };
+const base: NotionInput = { release, now, previousCleared: true, cleared: false, stagesTotal: 3, stagesDone: 0 };
 
-describe("statut d'un étage", () => {
+describe("statut d'une notion", () => {
   it("en classe, est scellé avant la date d'ouverture", () => {
-    expect(floorStatus({ ...base, now: new Date("2026-11-22T10:00:00") })).toBe("sealed");
+    expect(notionStatus({ ...base, now: new Date("2026-11-22T10:00:00") })).toBe("sealed");
   });
   it("en apprentissage libre, ne dépend que de la progression", () => {
-    expect(floorStatus({ ...base, release: null })).toBe("open");
-    expect(floorStatus({ ...base, release: null, previousCleared: false })).toBe("blocked");
+    expect(notionStatus({ ...base, release: null })).toBe("open");
+    expect(notionStatus({ ...base, release: null, previousCleared: false })).toBe("blocked");
     expect(guardianGate({ ...base, release: null, stagesDone: 3 })).toBe("ready");
     expect(guardianGate({ ...base, release: null, stagesDone: 1 })).toBe("explore-first");
   });
   it("est bloqué tant que le gardien précédent n'est pas vaincu", () => {
-    expect(floorStatus({ ...base, previousCleared: false })).toBe("blocked");
+    expect(notionStatus({ ...base, previousCleared: false })).toBe("blocked");
   });
   it("est ouvert puis attend le gardien quand toutes les salles sont faites", () => {
-    expect(floorStatus(base)).toBe("open");
-    expect(floorStatus({ ...base, stagesDone: 3 })).toBe("guardian");
+    expect(notionStatus(base)).toBe("open");
+    expect(notionStatus({ ...base, stagesDone: 3 })).toBe("guardian");
   });
   it("est validé une fois le gardien vaincu, quelle que soit la date", () => {
-    expect(floorStatus({ ...base, cleared: true, release: null })).toBe("cleared");
+    expect(notionStatus({ ...base, cleared: true, release: null })).toBe("cleared");
   });
-  it("une dérogation de l'enseignant ouvre un étage scellé ou bloqué", () => {
-    expect(floorStatus({ ...base, release: null, previousCleared: false, override: { unlock: true } })).toBe("open");
+  it("une dérogation de l'enseignant ouvre une notion scellée ou bloquée", () => {
+    expect(notionStatus({ ...base, release: null, previousCleared: false, override: { unlock: true } })).toBe("open");
   });
 });
 
 describe("porte du gardien", () => {
-  it("exige d'avoir exploré tout l'étage", () => {
+  it("exige d'avoir exploré tout le lieu", () => {
     expect(guardianGate({ ...base, stagesDone: 2 })).toBe("explore-first");
   });
   it("respecte la fenêtre du challenge", () => {
@@ -50,7 +50,7 @@ describe("porte du gardien", () => {
 });
 
 describe("planning de démonstration", () => {
-  it("ouvre un étage par semaine à partir du lundi", () => {
+  it("ouvre une notion par semaine à partir du lundi", () => {
     const monday = new Date("2026-11-23T10:00:00");
     expect(demoRelease(3, monday).gameOpensAt.getDate()).toBe(23);
     expect(demoRelease(4, monday).gameOpensAt.getDate()).toBe(30);

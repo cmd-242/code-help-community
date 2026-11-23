@@ -16,11 +16,11 @@ export function levelFromXp(xp: number): { level: number; current: number; neede
 }
 
 /** Clé du titre de rang (traduit dans messages/fr.json → ranks.*) */
-export function rankKey(level: number): "novice" | "explorer" | "pathfinder" | "runebreaker" | "shellmaster" {
+export function rankKey(level: number): "novice" | "explorer" | "pathfinder" | "captain" | "shellmaster" {
   if (level <= 2) return "novice";
   if (level <= 4) return "explorer";
   if (level <= 7) return "pathfinder";
-  if (level <= 10) return "runebreaker";
+  if (level <= 10) return "captain";
   return "shellmaster";
 }
 
@@ -74,7 +74,7 @@ export function toDayKey(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
-/** XP pour une page du grimoire lue (une seule fois) */
+/** XP pour une page du cours lue (une seule fois) */
 export const LESSON_XP = 10;
 
 /** Objectifs hebdomadaires proposés à l'apprenant libre (XP par semaine) */

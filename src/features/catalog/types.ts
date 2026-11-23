@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { encounterSchema } from "@/games/schemas";
 
-/** Blocs d'une leçon (côté fermé : le grimoire) */
+/** Blocs d'une leçon (côté fermé : le cours) */
 export const lessonBlockSchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("h"), text: z.string() }),
   z.object({ kind: z.literal("p"), text: z.string() }),
@@ -32,7 +32,7 @@ export const guardianSchema = z.object({
   taunt: z.string(),
 });
 
-/** Grand challenge : le combat contre le gardien de l'étage */
+/** Grand challenge : le combat contre le gardien du lieu */
 export const challengeSchema = z.object({
   questionCount: z.number().int().positive(),
   durationSeconds: z.number().int().positive(),
@@ -43,8 +43,10 @@ export const challengeSchema = z.object({
 
 export const notionSchema = z.object({
   slug: z.string(),
-  floor: z.number().int().positive(),
-  room: z.string(),
+  /** Ordre dans le parcours (1, 2, 3…) */
+  position: z.number().int().positive(),
+  /** Nom du lieu dans l'univers du parcours (une île, une station…) */
+  place: z.string(),
   concept: z.string(),
   summary: z.string(),
   guardian: guardianSchema,
@@ -53,13 +55,42 @@ export const notionSchema = z.object({
   challenge: challengeSchema.optional(),
 });
 
+/** Rareté d'une carte de collection */
+export const raritySchema = z.enum(["common", "rare", "epic", "legendary"]);
+export type Rarity = z.infer<typeof raritySchema>;
+
+/**
+ * Carte de collection.
+ * kind "command" : liée à une compétence (`skill` des épreuves), gagnée en la réussissant.
+ * kind "guardian" : gagnée en battant le gardien de la notion (id = "guardian:<slug>").
+ */
+export const cardSchema = z.object({
+  id: z.string(),
+  kind: z.enum(["command", "guardian"]),
+  notion: z.string(),
+  title: z.string(),
+  rarity: raritySchema,
+  text: z.string(),
+});
+export type Card = z.infer<typeof cardSchema>;
+
+/**
+ * Univers visuel d'un parcours.
+ * archipel : les débuts (îles, mer, bateau) ; metro : les parcours avancés (à venir).
+ */
+export const universeSchema = z.enum(["archipel", "metro"]);
+export type Universe = z.infer<typeof universeSchema>;
+
 export const trackSchema = z.object({
   slug: z.string(),
   domain: z.string(),
   title: z.string(),
-  dungeon: z.string(),
+  universe: universeSchema,
+  /** Nom de la carte dans l'univers (ex. « L'Archipel du Shell ») */
+  world: z.string(),
   tagline: z.string(),
   notions: z.array(notionSchema).min(1),
+  cards: z.array(cardSchema).default([]),
 });
 
 export type LessonBlock = z.infer<typeof lessonBlockSchema>;

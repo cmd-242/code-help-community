@@ -12,7 +12,7 @@ type Props = {
   onSubmit: () => void;
 };
 
-/** Prédire la sortie : l'étudiant tape ce que le terminal affichera. */
+/** Prédire la sortie : l'apprenant tape ce que le terminal affichera. */
 export function PredictPlay({ encounter, disabled, onChange, onSubmit }: Props) {
   const t = useTranslations("game");
   const id = useId();
@@ -20,11 +20,11 @@ export function PredictPlay({ encounter, disabled, onChange, onSubmit }: Props) 
   return (
     <div>
       <CodeBlock code={encounter.code} />
-      <label htmlFor={id} className="mb-2 mt-5 block text-sm text-parchment-dim">
+      <label htmlFor={id} className="mb-2 mt-5 block text-sm font-bold text-info-deep">
         {t("predictLabel")}
       </label>
-      <div className="flex items-center gap-2 rounded-lg border-2 border-torch/50 bg-abyss-deep px-3 focus-within:border-torch focus-within:shadow-[0_0_20px_-6px_rgba(242,165,65,0.8)]">
-        <span className="font-mono text-moss-dim" aria-hidden>
+      <div className="flex items-center gap-2 rounded-2xl bg-surface px-4 shadow-[0_0_0_2px_var(--color-line)] focus-within:shadow-[0_0_0_3px_var(--color-info-deep)]">
+        <span className="font-mono font-bold text-info-deep" aria-hidden>
           &gt;
         </span>
         <input
@@ -42,7 +42,7 @@ export function PredictPlay({ encounter, disabled, onChange, onSubmit }: Props) 
           onKeyDown={(e) => {
             if (e.key === "Enter" && value.trim()) onSubmit();
           }}
-          className="w-full bg-transparent py-3 font-mono text-lg text-torch-bright caret-torch outline-none placeholder:text-parchment-dim/50"
+          className="w-full bg-transparent py-3.5 font-mono text-lg outline-none placeholder:text-muted/70"
         />
       </div>
     </div>

@@ -1,189 +1,218 @@
 {
   "meta": {
-    "title": "Code Help Community — apprendre l'informatique en jouant",
+    "title": "Code Help Community : apprendre l'informatique en jouant",
     "short": "Code Help Community",
-    "description": "Chaque semaine, ton enseignant ouvre un nouvel étage du donjon. Explore, lis le grimoire, affronte le gardien et progresse en Linux, code, Git, réseaux et cloud."
+    "description": "Apprends Linux, le code, Git, les réseaux et le cloud en naviguant d'île en île. Seul à ton rythme, ou avec ta classe."
   },
   "sound": {
     "mute": "Couper le son",
     "unmute": "Activer le son"
   },
   "hud": {
-    "home": "Retour au camp",
+    "home": "Retour au port",
     "level": "Niveau {level}",
     "xpTitle": "{current} XP sur {needed} pour le prochain niveau",
     "xp": "{current} / {needed} XP",
-    "streakTitle": "{count, plural, =0 {Aucune série en cours : joue aujourd'hui pour l'allumer} one {# jour d'affilée} other {# jours d'affilée}}"
+    "streakTitle": "{count, plural, =0 {Aucune série en cours : joue aujourd'hui pour l'allumer} one {# jour d'affilée} other {# jours d'affilée}}",
+    "collection": "Ma collection de cartes"
   },
   "ranks": {
-    "novice": "Porteur de torche",
-    "explorer": "Explorateur",
-    "pathfinder": "Arpenteur des galeries",
-    "runebreaker": "Briseur de runes",
-    "shellmaster": "Maître du shell"
+    "novice": "Moussaillon",
+    "explorer": "Matelot",
+    "pathfinder": "Navigatrice ou navigateur",
+    "shellmaster": "Amirale ou amiral du shell",
+    "captain": "Capitaine"
   },
   "levelUp": {
-    "title": "Niveau supérieur",
-    "body": "Tu atteins le niveau {level} : te voilà {rank}.",
-    "continue": "Reprendre l'exploration"
+    "title": "Niveau supérieur !",
+    "body": "Tu passes niveau {level} : te voilà {rank}.",
+    "continue": "Reprendre la mer"
   },
   "game": {
     "multiple": "Plusieurs réponses possibles.",
-    "parsonsTarget": "Ton parchemin : {count, plural, one {# ligne} other {# lignes}} à placer dans l'ordre",
+    "parsonsTarget": "Ton ordre de marche : {count, plural, one {# planche} other {# planches}} à placer",
     "removeLine": "Retirer la ligne {line}",
     "moveUp": "Monter la ligne",
     "moveDown": "Descendre la ligne",
-    "parsonsPool": "Touche une ligne pour la poser. Attention : certaines sont des pièges.",
+    "parsonsPool": "Touche une planche pour la poser. Attention : certaines ne servent à rien.",
     "blankEmpty": "Trou {n}, vide",
     "blankFilled": "Trou rempli avec {value}, touche pour retirer",
-    "fillBank": "Touche un mot pour remplir le trou suivant.",
+    "fillBank": "Touche une planche pour remplir le trou suivant.",
     "predictLabel": "Qu'affiche le terminal ?",
     "predictPlaceholder": "Écris la sortie",
-    "checking": "Le donjon vérifie…",
+    "checking": "Vérification…",
     "submit": "Valider",
-    "correct": "Coup juste",
+    "correct": "Bien joué !",
     "wrong": "Raté",
     "solution": "La bonne réponse :",
     "continue": "Continuer"
   },
   "stage": {
-    "hearts": "{count, plural, =0 {Plus aucun cœur} one {# cœur restant} other {# cœurs restants}}",
-    "progress": "Rencontre {current} sur {total}",
+    "lives": "{count, plural, =0 {Plus aucune bouée} one {# bouée restante} other {# bouées restantes}}",
+    "progress": "Épreuve {current} sur {total}",
     "combo": "Série ×{count}",
-    "defeatTitle": "Tu t'es effondré",
-    "defeatBody": "Trois erreurs, et la torche s'est éteinte. Relis le grimoire ou retente directement : chaque essai t'apprend quelque chose.",
-    "retry": "Rallumer la torche",
-    "readGrimoire": "Lire le grimoire",
-    "where": "Étage {floor}, salle {stage}",
-    "encounters": "{count, plural, one {# épreuve t'attend} other {# épreuves t'attendent}} derrière cette porte. Tu as trois cœurs.",
-    "enter": "Pousser la porte",
-    "victoryTitle": "Salle conquise",
+    "quit": "Quitter l'épreuve",
+    "defeatTitle": "Ton bateau a pris l'eau",
+    "defeatBody": "Trois erreurs, et plus de bouée. Relis le cours ou repars tout de suite : chaque essai t'apprend quelque chose.",
+    "retry": "Écoper et repartir",
+    "readCourse": "Relire le cours",
+    "where": "{place}, crique {stage}",
+    "encounters": "{count, plural, one {# épreuve t'attend} other {# épreuves t'attendent}}. Tu as trois bouées.",
+    "depart": "Larguer les amarres",
+    "victoryTitle": "Crique conquise !",
     "starsLabel": "{count, plural, one {# étoile} other {# étoiles}} sur 3",
-    "starsHint1": "Tu as survécu de justesse. Rejoue pour décrocher les trois étoiles.",
+    "starsHint1": "Tu t'en es sorti de justesse. Rejoue pour décrocher les trois étoiles.",
     "starsHint2": "Presque parfait. Une seule erreur te sépare des trois étoiles.",
-    "starsHint3": "Sans une égratignure. Trois étoiles.",
-    "nextStage": "Salle suivante",
-    "backToFloor": "Retour à l'étage",
-    "replay": "Rejouer"
+    "starsHint3": "Sans une goutte d'eau dans la cale. Trois étoiles.",
+    "nextStage": "Crique suivante",
+    "backToNotion": "Retour à l'île",
+    "replay": "Rejouer",
+    "newCards": "{count, plural, one {Nouvelle carte !} other {# nouvelles cartes !}}"
   },
   "guardian": {
-    "floorGuardian": "Gardien de l'étage {floor}",
-    "rules": "Chaque bonne réponse le frappe. Le sablier tourne : si tu atteins le seuil avant la fin, l'escalier vers l'étage suivant s'ouvre.",
+    "label": "Le gardien de l'île",
+    "rules": "Chaque bonne réponse le repousse. Le sablier tourne : atteins le seuil avant la fin et la route vers l'île suivante s'ouvre.",
     "error": "Le gardien ne répond pas. Vérifie ta connexion, puis réessaie.",
-    "loading": "Le gardien se lève…",
+    "loading": "Le gardien sort de l'eau…",
     "engage": "Affronter le gardien",
-    "hp": "Vie du gardien",
+    "hp": "Force du gardien",
     "question": "Question {current} sur {total}",
-    "strike": "Frapper",
-    "wonTitle": "Gardien vaincu",
-    "wonBody": "{name} s'effondre. Score : {score} %.",
-    "stairsOpen": "L'escalier vers l'étage {floor}, {room}, est maintenant ouvert.",
-    "descend": "Descendre",
+    "strike": "Valider",
+    "wonTitle": "Gardien vaincu !",
+    "wonBody": "{name} replonge au fond de l'océan. Score : {score} %.",
+    "routeOpen": "La route vers {place} est ouverte.",
+    "setSail": "Mettre les voiles",
     "backToMap": "Retour à la carte",
-    "lostTitle": "Le gardien tient bon",
+    "lostTitle": "Le gardien résiste",
     "lostBody": "Tu as obtenu {score} %. Il faut {needed} % pour le vaincre.",
     "lostXp": "Ton courage te rapporte quand même {xp} XP.",
     "trainAgain": "S'entraîner encore",
-    "retry": "Revenir au combat"
+    "retry": "Retenter",
+    "trophy": "Carte légendaire !"
   },
   "map": {
-    "depth": "Étage −{floor}",
-    "opensOn": "S'ouvre le {date}",
-    "blocked": "Le gardien précédent bloque l'escalier",
-    "cleared": "Étage validé",
+    "stop": "Île {position}",
+    "cleared": "Île conquise",
+    "guardianAwaits": "{name} t'attend",
     "stars": "{count} étoiles sur {max}",
-    "guardianAwaits": "Le gardien t'attend",
-    "explore": "{done} salles sur {total}",
-    "youAreHere": "Tu es ici",
-    "soon": "En cours d'écriture : bientôt ouvert"
+    "opensOn": "Accessible le {date}",
+    "soon": "Encore dans la brume",
+    "blocked": "Bats d'abord le gardien précédent",
+    "youAreHere": "Ton bateau est ici"
   },
   "camp": {
-    "metaTitle": "Le camp",
+    "metaTitle": "Le port",
     "demoNotice": "Version de démonstration : ta progression est enregistrée sur cet appareil. Les comptes arrivent bientôt.",
-    "questTitle": "Étage {floor} : {room}",
-    "questProgress": "{done} / {total} salles",
+    "questLabelFree": "Prochaine escale",
+    "questLabelClass": "Escale de la semaine (ta classe)",
+    "questProgress": "{done} / {total} criques",
     "faceGuardian": "Affronter {name}",
-    "continue": "Reprendre l'exploration",
-    "start": "Commencer l'exploration",
-    "allDoneTitle": "Tous les étages ouverts sont conquis",
-    "questLabelFree": "Ta quête en cours",
-    "questLabelClass": "Quête de la semaine (ta classe)",
-    "allDoneBodyFree": "Tu as conquis tous les étages disponibles. De nouveaux étages et de nouveaux royaumes arrivent : en attendant, rejoue les salles pour décrocher toutes les étoiles.",
-    "allDoneBodyClass": "Ton enseignant ouvrira le prochain étage lundi. En attendant, rejoue les salles pour décrocher toutes les étoiles."
+    "continue": "Reprendre la navigation",
+    "start": "Mettre les voiles",
+    "allDoneTitle": "Toutes les îles accessibles sont conquises",
+    "allDoneBodyFree": "De nouvelles îles et de nouveaux archipels arrivent. En attendant, rejoue les criques pour décrocher toutes les étoiles.",
+    "allDoneBodyClass": "Ton enseignant ouvrira la prochaine île lundi. En attendant, rejoue les criques pour décrocher toutes les étoiles."
   },
-  "floor": {
-    "depth": "Étage −{floor}",
-    "sealed": "Cet étage est encore scellé. Il s'ouvrira le {date}.",
-    "blocked": "Tu dois d'abord vaincre {name} pour descendre ici.",
+  "rhythm": {
+    "label": "Ton rythme",
+    "goalTitle": "Ton cap de la semaine",
+    "goalProgress": "{earned} / {target} XP",
+    "goalHint": "Personne ne te presse : tu choisis ton cap, la flamme fait le reste.",
+    "goalReached": "Objectif atteint. Tout ce que tu gagnes en plus est du bonus.",
+    "goalPick": "Choisir ton cap",
+    "goals": {
+      "calm": "Tranquille, {xp} XP",
+      "steady": "Régulier, {xp} XP",
+      "intense": "Acharné, {xp} XP"
+    },
+    "classTitle": "Ton enseignant donne le rythme",
+    "classBody": "Les îles s'ouvrent selon le planning de ta classe, et le gardien se réveille aux dates prévues.",
+    "modeTitle": "Comment tu apprends",
+    "modes": {
+      "free": {
+        "title": "Librement",
+        "body": "Seul, à ton rythme : chaque gardien vaincu ouvre la route vers l'île suivante."
+      },
+      "classroom": {
+        "title": "Avec ma classe (démo)",
+        "body": "Ton enseignant ouvre une île par semaine."
+      }
+    }
+  },
+  "notion": {
+    "stop": "Île {position}",
+    "sealed": "Cette île est encore loin. Elle sera accessible le {date}.",
+    "soon": "Cette île est encore dans la brume : son contenu est en cours d'écriture.",
+    "blocked": "Tu dois d'abord vaincre {name} pour naviguer jusqu'ici.",
     "backToMap": "Retour à la carte",
-    "dungeonTitle": "Le donjon",
-    "dungeonHint": "Les salles s'ouvrent l'une après l'autre. Trois cœurs par salle, jusqu'à trois étoiles à gagner.",
-    "stageNumber": "Salle {n} · {count} épreuves",
+    "stagesTitle": "Les criques",
+    "stagesHint": "Chaque crique est une série d'épreuves. Trois bouées par crique, jusqu'à trois étoiles à gagner.",
+    "stageNumber": "Crique {n}, {count} épreuves",
     "stars": "{count, plural, one {# étoile} other {# étoiles}} sur 3",
-    "stageLocked": "Termine la salle précédente pour ouvrir celle-ci.",
-    "grimoireTitle": "Le grimoire",
-    "grimoireHint": "Le cours de la semaine. Chaque page lue rapporte de l'XP.",
+    "stageLocked": "Termine la crique précédente pour ouvrir celle-ci.",
+    "courseTitle": "Le journal de bord",
+    "courseHint": "Le cours de l'île. Chaque page lue rapporte de l'XP.",
     "lessonRead": "Lu",
     "lessonMinutes": "{minutes} min de lecture",
-    "guardianLabel": "Le grand challenge",
+    "guardianLabel": "Le grand défi",
     "guardianDefeated": "Tu l'as vaincu. Tu peux le réaffronter pour t'entraîner.",
-    "guardianExploreFirst": "Le gardien n'affronte que ceux qui ont exploré tout l'étage : {done} salles sur {total}.",
+    "guardianExploreFirst": "Le gardien n'affronte que ceux qui ont exploré toute l'île : {done} criques sur {total}.",
     "guardianNotYet": "Le gardien dort encore. Ton enseignant le réveillera bientôt.",
-    "guardianClosed": "La salle du gardien est fermée. Demande à ton enseignant de la rouvrir.",
-    "guardianReady": "Il t'attend. Si tu le bats, l'étage suivant s'ouvre.",
+    "guardianClosed": "Le gardien est reparti au large. Demande à ton enseignant de rouvrir le défi.",
+    "guardianReady": "Il t'attend. Si tu le bats, la route vers l'île suivante s'ouvre.",
     "guardianRematch": "Le réaffronter",
-    "guardianFace": "Affronter le gardien",
-    "soon": "Cet étage est en cours d'écriture. Il s'ouvrira dès que son contenu sera prêt."
+    "guardianFace": "Affronter le gardien"
   },
-  "grimoire": {
-    "chapter": "Étage {floor} · {room}",
+  "course": {
+    "chapter": "Journal de bord, {place}",
     "minutes": "{minutes} minutes de lecture",
     "nextPage": "Page suivante : {title}",
-    "toDungeon": "Passer à la pratique",
-    "backToFloor": "Retour à l'étage",
+    "toPractice": "Passer aux criques",
+    "backToNotion": "Retour à l'île",
     "read": "Page apprise.",
     "markRead": "J'ai lu cette page (+{xp} XP)"
   },
   "home": {
     "brand": "Code Help Community",
-    "headline": "Apprends l'informatique en conquérant un donjon.",
-    "lede": "Linux, le code, Git, les réseaux, la sécurité, le cloud : chaque domaine est un donjon, chaque étage une notion. Seul à ton rythme, ou avec ta classe.",
-    "enter": "Entrer dans le donjon",
+    "seaHint": "Touche la mer pour naviguer",
+    "headline": "Apprends l'informatique d'île en île.",
+    "lede": "Linux, le code, Git, les réseaux, la sécurité, le cloud : chaque notion est une île à conquérir en jouant. Seul à ton rythme, ou avec ta classe.",
+    "enter": "Embarquer",
     "teacher": "Je suis enseignant",
-    "torchHint": "Promène ta torche sur le mur : tout ce qui y est gravé, tu vas l'apprendre.",
-    "weekTitle": "Comment on progresse",
+    "howTitle": "Comment on progresse",
     "steps": {
       "choose": {
-        "title": "Choisis ton royaume",
-        "body": "Linux, Python, Git, réseaux, cloud… Tu commences où tu veux, sans inscription dans une école."
+        "title": "Choisis ton archipel",
+        "body": "Linux, Python, Git, réseaux… Tu commences où tu veux, sans inscription dans une école."
       },
       "explore": {
-        "title": "Explore et apprends",
-        "body": "Des salles à conquérir en jouant, et un grimoire pour comprendre. À ton rythme, depuis chez toi, même sur téléphone."
+        "title": "Explore les criques",
+        "body": "Des épreuves à conquérir en jouant, et un journal de bord pour comprendre. À ton rythme, même sur téléphone."
       },
       "guardian": {
         "title": "Bats le gardien",
-        "body": "Un combat chronométré valide la notion. Tu le bats : l'escalier vers l'étage suivant s'ouvre."
+        "body": "Un défi chronométré valide la notion. Tu le bats : la route vers l'île suivante s'ouvre."
       }
     },
-    "kingdomsTitle": "Les royaumes",
-    "kingdomsLede": "Chaque domaine est un donjon à part entière, avec ses étages et ses gardiens.",
-    "kingdoms": {
-      "linux": "Les Catacombes du Shell",
-      "python": "La Tour du Serpent",
-      "javascript": "La Forge des Scripts",
-      "git": "Les Branches du Temps",
-      "network": "Le Labyrinthe des Paquets",
-      "security": "La Citadelle",
-      "cloud": "Les Royaumes du Ciel"
+    "seasTitle": "Les archipels",
+    "seasLede": "Chaque domaine est un archipel, avec ses îles et ses gardiens.",
+    "seas": {
+      "linux": "L'Archipel du Shell",
+      "python": "Les Îles du Serpent",
+      "javascript": "Les Îles des Scripts",
+      "git": "Les Îles du Temps",
+      "network": "Le Détroit des Paquets",
+      "security": "La Baie Fortifiée"
     },
-    "kingdomOpen": "Ouvert",
-    "kingdomSoon": "Bientôt",
+    "seaOpen": "Ouvert",
+    "seaSoon": "Bientôt",
+    "cityTitle": "Et après les îles : la ville",
+    "cityBody": "Quand tu maîtriseras les bases, ton bateau accostera à Néo-Métro, la ville des experts : des lignes de métro, des parcours avancés et des pare-feu à pirater.",
     "teachersTitle": "Tu enseignes ? Amène ta classe",
     "roles": {
       "rhythm": {
         "title": "Tu donnes le rythme",
-        "body": "Tu choisis quand chaque étage s'ouvre pour chacune de tes classes, et quand le gardien se réveille."
+        "body": "Tu choisis quand chaque île s'ouvre pour chacune de tes classes, et quand le gardien se réveille."
       },
       "watch": {
         "title": "Tu vois qui décroche",
@@ -194,33 +223,43 @@
         "body": "Des équipes encadrées par un mentor, pour les classes comme pour les autodidactes."
       }
     },
-    "teachersSoon": "Les classes sont une option : sans enseignant, tout le donjon reste accessible. L'espace enseignant est en cours de construction.",
-    "footerTitle": "Pas besoin d'école pour entrer. La torche est allumée."
+    "teachersSoon": "Les classes sont une option : sans enseignant, tout l'archipel reste accessible. L'espace enseignant est en cours de construction.",
+    "footerTitle": "Pas besoin d'école pour embarquer."
   },
-  "rhythm": {
-    "label": "Ton rythme",
-    "goalTitle": "Ton objectif de la semaine",
-    "goalProgress": "{earned} / {target} XP",
-    "goalHint": "Personne ne te presse : tu choisis ton objectif, la flamme fait le reste.",
-    "goalReached": "Objectif atteint. Tout ce que tu gagnes en plus est du bonus.",
-    "goalPick": "Choisir ton objectif",
-    "goals": {
-      "calm": "Tranquille, {xp} XP",
-      "steady": "Régulier, {xp} XP",
-      "intense": "Acharné, {xp} XP"
+  "collection": {
+    "metaTitle": "Ma collection",
+    "title": "Ma collection",
+    "lede": "Chaque commande que tu maîtrises devient une carte. Rejoue pour les faire monter en maîtrise, bats les gardiens pour gagner leurs cartes légendaires.",
+    "progress": "{owned} cartes sur {total}",
+    "rarity": {
+      "common": "Commune",
+      "rare": "Rare",
+      "epic": "Épique",
+      "legendary": "Légendaire"
     },
-    "classTitle": "Ton enseignant donne le rythme",
-    "classBody": "Les étages s'ouvrent selon le planning de ta classe, et le gardien se réveille aux dates prévues.",
-    "modeTitle": "Comment tu apprends",
-    "modes": {
-      "free": {
-        "title": "Librement",
-        "body": "Seul, à ton rythme : chaque gardien vaincu ouvre l'étage suivant."
-      },
-      "classroom": {
-        "title": "Avec ma classe (démo)",
-        "body": "Ton enseignant ouvre un étage par semaine."
-      }
-    }
+    "shiny": "Brillante",
+    "cardLabel": "Carte {title}, {rarity}",
+    "lockedLabel": "Carte pas encore gagnée",
+    "masteryLabel": "Maîtrise {level} sur 3",
+    "masteryNext": "{count, plural, one {Encore # bonne réponse} other {Encore # bonnes réponses}} pour monter en maîtrise.",
+    "masteryMax": "Maîtrise maximale atteinte.",
+    "openCard": "Voir la carte {title}",
+    "hintCommand": "À gagner dans les criques",
+    "hintGuardian": "Bats le gardien",
+    "close": "Fermer",
+    "revealCount": "Carte {current} sur {total}",
+    "revealNext": "Carte suivante",
+    "revealDone": "Ranger dans ma collection",
+    "chestTitle": "Le coffre de la semaine",
+    "chestLocked": "Encore {left} XP pour atteindre ton cap et l'ouvrir.",
+    "chestReady": "Ton cap est atteint : le coffre est à toi.",
+    "chestDone": "Coffre ouvert cette semaine. Rendez-vous lundi pour le suivant.",
+    "chestBonus": "Toutes tes cartes brillent déjà : le coffre te donne {xp} XP.",
+    "chestOpen": "Ouvrir le coffre",
+    "chestReveal": "Une carte devient brillante !",
+    "chestHint": "Gagne tes premières cartes dans les criques.",
+    "teaserTitle": "Ma collection",
+    "teaserEmpty": "Réussis ta première crique pour gagner tes premières cartes.",
+    "teaserBody": "Voir toutes mes cartes et le coffre de la semaine."
   }
 }

@@ -12,7 +12,7 @@ type Props = {
   onChange: (response: string[] | null) => void;
 };
 
-/** Texte à trous : chaque jeton de la banque remplit le premier trou libre. */
+/** Texte à trous : chaque planche de la réserve remplit le premier trou libre. */
 export function FillPlay({ encounter, disabled, onChange }: Props) {
   const t = useTranslations("game");
   const { play } = useSound();
@@ -44,8 +44,8 @@ export function FillPlay({ encounter, disabled, onChange }: Props) {
 
   return (
     <div>
-      <pre className="whitespace-pre-wrap rounded-lg border border-stone-edge/50 bg-abyss-deep/90 px-4 py-4 font-mono text-lg leading-[2.4] text-parchment">
-        <span className="text-moss-dim">$ </span>
+      <pre className="whitespace-pre-wrap rounded-2xl bg-ink px-4 py-4 font-mono text-lg leading-[2.4] text-[#e9f7f5]">
+        <span className="text-success">$ </span>
         {parts.map((part, k) => {
           const m = part.match(/^\{\{(\d+)\}\}$/);
           if (!m) {
@@ -56,7 +56,7 @@ export function FillPlay({ encounter, disabled, onChange }: Props) {
                     {j > 0 && (
                       <>
                         {"\n"}
-                        <span className="text-moss-dim">$ </span>
+                        <span className="text-success">$ </span>
                       </>
                     )}
                     {seg}
@@ -74,8 +74,8 @@ export function FillPlay({ encounter, disabled, onChange }: Props) {
               onClick={() => clear(slot)}
               disabled={disabled}
               aria-label={value === null ? t("blankEmpty", { n: slot + 1 }) : t("blankFilled", { value: encounter.bank[value] })}
-              className={`mx-0.5 inline-block min-w-14 rounded-md border-b-2 px-2 py-0.5 align-middle leading-normal transition ${
-                value === null ? "animate-pulse border-torch bg-torch/10 text-transparent" : "border-torch bg-torch/20 text-torch-bright"
+              className={`mx-0.5 inline-block min-w-14 rounded-lg px-2 py-0.5 align-middle leading-normal transition ${
+                value === null ? "animate-pulse border-2 border-dashed border-accent text-transparent" : "bg-accent font-semibold text-ink"
               }`}
             >
               {value === null ? "___" : encounter.bank[value]}
@@ -83,7 +83,7 @@ export function FillPlay({ encounter, disabled, onChange }: Props) {
           );
         })}
       </pre>
-      <p className="mb-2 mt-5 text-sm text-parchment-dim">{t("fillBank")}</p>
+      <p className="mb-2 mt-5 text-sm font-bold text-wood-deep">{t("fillBank")}</p>
       <ul className="flex flex-wrap gap-2">
         {encounter.bank.map((token, i) => {
           const used = slots.includes(i);
@@ -93,7 +93,7 @@ export function FillPlay({ encounter, disabled, onChange }: Props) {
                 type="button"
                 disabled={disabled || used}
                 onClick={() => pick(i)}
-                className="stone min-w-12 rounded-lg border border-stone-edge/70 px-3.5 py-2.5 font-mono text-lg text-parchment transition hover:-translate-y-0.5 hover:border-torch disabled:opacity-25"
+                className="min-h-12 min-w-12 rounded-xl bg-wood px-3.5 py-2.5 font-mono text-lg font-semibold text-white shadow-[0_4px_0_var(--color-wood-deep)] transition hover:-translate-y-0.5 disabled:bg-line disabled:text-muted disabled:shadow-none"
               >
                 {token}
               </button>
