@@ -39,11 +39,14 @@ Une seule application **Next.js 16** (App Router) pour le front, le back et l'AP
 
 ```bash
 pnpm install
-pnpm dev            # http://localhost:3000
-pnpm test           # tests unitaires
+cp .env.example .env     # renseigner BETTER_AUTH_SECRET (openssl rand -base64 32)
+docker compose up -d     # PostgreSQL en local
+pnpm db:generate         # client Prisma
+pnpm db:migrate          # crée les tables (nommer la migration, ex. « init »)
+pnpm dev                 # http://localhost:3000
 ```
 
-La version actuelle fonctionne sans base de données : la progression est stockée dans le navigateur (mode démo).
+On peut jouer sans compte (progression sur l'appareil). En créant un compte, la progression déjà faite est reprise et sauvegardée.
 
 ## État
 

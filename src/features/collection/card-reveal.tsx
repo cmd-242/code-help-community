@@ -37,7 +37,7 @@ export function CardReveal({ items, title, onClose }: { items: RevealedCard[]; t
 
   return (
     <motion.div
-      className="fixed inset-0 z-[70] grid place-items-center bg-ink/70 p-6 backdrop-blur-sm"
+      className="fixed inset-0 z-[70] grid place-items-center bg-panel/80 p-6 backdrop-blur-sm"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       role="dialog"

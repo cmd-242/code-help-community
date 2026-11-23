@@ -1,13 +1,12 @@
 "use client";
 
 import { AnimatePresence, motion, useAnimate } from "motion/react";
-import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { fireConfetti } from "@/components/fx/confetti";
-import { SailIcon } from "@/components/icons";
+import { MetroIcon, SailIcon } from "@/components/icons";
 import { GameButton, GameLink } from "@/components/ui/game-button";
 import { challengeScore, challengeXp } from "@/features/gamification/rules";
-import type { Card } from "@/features/catalog/types";
+import type { Card, Universe } from "@/features/catalog/types";
 import { CardReveal } from "@/features/collection/card-reveal";
 import { guardianCardId } from "@/features/collection/rules";
 import { useProgress } from "@/features/progression/progress-store";
@@ -15,8 +14,8 @@ import { useHydratedProgress } from "@/features/progression/use-hydrated-progres
 import { useSound } from "@/features/sound/sound-provider";
 import { EncounterView } from "@/games/encounter-view";
 import type { CheckResult, PublicEncounter } from "@/games/public";
-import { CreatureArt } from "@/universes/archipel/creature-art";
-import { SeaWaves } from "@/universes/archipel/sea-waves";
+import { Backdrop, GuardianPortrait, sceneClass } from "@/universes/universe-art";
+import { useWorldT } from "@/universes/world-text";
 import { answerGuardian, startGuardianFight } from "./actions";
 
 type Props = {
@@ -26,13 +25,15 @@ type Props = {
   next: { slug: string; place: string } | null;
   /** Carte légendaire gagnée en battant ce gardien */
   guardianCard: Card | null;
+  universe: Universe;
+  mapHref: string;
 };
 
 type Fight = { questions: PublicEncounter[]; durationSeconds: number; passingScore: number; xp: number };
 type Phase = "intro" | "loading" | "fight" | "won" | "lost";
 
-export function GuardianFight({ notionSlug, position, guardian, next, guardianCard }: Props) {
-  const t = useTranslations("guardian");
+export function GuardianFight({ notionSlug, position, guardian, next, guardianCard, universe, mapHref }: Props) {
+  const t = useWorldT("guardian", universe);
   const { play } = useSound();
   useHydratedProgress();
   const [phase, setPhase] = useState<Phase>("intro");
@@ -150,15 +151,15 @@ export function GuardianFight({ notionSlug, position, guardian, next, guardianCa
       <AnimatePresence mode="wait">
         {(phase === "intro" || phase === "loading") && (
           <motion.section key="intro" exit={{ opacity: 0 }} className="paper overflow-hidden rounded-[2rem] text-center">
-            <div className="sea relative h-64 overflow-hidden">
-              <SeaWaves />
+            <div className={`${sceneClass(universe)} relative h-64 overflow-hidden`}>
+              <Backdrop universe={universe} />
               <motion.div
                 initial={{ y: 140 }}
                 animate={{ y: 0 }}
                 transition={{ type: "spring", stiffness: 60, damping: 11, delay: 0.2 }}
                 className="absolute inset-x-0 bottom-0 mx-auto w-52"
               >
-                <CreatureArt position={position} className="w-52 animate-bob" />
+                <GuardianPortrait universe={universe} position={position} className="w-52 animate-bob" />
               </motion.div>
             </div>
             <div className="px-6 pb-8 pt-6">
@@ -183,10 +184,10 @@ export function GuardianFight({ notionSlug, position, guardian, next, guardianCa
 
         {phase === "fight" && fight && (
           <motion.section key="fight" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <div className="sea relative flex items-end gap-3 overflow-hidden rounded-[2rem] px-4 pb-4 pt-3">
-              <SeaWaves />
+            <div className={`${sceneClass(universe)} relative flex items-end gap-3 overflow-hidden rounded-[2rem] px-4 pb-4 pt-3`}>
+              <Backdrop universe={universe} />
               <div ref={creatureScope} className="relative shrink-0">
-                <CreatureArt position={position} className="w-24" />
+                <GuardianPortrait universe={universe} position={position} className="w-24" />
               </div>
               <div className="relative min-w-0 flex-1">
                 <div className="flex items-baseline justify-between gap-2">
@@ -201,7 +202,7 @@ export function GuardianFight({ notionSlug, position, guardian, next, guardianCa
                   ))}
                 </div>
                 <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-white/50">
-                  <motion.div className="h-full bg-ink" animate={{ width: `${(timeLeft / fight.durationSeconds) * 100}%` }} transition={{ ease: "linear", duration: 1 }} />
+                  <motion.div className="h-full bg-panel" animate={{ width: `${(timeLeft / fight.durationSeconds) * 100}%` }} transition={{ ease: "linear", duration: 1 }} />
                 </div>
                 <p className="mt-1 text-sm font-bold">{t("question", { current: index + 1, total })}</p>
               </div>
@@ -222,10 +223,10 @@ export function GuardianFight({ notionSlug, position, guardian, next, guardianCa
 
         {phase === "won" && result && (
           <motion.section key="won" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="paper overflow-hidden rounded-[2rem] text-center">
-            <div className="sea relative h-52 overflow-hidden">
-              <SeaWaves />
+            <div className={`${sceneClass(universe)} relative h-52 overflow-hidden`}>
+              <Backdrop universe={universe} />
               <motion.div className="absolute inset-x-0 bottom-0 mx-auto w-44" initial={{ y: 0, opacity: 1 }} animate={{ y: 180, opacity: 0.2 }} transition={{ duration: 1.8, ease: "easeIn" }}>
-                <CreatureArt position={position} mood="hurt" className="w-44" />
+                <GuardianPortrait universe={universe} position={position} mood="hurt" className="w-44" />
               </motion.div>
             </div>
             <div className="px-6 pb-8 pt-6">
@@ -234,14 +235,14 @@ export function GuardianFight({ notionSlug, position, guardian, next, guardianCa
               <p className="mt-3 font-display text-5xl font-bold text-success-deep">+{result.xp} XP</p>
               {next ? (
                 <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1.8 }} className="mx-auto mt-7 max-w-md rounded-3xl bg-success/20 p-5">
-                  <SailIcon className="mx-auto size-10 text-info-deep" />
+                  {universe === "metro" ? <MetroIcon className="mx-auto size-10" /> : <SailIcon className="mx-auto size-10 text-info-deep" />}
                   <p className="mt-2 text-lg font-semibold">{t("routeOpen", { place: next.place })}</p>
                   <GameLink href={`/app/notion/${next.slug}`} variant="success" className="mt-4" sfx="enter">
                     {t("setSail")}
                   </GameLink>
                 </motion.div>
               ) : (
-                <GameLink href="/app" className="mt-8" sfx="enter">
+                <GameLink href={mapHref} className="mt-8" sfx="enter">
                   {t("backToMap")}
                 </GameLink>
               )}
@@ -251,10 +252,10 @@ export function GuardianFight({ notionSlug, position, guardian, next, guardianCa
 
         {phase === "lost" && result && fight && (
           <motion.section key="lost" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="paper overflow-hidden rounded-[2rem] text-center">
-            <div className="sea relative h-52 overflow-hidden">
-              <SeaWaves />
+            <div className={`${sceneClass(universe)} relative h-52 overflow-hidden`}>
+              <Backdrop universe={universe} />
               <motion.div className="absolute inset-x-0 bottom-0 mx-auto w-44" animate={{ y: [0, -14, 0], scale: [1, 1.08, 1] }} transition={{ duration: 1.2 }}>
-                <CreatureArt position={position} className="w-44" />
+                <GuardianPortrait universe={universe} position={position} className="w-44" />
               </motion.div>
             </div>
             <div className="px-6 pb-8 pt-6">

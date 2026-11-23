@@ -8,7 +8,7 @@ const SEAS = [
   { key: "linux", glyph: ">_", open: true },
   { key: "python", glyph: "def", open: false },
   { key: "javascript", glyph: "{ }", open: false },
-  { key: "git", glyph: "⑂", open: false },
+  { key: "git", glyph: "⑂", open: true },
   { key: "network", glyph: "⇄", open: false },
   { key: "security", glyph: "⚿", open: false },
 ] as const;
@@ -81,7 +81,7 @@ export default async function HomePage() {
                 </li>
               ))}
             </ul>
-            <div className="mt-10 rounded-3xl bg-ink p-6 text-white">
+            <div className="mt-10 rounded-3xl bg-panel p-6 text-on-panel">
               <p className="font-display text-2xl font-semibold">{t("cityTitle")}</p>
               <p className="mt-2 text-[#c9dbe6]">{t("cityBody")}</p>
             </div>
@@ -101,6 +101,9 @@ export default async function HomePage() {
             ))}
           </div>
           <p className="mt-10 text-muted">{t("teachersSoon")}</p>
+          <GameLink href="/prof" className="mt-6">
+            {t("teacherCta")}
+          </GameLink>
         </section>
 
         <footer className="sea px-5 py-16 text-center">

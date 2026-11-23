@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { cardsOfNotion, getNotion, getTrack } from "@/features/catalog/queries";
+import { cardsOfNotion, getNotion, getTracks } from "@/features/catalog/queries";
+import { mapHref } from "@/features/catalog/paths";
 import { guardianCardId } from "@/features/collection/rules";
 import { GuardianFight } from "@/features/guardian/guardian-fight";
 
 export function generateStaticParams() {
-  return getTrack()?.notions.filter((n) => n.challenge).map((n) => ({ slug: n.slug })) ?? [];
+  return getTracks().flatMap((t) => t.notions.filter((n) => n.challenge).map((n) => ({ slug: n.slug })));
 }
 
 export async function generateMetadata({ params }: PageProps<"/app/notion/[slug]/gardien">): Promise<Metadata> {
@@ -26,6 +27,8 @@ export default async function GuardianPage({ params }: PageProps<"/app/notion/[s
       position={notion.position}
       guardian={notion.guardian}
       next={next ? { slug: next.slug, place: next.place } : null}
+      universe={track.universe}
+      mapHref={mapHref(track)}
       guardianCard={cardsOfNotion(track, notion.slug).find((c) => c.id === guardianCardId(notion.slug)) ?? null}
     />
   );

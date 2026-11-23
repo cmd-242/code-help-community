@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import type { Card, Rarity } from "@/features/catalog/types";
-import { CreatureArt } from "@/universes/archipel/creature-art";
+import { GuardianPortrait, sceneClass } from "@/universes/universe-art";
 
 const RARITY_BG: Record<Rarity, string> = {
   common: "bg-rarity-common",
@@ -62,11 +62,11 @@ export function GameCard({ card, owned, mastery = 1, shiny = false, position = 1
         )}
       </header>
 
-      <div className="sea relative flex flex-1 items-center justify-center overflow-hidden">
+      <div className={`${sceneClass(card.universe)} relative flex flex-1 items-center justify-center overflow-hidden`}>
         {card.kind === "guardian" ? (
-          <CreatureArt position={position} className={small ? "w-14" : "w-24"} />
+          <GuardianPortrait universe={card.universe} position={position} className={small ? "w-14" : "w-24"} />
         ) : (
-          <span className={`rounded-xl bg-ink px-2 py-1 font-mono font-semibold text-[#e9f7f5] ${small ? "text-sm" : "text-2xl"}`}>{card.title}</span>
+          <span className={`rounded-xl bg-panel px-2 py-1 font-mono font-semibold text-on-panel ${small ? "text-sm" : "text-2xl"}`}>{card.title}</span>
         )}
       </div>
 

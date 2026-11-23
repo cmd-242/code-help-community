@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  verifier:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: chc
+          POSTGRES_PASSWORD: chc
+          POSTGRES_DB: chc
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U chc" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://chc:chc@localhost:5432/chc
+      BETTER_AUTH_SECRET: ci-secret-pour-les-tests-uniquement
+      BETTER_AUTH_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Générer le client Prisma
+        run: pnpm db:generate
+      - name: Créer les tables
+        run: pnpm db:push
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - name: Tests unitaires
+        run: pnpm test
+      - name: Tests d'intégration (base PostgreSQL)
+        run: pnpm test:integration
+      - run: pnpm build
+      - name: Essai de fumée (inscription, session)
+        run: |
+          pnpm start -p 3000 > server.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf http://localhost:3000/ > /dev/null && break; sleep 1; done
+          curl -sf http://localhost:3000/app > /dev/null
+          curl -sf http://localhost:3000/inscription > /dev/null
+          code=$(curl -s -o signup.json -w "%{http_code}" -c cookies.txt -H "Content-Type: application/json" -H "Origin: http://localhost:3000" \
+            -d '{"name":"Aya","email":"aya.ci@example.com","password":"motdepasse123"}' http://localhost:3000/api/auth/sign-up/email)
+          echo "inscription: $code"; cat signup.json; echo
+          test "$code" = "200"
+          curl -sf -b cookies.txt http://localhost:3000/api/auth/get-session | tee session.json
+          grep -q "aya.ci@example.com" session.json
+      - name: Captures de l'espace enseignant
+        run: |
+          pnpm db:seed
+          npm install --prefix /tmp/pw playwright
+          /tmp/pw/node_modules/.bin/playwright install --with-deps chromium
+          node scripts/screenshots-teacher.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: captures-enseignant
+          path: screenshots/
+      - name: Journal du serveur en cas d'échec
+        if: failure()
+        run: cat server.log || true

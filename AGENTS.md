@@ -49,13 +49,16 @@ Avant d'utiliser une API de Next.js, vérifie la documentation correspondant à 
 
 ```bash
 pnpm install
+cp .env.example .env          # puis renseigner BETTER_AUTH_SECRET
 docker compose up -d          # Postgres + MinIO en local
-pnpm db:migrate               # prisma migrate dev
+pnpm db:generate              # génère le client Prisma (src/generated/prisma)
+pnpm db:migrate               # crée / applique les migrations
 pnpm dev                      # http://localhost:3000
 pnpm lint && pnpm typecheck && pnpm test   # à lancer avant chaque commit
+pnpm test:integration         # tests sur une vraie base (DATABASE_URL)
 ```
 
-À venir : `pnpm db:seed` et `pnpm test:e2e` (Playwright). Le contenu pédagogique vit dans `content/` et est validé par `tests/unit/content.test.ts`.
+La CI GitHub (`.github/workflows/ci.yml`) lance tout cela sur une base PostgreSQL, plus un essai d'inscription. À venir : `pnpm db:seed` et `pnpm test:e2e` (Playwright). Le contenu pédagogique vit dans `content/` et est validé par `tests/unit/content.test.ts`.
 
 ## Règles obligatoires
 
@@ -73,7 +76,8 @@ pnpm lint && pnpm typecheck && pnpm test   # à lancer avant chaque commit
 9. Route Handlers (`app/api/`) uniquement pour SSE, cron, exports, webhooks.
 10. Le déblocage d'une notion est **calculé à la lecture** (`features/progression/unlock.ts`) : prérequis, plus dates du planning et dérogations **seulement en classe**. Ne pas créer de cron pour débloquer.
 10 bis. **Toute fonctionnalité doit marcher pour un apprenant libre** (sans établissement, sans classe, sans enseignant). Le cadre scolaire s'ajoute par-dessus et ne doit jamais devenir un prérequis.
-11. Les XP sont des **événements** (`XpEvent`), jamais un compteur qu'on incrémente.
+11. Les XP sont des **événements** (`XpEvent`), jamais un compteur qu'on incrémente. **Le serveur recalcule toujours les XP** (`src/server/services/progress.ts`) : le navigateur envoie des actions (`ProgressOp`), jamais des montants.
+11 bis. Sans compte, on peut tout jouer (progression sur l'appareil). Avec un compte, la progression est synchronisée et le serveur fait foi. La progression référence le contenu par identifiant (slug, id d'étape, de leçon, de carte), sans clé étrangère.
 12. Nouveau type d'exercice = nouveau moteur dans `src/games/<type>/` déclaré dans `src/games/registry.ts` (schéma Zod + composant + correcteur pur). Nouveau domaine = **contenu uniquement**.
 13. Charger les modules lourds (Pyodide, xterm, React Flow, CodeMirror) avec `next/dynamic`.
 

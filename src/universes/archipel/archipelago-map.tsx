@@ -60,9 +60,11 @@ function IslandStop({ notion, state, index, ready, last }: { notion: NotionSumma
               <LockIcon className="size-4" />
               {state.status === "sealed" && state.release
                 ? t("opensOn", { date: format.dateTime(state.release.gameOpensAt, { weekday: "long", day: "numeric", month: "long" }) })
-                : state.status === "soon"
-                  ? t("soon")
-                  : t("blocked")}
+                : state.status === "sealed"
+                  ? t("notScheduled")
+                  : state.status === "soon"
+                    ? t("soon")
+                    : t("blocked")}
             </span>
           )}
         </p>

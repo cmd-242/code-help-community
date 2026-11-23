@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import type { NotionSummary } from "@/features/catalog/queries";
 import { useProgress } from "./progress-store";
 import { useHydratedProgress } from "./use-hydrated-progress";
-import { demoRelease, notionStatus, guardianGate, type NotionStatus, type GuardianGate, type Release } from "./unlock";
+import { notionStatus, guardianGate, type NotionStatus, type GuardianGate, type Release } from "./unlock";
 
 export type NotionState = {
   /** "soon" : le lieu est accessible mais son contenu n'est pas encore écrit */
@@ -21,14 +21,19 @@ export function useNotionStates(notions: NotionSummary[]): { ready: boolean; sta
   const ready = useHydratedProgress();
   const stageStars = useProgress((s) => s.stageStars);
   const cleared = useProgress((s) => s.cleared);
-  const mode = useProgress((s) => s.mode);
+  const classroom = useProgress((s) => s.classroom);
 
   const states = useMemo(() => {
     // L'heure n'est lue que chez l'étudiant, jamais pendant le pré-rendu
     const now = ready ? new Date() : new Date(0);
     return notions.map((f, i) => {
       // Libre : aucun planning, seule la progression compte. En classe : planning de l'enseignant.
-      const release = mode === "classroom" ? demoRelease(f.position, now) : null;
+      const raw = classroom?.releases[f.slug];
+      const release = raw
+        ? { gameOpensAt: new Date(raw.gameOpensAt), challengeOpensAt: new Date(raw.challengeOpensAt), challengeClosesAt: new Date(raw.challengeClosesAt) }
+        : null;
+      // En classe, une notion que l'enseignant n'a pas encore programmée reste fermée
+      const unscheduled = Boolean(classroom?.notionSlugs.includes(f.slug)) && !raw;
       const stars = f.stageIds.reduce((n, id) => n + (stageStars[id] ?? 0), 0);
       const stagesDone = f.stageIds.filter((id) => (stageStars[id] ?? 0) > 0).length;
       const input = {
@@ -39,18 +44,18 @@ export function useNotionStates(notions: NotionSummary[]): { ready: boolean; sta
         stagesTotal: f.stageIds.length,
         stagesDone,
       };
-      const computed = notionStatus(input);
+      const computed = unscheduled ? "sealed" : notionStatus(input);
       const written = f.stageIds.length > 0;
       return {
         status: !ready ? "sealed" : !written && (computed === "open" || computed === "guardian") ? "soon" : computed,
-        gate: guardianGate(input),
+        gate: unscheduled ? "not-yet" : guardianGate(input),
         release,
         stagesDone,
         stars,
         maxStars: f.stageIds.length * 3,
       } satisfies NotionState;
     });
-  }, [notions, stageStars, cleared, ready, mode]);
+  }, [notions, stageStars, cleared, ready, classroom]);
 
   return { ready, states };
 }

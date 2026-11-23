@@ -9,21 +9,24 @@ Durées indicatives pour une petite équipe (1 à 2 développeurs). Chaque phase
 - [ ] Prettier, Husky, Playwright.
 - [x] Docker Compose local : PostgreSQL + MinIO.
 - [x] Prisma 7 : schéma et `prisma.config.ts`.
-- [ ] Première migration, script de seed, client `src/server/db.ts`.
-- [ ] Authentification (e-mail + Google) et rôles.
+- [x] Client `src/server/db.ts`, intégration continue avec PostgreSQL.
+- [ ] Première migration versionnée (`pnpm db:migrate`), script de seed.
+- [x] Authentification (e-mail + Google) avec Better Auth.
+- [ ] Rôles et permissions par classe.
 - [ ] `proxy.ts`, `src/server/permissions.ts` et tests des règles de visibilité.
 - [x] Univers Archipel (design, sons, animations) et structure multi-univers (voir `docs/06`).
-- [ ] Univers Néo-Métro pour les parcours avancés, passage du port à la ville.
+- [x] Univers Néo-Métro (thème de nuit, ville, plan de métro, sons, gardiens mécaniques), porte d'entrée depuis l'Archipel. Premier parcours : Git (3 stations jouables sur 6).
 - [x] Collection de cartes : une compétence réussie = une carte, maîtrise 1 à 3, carte légendaire par gardien, coffre de la semaine (carte brillante). Stockée sur l'appareil en démo.
 - [ ] Mise en page des espaces enseignant, mentor, admin.
-- [ ] Intégration continue (GitHub Actions : lint, types, tests, build).
+- [x] Intégration continue (GitHub Actions : lint, types, tests unitaires et d'intégration, build, essai d'inscription).
 
 ## Phase 1 — MVP « apprentissage libre » (semaines 3-10)
 
 Objectif : n'importe qui peut créer un compte, choisir un parcours et progresser seul, sans école. Pilote : un parcours complet (*Linux débutant*) puis *Python débutant*.
 
-- [ ] Comptes (e-mail + Google), profil, pseudonyme.
-- [ ] Progression enregistrée en base (`TrackEnrollment`, `NotionProgress`, `StageAttempt`, `XpEvent`) à la place du stockage local de la démo.
+- [x] Comptes (e-mail + Google), jeu possible sans compte, reprise de la progression d'invité.
+- [ ] Profil, pseudonyme, avatar.
+- [x] Progression enregistrée en base et synchronisée (XP recalculés par le serveur), cartes comprises.
 - [x] Déblocage libre : une notion s'ouvre dès que le gardien précédent est vaincu.
 - [x] Objectif hebdomadaire personnel, série de jours, XP, niveaux, étoiles (en démo).
 - [ ] Badges.
@@ -41,9 +44,9 @@ Objectif : n'importe qui peut créer un compte, choisir un parcours et progresse
 
 Objectif : une classe pilote utilise la plateforme 4 semaines ; les autodidactes trouvent de l'entraide.
 
-- [ ] Classes (avec ou sans établissement), code d'invitation, import CSV, parcours assignés.
-- [ ] Planning hebdomadaire par classe, dérogations individuelles. *(logique de déblocage déjà prête et testée)*
-- [ ] Tableau de bord enseignant, fiche étudiant, alertes de décrochage, annonces.
+- [x] Classes (sans établissement), code d'invitation, parcours assigné. *(import CSV et établissements : à venir)*
+- [x] Planning hebdomadaire par classe. *(dérogations individuelles : à venir)*
+- [x] Tableau de bord enseignant et alertes de décrochage (inactif, en retard, en difficulté). *(fiche étudiant détaillée et annonces : à venir)*
 - [ ] Permissions serveur (`src/server/permissions.ts`) et journal d'audit.
 - [ ] Guildes ouvertes, équipes de classe, mentors (de classe ou bénévoles), revue de code.
 - [ ] Ligues hebdomadaires publiques, quêtes, monnaie virtuelle, gel de série.

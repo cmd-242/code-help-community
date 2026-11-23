@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
-import { getNotion, getTrack, notionSummaries } from "@/features/catalog/queries";
+import { getNotion, getTracks, notionSummaries } from "@/features/catalog/queries";
+import { mapHref } from "@/features/catalog/paths";
 import { NotionView } from "@/features/notion/notion-view";
-import { SeaWaves } from "@/universes/archipel/sea-waves";
+import { Backdrop, sceneClass } from "@/universes/universe-art";
+import { getWorldT } from "@/universes/world-text-server";
 
 export function generateStaticParams() {
-  return getTrack()?.notions.map((n) => ({ slug: n.slug })) ?? [];
+  return getTracks().flatMap((t) => t.notions.map((n) => ({ slug: n.slug })));
 }
 
 export async function generateMetadata({ params }: PageProps<"/app/notion/[slug]">): Promise<Metadata> {
@@ -18,14 +19,14 @@ export default async function NotionPage({ params }: PageProps<"/app/notion/[slu
   const { slug } = await params;
   const found = getNotion(slug);
   if (!found) notFound();
-  const t = await getTranslations("notion");
   const { track, notion } = found;
+  const t = await getWorldT("notion", track.universe);
   const notions = notionSummaries(track);
 
   return (
     <div className="mx-auto max-w-3xl px-3 pb-24 pt-5">
-      <header className="sea relative overflow-hidden rounded-[2rem] px-6 pb-8 pt-7 text-ink">
-        <SeaWaves />
+      <header className={`${sceneClass(track.universe)} relative overflow-hidden rounded-[2rem] px-6 pb-8 pt-7 ${track.universe === "metro" ? "text-white" : "text-ink"}`}>
+        <Backdrop universe={track.universe} />
         <div className="relative">
           <p className="inline-block rounded-full bg-surface px-3 py-1 text-sm font-bold text-info-deep">{t("stop", { position: notion.position })}</p>
           <h1 className="mt-3 font-display text-5xl font-bold leading-[1.05] text-balance">{notion.place}</h1>
@@ -39,6 +40,8 @@ export default async function NotionPage({ params }: PageProps<"/app/notion/[slu
         index={notions.findIndex((n) => n.slug === notion.slug)}
         stages={notion.stages.map((s) => ({ id: s.id, title: s.title, description: s.description, xp: s.xp, count: s.encounters.length }))}
         lessons={notion.lessons.map((l) => ({ id: l.id, title: l.title, minutes: l.minutes }))}
+        universe={track.universe}
+        mapHref={mapHref(track)}
       />
     </div>
   );

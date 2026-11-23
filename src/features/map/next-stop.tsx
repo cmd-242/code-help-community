@@ -13,7 +13,7 @@ import { CreatureArt } from "@/universes/archipel/creature-art";
 export function NextStop({ notions }: { notions: NotionSummary[] }) {
   const t = useTranslations("camp");
   const { ready, states } = useNotionStates(notions);
-  const mode = useProgress((s) => s.mode);
+  const inClass = useProgress((s) => Boolean(s.classroom));
   const i = states.findIndex((s) => s.status === "open" || s.status === "guardian");
   const notion = i >= 0 ? notions[i] : null;
   const state = i >= 0 ? states[i] : null;
@@ -27,7 +27,7 @@ export function NextStop({ notions }: { notions: NotionSummary[] }) {
     >
       <p className="flex items-center gap-2 font-bold text-info-deep">
         <AnchorIcon className="size-5" />
-        {mode === "classroom" ? t("questLabelClass") : t("questLabelFree")}
+        {inClass ? t("questLabelClass") : t("questLabelFree")}
       </p>
 
       {!ready ? (
@@ -72,7 +72,7 @@ export function NextStop({ notions }: { notions: NotionSummary[] }) {
           <h1 id="quest-title" className="mt-1 font-display text-4xl font-bold">
             {t("allDoneTitle")}
           </h1>
-          <p className="mt-2 text-lg text-muted">{mode === "classroom" ? t("allDoneBodyClass") : t("allDoneBodyFree")}</p>
+          <p className="mt-2 text-lg text-muted">{inClass ? t("allDoneBodyClass") : t("allDoneBodyFree")}</p>
         </div>
       )}
     </motion.section>

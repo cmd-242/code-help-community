@@ -2,7 +2,11 @@
 
 import { z } from "zod";
 import { drawGuardianQuestions, getNotion } from "@/features/catalog/queries";
+import { guardianWindowOpen } from "@/features/classroom/rules";
 import { check } from "@/games/public";
+import { db } from "@/server/db";
+import { getStudentClassroom } from "@/server/services/classroom";
+import { getSession } from "@/server/session";
 
 /**
  * Combat contre le gardien (grand challenge).
@@ -10,16 +14,21 @@ import { check } from "@/games/public";
  * publiques et le verdict de chaque réponse.
  *
  * Ordre imposé par AGENTS.md : session → Zod → permission → service.
- * TODO(auth) : vérifier la session et que la notion est ouverte pour la classe
- * de l'étudiant dès que l'authentification sera branchée.
+ * Sans compte, le combat est libre. En classe, il n'est possible que pendant
+ * la fenêtre fixée par l'enseignant.
  */
 
 const slugSchema = z.string().min(1).max(100);
 
 export async function startGuardianFight(notionSlug: string) {
+  const session = await getSession();
   const slug = slugSchema.parse(notionSlug);
   const found = getNotion(slug);
   if (!found?.notion.challenge) throw new Error("Ce gardien n'existe pas.");
+  if (session) {
+    const classroom = await getStudentClassroom(db, session.user.id, found.track.slug);
+    if (classroom && !guardianWindowOpen(classroom.releases[slug], new Date())) throw new Error("GUARDIAN_CLOSED"); // un fichier "use server" n'exporte que des fonctions
+  }
   const { challenge } = found.notion;
   return {
     questions: drawGuardianQuestions(found.notion),

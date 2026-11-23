@@ -128,3 +128,31 @@ export function CardsIcon({ className = "size-6", title }: IconProps) {
     </svg>
   );
 }
+
+/** Ticket de métro : les « vies » dans Néo-Métro (équivalent de la bouée). */
+export function TicketIcon({ className = "size-7", filled = true, title }: IconProps & { filled?: boolean }) {
+  return (
+    <svg viewBox="0 0 30 30" className={className} {...a11y(title)}>
+      <path
+        d="M4 8h22a1 1 0 011 1v3.2a3 3 0 000 5.6V21a1 1 0 01-1 1H4a1 1 0 01-1-1v-3.2a3 3 0 000-5.6V9a1 1 0 011-1z"
+        fill={filled ? "#ffd23f" : "none"}
+        stroke={filled ? "none" : "currentColor"}
+        strokeOpacity={filled ? 1 : 0.25}
+        strokeWidth="2.4"
+        transform="translate(0 3)"
+      />
+      {filled && <path d="M10 14.5v6" stroke="#0a0f1f" strokeOpacity="0.35" strokeWidth="1.6" strokeDasharray="1.6 2.2" />}
+    </svg>
+  );
+}
+
+/** Rond du métro : l'équivalent de la voile pour Néo-Métro. */
+export function MetroIcon({ className = "size-7", title }: IconProps) {
+  return (
+    <svg viewBox="0 0 30 30" className={className} {...a11y(title)}>
+      <circle cx="15" cy="15" r="13" fill="#2f6bff" />
+      <circle cx="15" cy="15" r="13" fill="none" stroke="#fff" strokeWidth="2" />
+      <path d="M8.5 21V9.5l6.5 7 6.5-7V21" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}

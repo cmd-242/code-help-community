@@ -6,7 +6,7 @@ import { useProgress } from "./progress-store";
 let hydration: Promise<void> | null = null;
 
 /** Recharge la progression stockée une seule fois, puis enregistre la journée active. */
-function ensureHydrated() {
+export function ensureHydrated() {
   if (!hydration) {
     hydration = Promise.resolve(useProgress.persist.rehydrate()).then(() => useProgress.getState().touchToday());
   }
