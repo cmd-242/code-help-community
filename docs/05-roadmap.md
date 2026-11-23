@@ -17,7 +17,7 @@ Durées indicatives pour une petite équipe (1 à 2 développeurs). Chaque phase
 - [x] Univers Archipel (design, sons, animations) et structure multi-univers (voir `docs/06`).
 - [x] Univers Néo-Métro (thème de nuit, ville, plan de métro, sons, gardiens mécaniques), porte d'entrée depuis l'Archipel. Premier parcours : Git (3 stations jouables sur 6).
 - [x] Catalogue des parcours (`/app/catalogue`) : tout apprenant choisit librement son parcours, sans compte ni classe.
-- [x] Parcours PHP débutant (Archipel du Serveur, 3 îles) : contenu seul, sans nouveau moteur.
+- [x] Parcours PHP (Archipel du Serveur, 6 îles : de echo à PDO) et Python débutant (Îles du Serpent, 5 îles) : contenu seul, sans nouveau moteur.
 - [x] Enseignant : choix des parcours à la création de la classe, ajout d'un parcours ensuite, planning par parcours. Les étudiants restent libres sur tout le reste.
 - [x] Collection de cartes : une compétence réussie = une carte, maîtrise 1 à 3, carte légendaire par gardien, coffre de la semaine (carte brillante). Stockée sur l'appareil en démo.
 - [ ] Mise en page des espaces enseignant, mentor, admin.

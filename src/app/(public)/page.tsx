@@ -6,7 +6,8 @@ import { HeroSea } from "@/universes/archipel/hero-sea";
 
 const SEAS = [
   { key: "linux", glyph: ">_", open: true },
-  { key: "python", glyph: "def", open: false },
+  { key: "python", glyph: "def", open: true },
+  { key: "php", glyph: "<?", open: true },
   { key: "javascript", glyph: "{ }", open: false },
   { key: "git", glyph: "⑂", open: true },
   { key: "network", glyph: "⇄", open: false },
