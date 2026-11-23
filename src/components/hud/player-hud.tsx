@@ -34,7 +34,7 @@ export function PlayerHud() {
         </Link>
 
         <div className="min-w-0 flex-1" title={t("xpTitle", { current: lvl.current, needed: lvl.needed })}>
-          <div className="relative h-3.5 overflow-hidden rounded-full bg-[#dcefee]">
+          <div className="relative h-3.5 overflow-hidden rounded-full bg-track">
             <motion.div
               className="absolute inset-y-0 left-0 rounded-full bg-info-deep"
               initial={false}

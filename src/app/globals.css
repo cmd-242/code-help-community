@@ -37,9 +37,26 @@
   --color-sea: #2ec4d6;
   --color-sea-light: #5fe0ea;
   --color-sea-deep: #1a8fa8;
-  --color-sand: #f7dda4;
   --color-wood: #a86d3a;
   --color-wood-deep: #7a4a24;
+
+  /* rôles secondaires (redéfinis par chaque univers) */
+  --color-surface-hover: #ffffff;
+  --color-sand: #f7dda4;
+  --color-sand-edge: #e2c27f;
+  --color-track: #dcefee;
+  --color-panel: #13324b;
+  --color-on-panel: #ffffff;
+  --color-on-primary: #ffffff;
+  --color-on-success: #13324b;
+  --color-wood-light: #c2834a;
+  --color-label: #7a4a24;
+
+  /* décor de Néo-Métro : lignes du plan et ciel de la ville */
+  --color-night: #0a0f1f;
+  --color-line-main: #2f6bff;
+  --color-line-branch: #ff8a1f;
+  --color-line-three: #3ddc97;
 
   --font-display: var(--font-fredoka), ui-rounded, system-ui, sans-serif;
   --font-sans: var(--font-nunito), system-ui, sans-serif;
@@ -50,6 +67,7 @@
   --animate-waves: waves 9s linear infinite;
   --animate-twinkle: twinkle 2.6s ease-in-out infinite;
   --animate-sheen: sheen 2.8s ease-in-out infinite;
+  --animate-pulse-ring: pulse-ring 2.2s ease-out infinite;
 }
 
 @keyframes bob {
@@ -70,6 +88,16 @@
 @keyframes sheen {
   from { transform: translateX(-120%) rotate(20deg); }
   to { transform: translateX(220%) rotate(20deg); }
+}
+
+@keyframes cross {
+  from { left: -20%; }
+  to { left: 110%; }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.9; }
+  100% { transform: scale(2.2); opacity: 0; }
 }
 
 @keyframes twinkle {
@@ -104,7 +132,12 @@ body {
 /* Carte « papier » : surface claire posée sur l'eau, ombre franche */
 .paper {
   background: var(--color-surface);
-  box-shadow: 0 6px 0 rgba(19, 50, 75, 0.12);
+  box-shadow: 0 6px 0 var(--paper-shadow, rgba(19, 50, 75, 0.12));
+}
+
+/* Ville de nuit (Néo-Métro) : dégradé de ciel, sans image à télécharger */
+.city {
+  background: linear-gradient(180deg, #080c1c 0%, #141a40 55%, #2b2260 100%);
 }
 
 /* Mer : dégradé de lagon, sans image à télécharger */
@@ -118,4 +151,44 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Néo-Métro : la ville de nuit.
+   Le thème s'applique à toute la page dès qu'un élément marqueur
+   [data-universe-marker="metro"] est présent (voir UniverseMarker),
+   ou à un bloc explicitement marqué data-universe="metro".
+   Contrastes (texte / fond) : ink 15:1 sur page, muted 8:1 sur surface,
+   blanc sur primary 5,2:1, on-success 9:1 sur success.
+   ───────────────────────────────────────────────────────────── */
+:root:has([data-universe-marker="metro"]),
+[data-universe="metro"] {
+  color-scheme: dark;
+  --color-page: #0a0f1f;
+  --color-surface: #141b36;
+  --color-surface-sunk: #0e1428;
+  --color-surface-hover: #1b2447;
+  --color-line: #2a3560;
+  --color-ink: #eef2ff;
+  --color-muted: #a6b2d9;
+  --color-primary: #2f6bff;
+  --color-primary-deep: #1a3fa8;
+  --color-accent: #ffd23f;
+  --color-accent-deep: #ffd23f;
+  --color-success: #3ddc97;
+  --color-success-deep: #5ee6a8;
+  --color-info: #38bdf8;
+  --color-info-deep: #67d4ff;
+  --color-danger-text: #ff8f85;
+  --color-sand: #18213f;
+  --color-sand-edge: #0b1024;
+  --color-track: #26305a;
+  --color-panel: #1d2850;
+  --color-on-success: #062a1b;
+  --color-wood: #26305a;
+  --color-wood-deep: #0b1024;
+  --color-wood-light: #36427a;
+  --color-label: #67d4ff;
+  --paper-shadow: rgba(0, 0, 0, 0.5);
+  --font-display: var(--font-signal), ui-sans-serif, system-ui, sans-serif;
 }

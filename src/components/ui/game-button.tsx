@@ -10,11 +10,11 @@ type Variant = "primary" | "secondary" | "success" | "wood";
 /** Boutons « jouets » : épais, arrondis, avec une ombre franche qui s'enfonce au clic. */
 const styles: Record<Variant, string> = {
   primary:
-    "bg-primary text-white shadow-[0_6px_0_var(--color-primary-deep)] hover:brightness-105 active:translate-y-[4px] active:shadow-[0_2px_0_var(--color-primary-deep)]",
+    "bg-primary text-on-primary shadow-[0_6px_0_var(--color-primary-deep)] hover:brightness-105 active:translate-y-[4px] active:shadow-[0_2px_0_var(--color-primary-deep)]",
   secondary:
-    "bg-surface text-ink shadow-[0_0_0_2px_var(--color-line),0_6px_0_var(--color-line)] hover:bg-white active:translate-y-[4px] active:shadow-[0_0_0_2px_var(--color-line),0_2px_0_var(--color-line)]",
+    "bg-surface text-ink shadow-[0_0_0_2px_var(--color-line),0_6px_0_var(--color-line)] hover:bg-surface-hover active:translate-y-[4px] active:shadow-[0_0_0_2px_var(--color-line),0_2px_0_var(--color-line)]",
   success:
-    "bg-success text-ink shadow-[0_6px_0_var(--color-success-deep)] hover:brightness-105 active:translate-y-[4px] active:shadow-[0_2px_0_var(--color-success-deep)]",
+    "bg-success text-on-success shadow-[0_6px_0_var(--color-success-deep)] hover:brightness-105 active:translate-y-[4px] active:shadow-[0_2px_0_var(--color-success-deep)]",
   wood: "bg-wood text-white shadow-[0_6px_0_var(--color-wood-deep)] hover:brightness-105 active:translate-y-[4px] active:shadow-[0_2px_0_var(--color-wood-deep)]",
 };
 

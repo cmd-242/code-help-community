@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { getTrack, notionSummaries } from "@/features/catalog/queries";
+import { getTrack, getTracks, notionSummaries } from "@/features/catalog/queries";
+import { mapHref } from "@/features/catalog/paths";
 import { GuestBanner } from "@/features/account/guest-banner";
 import { CollectionTeaser } from "@/features/collection/collection-teaser";
+import { MetroPortal } from "@/features/map/metro-portal";
 import { NextStop } from "@/features/map/next-stop";
 import { RhythmPanel } from "@/features/map/rhythm-panel";
 import { ArchipelagoMap } from "@/universes/archipel/archipelago-map";
@@ -36,6 +38,12 @@ export default async function CampPage() {
           <ArchipelagoMap notions={notions} />
         </div>
       </section>
+
+      {getTracks()
+        .filter((t) => t.universe === "metro")
+        .map((t) => (
+          <MetroPortal key={t.slug} href={mapHref(t)} trackTitle={t.title} stations={t.notions.length} />
+        ))}
     </div>
   );
 }

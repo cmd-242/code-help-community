@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { SoundProvider } from "@/features/sound/sound-provider";
-import { fredoka, jetbrains, nunito } from "./fonts";
+import { fredoka, jetbrains, nunito, signal } from "./fonts";
 import "./globals.css";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -21,7 +21,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="fr" data-universe="archipel" className={`${fredoka.variable} ${nunito.variable} ${jetbrains.variable} h-full antialiased`}>
+    <html lang="fr" data-universe="archipel" className={`${fredoka.variable} ${nunito.variable} ${jetbrains.variable} ${signal.variable} h-full antialiased`}>
       <body className="min-h-full">
         <NextIntlClientProvider>
           <SoundProvider>{children}</SoundProvider>

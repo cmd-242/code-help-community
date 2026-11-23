@@ -14,7 +14,7 @@ import { CardReveal, type RevealedCard } from "./card-reveal";
 import { GameCard } from "./game-card";
 import { BOOSTER_XP, boosterAvailable, collectionStats, guardianCardId, hitsToNextMastery, masteryLevel, pickBoosterCard, weekKey } from "./rules";
 
-type Group = { slug: string; place: string; position: number; cards: Card[] };
+type Group = { slug: string; place: string; world: string; position: number; cards: Card[] };
 
 export function CollectionView({ groups, allCards }: { groups: Group[]; allCards: Card[] }) {
   const t = useTranslations("collection");
@@ -35,7 +35,7 @@ export function CollectionView({ groups, allCards }: { groups: Group[]; allCards
       <div className="paper flex items-center gap-4 rounded-[2rem] p-5">
         <div className="min-w-0 flex-1">
           <p className="font-display text-2xl font-bold">{t("progress", { owned: stats.owned, total: stats.total })}</p>
-          <div className="mt-2 h-3.5 overflow-hidden rounded-full bg-[#dcefee]">
+          <div className="mt-2 h-3.5 overflow-hidden rounded-full bg-track">
             <motion.div className="h-full rounded-full bg-rarity-epic" initial={{ width: 0 }} animate={{ width: `${(stats.owned / Math.max(1, stats.total)) * 100}%` }} transition={{ duration: 1 }} />
           </div>
         </div>
@@ -45,6 +45,7 @@ export function CollectionView({ groups, allCards }: { groups: Group[]; allCards
 
       {groups.map((g) => (
         <section key={g.slug} aria-labelledby={`g-${g.slug}`}>
+          <p className="px-2 text-sm font-bold text-info-deep">{g.world}</p>
           <h2 id={`g-${g.slug}`} className="px-2 font-display text-2xl font-bold">
             {g.place}
           </h2>
@@ -78,7 +79,7 @@ export function CollectionView({ groups, allCards }: { groups: Group[]; allCards
       ))}
 
       {detail && (
-        <div className="fixed inset-0 z-[70] grid place-items-center bg-ink/70 p-6 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label={detail.title} onClick={() => setSelected(null)}>
+        <div className="fixed inset-0 z-[70] grid place-items-center bg-panel/80 p-6 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label={detail.title} onClick={() => setSelected(null)}>
           <motion.div initial={{ scale: 0.7, rotate: -4 }} animate={{ scale: 1, rotate: 0 }} className="w-64" onClick={(e) => e.stopPropagation()}>
             <GameCard card={detail} owned position={positionOf(detail.notion)} shiny={Boolean(shiny[detail.id])} mastery={masteryLevel(hits[detail.id] ?? 0)} />
             {detail.kind === "command" && (
@@ -131,7 +132,7 @@ function WeeklyChest({ allCards, positionOf }: { allCards: Card[]; positionOf: (
   };
 
   return (
-    <section className="flex items-center gap-4 rounded-[2rem] bg-sand p-5 shadow-[0_6px_0_#e2c27f]" aria-labelledby="chest-title">
+    <section className="flex items-center gap-4 rounded-[2rem] bg-sand p-5 shadow-[0_6px_0_var(--color-sand-edge)]" aria-labelledby="chest-title">
       <motion.div animate={available ? { rotate: [0, -8, 8, -4, 0] } : {}} transition={{ duration: 0.8, repeat: Infinity, repeatDelay: 1.6 }}>
         <ChestIcon className="size-16" />
       </motion.div>

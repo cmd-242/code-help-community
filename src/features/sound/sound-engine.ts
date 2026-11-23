@@ -1,5 +1,5 @@
 /**
- * Moteur sonore procédural — univers Archipel.
+ * Moteur sonore procédural — Archipel, et aiguillage vers les sons de Néo-Métro (metro-sounds.ts).
  * Tous les sons sont synthétisés avec la Web Audio API : aucun fichier audio
  * à télécharger (léger sur réseau lent) et aucun problème de droits.
  *
@@ -8,6 +8,10 @@
  *
  * Le contexte audio ne démarre qu'après un geste de l'utilisateur (`unlock()`).
  */
+
+import { MetroSounds } from "./metro-sounds";
+
+export type UniverseId = "archipel" | "metro";
 
 export type SfxName =
   | "hover"
@@ -40,6 +44,12 @@ export class SoundEngine {
   private ambientTimers: number[] = [];
   private ambientOn = false;
   private lastHover = 0;
+  private universe: UniverseId = "archipel";
+  private readonly metro = new MetroSounds(() =>
+    this.ctx && this.sfxBus && this.ambientBus && this.noiseBuffer
+      ? { ctx: this.ctx, sfx: this.sfxBus, ambient: this.ambientBus, noise: this.noiseBuffer }
+      : null,
+  );
 
   get ready() {
     return this.ctx !== null && this.ctx.state === "running";
@@ -78,11 +88,28 @@ export class SoundEngine {
     this.master.gain.setTargetAtTime(muted ? 0 : 0.8, t, 0.08);
   }
 
+  /** Change d'univers sonore : l'ambiance en cours s'éteint en fondu, la nouvelle démarre. */
+  setUniverse(universe: UniverseId) {
+    if (universe === this.universe) return;
+    const wasOn = this.ambientOn;
+    if (wasOn) this.stopAmbient();
+    this.universe = universe;
+    if (wasOn) window.setTimeout(() => this.startAmbient(), 1300);
+  }
+
   // ───────────────────────── Ambiance : bord de mer ─────────────────────────
 
   startAmbient() {
     if (!this.ctx || !this.ambientBus || this.ambientOn) return;
     this.ambientOn = true;
+    if (this.universe === "metro") {
+      const t = this.ctx.currentTime;
+      this.ambientBus.gain.cancelScheduledValues(t);
+      this.ambientBus.gain.setValueAtTime(this.ambientBus.gain.value, t);
+      this.ambientBus.gain.linearRampToValueAtTime(0.6, t + 4);
+      this.metro.startAmbient();
+      return;
+    }
     const ctx = this.ctx;
     const t = ctx.currentTime;
     this.ambientBus.gain.cancelScheduledValues(t);
@@ -136,6 +163,7 @@ export class SoundEngine {
     this.ambientBus.gain.cancelScheduledValues(t);
     this.ambientBus.gain.setValueAtTime(this.ambientBus.gain.value, t);
     this.ambientBus.gain.linearRampToValueAtTime(0, t + 1.2);
+    this.metro.stopAmbient();
     this.ambientTimers.forEach((id) => window.clearTimeout(id));
     this.ambientTimers = [];
     const nodes = this.ambientNodes;
@@ -216,6 +244,7 @@ export class SoundEngine {
 
   play(name: SfxName) {
     if (!this.ready || !this.sfxBus) return;
+    if (this.universe === "metro" && this.metro.play(name)) return;
     const t = this.ctx!.currentTime;
     switch (name) {
       case "hover": {

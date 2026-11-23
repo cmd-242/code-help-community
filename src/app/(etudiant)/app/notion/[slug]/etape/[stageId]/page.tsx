@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { cardsOfNotion, getStage, getTrack } from "@/features/catalog/queries";
+import { cardsOfNotion, getStage, getTracks } from "@/features/catalog/queries";
 import { StagePlayer } from "@/features/play/stage-player";
 
 export function generateStaticParams() {
-  return getTrack()?.notions.flatMap((n) => n.stages.map((s) => ({ slug: n.slug, stageId: s.id }))) ?? [];
+  return getTracks().flatMap((t) => t.notions.flatMap((n) => n.stages.map((s) => ({ slug: n.slug, stageId: s.id }))));
 }
 
 export async function generateMetadata({ params }: PageProps<"/app/notion/[slug]/etape/[stageId]">): Promise<Metadata> {
@@ -31,6 +31,7 @@ export default async function StagePage({ params }: PageProps<"/app/notion/[slug
       nextStageId={notion.stages[index + 1]?.id ?? null}
       cards={cardsOfNotion(track, notion.slug)}
       position={notion.position}
+      universe={track.universe}
     />
   );
 }

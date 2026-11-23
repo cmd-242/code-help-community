@@ -1,4 +1,5 @@
 import "server-only";
+import { gitTrack } from "@content/git";
 import { linuxTrack } from "@content/linux";
 import { toPublicEncounter } from "@/games/public";
 import { trackSchema, type Notion, type Track } from "./types";
@@ -7,7 +8,10 @@ import { trackSchema, type Notion, type Track } from "./types";
  * Lecture du catalogue. Pour l'instant le contenu vient des fichiers `content/`
  * (versionnés avec le code) ; il sera ensuite synchronisé en base de données.
  */
-const tracks: Track[] = [trackSchema.parse(linuxTrack)];
+const tracks: Track[] = [linuxTrack, gitTrack].map((input) => {
+  const track = trackSchema.parse(input);
+  return { ...track, cards: track.cards.map((c) => ({ ...c, universe: track.universe })) };
+});
 
 export function getTracks(): Track[] {
   return tracks;
@@ -25,6 +29,12 @@ export function getNotion(slug: string, trackSlug?: string): { track: Track; not
   return undefined;
 }
 
+
+/** Parcours auquel appartient une notion (pour choisir l'univers d'une page) */
+export function universeOfNotion(slug: string) {
+  return getNotion(slug)?.track.universe ?? "archipel";
+}
+
 /** Résumé de notion envoyé aux composants client (sans le contenu des questions) */
 export function notionSummaries(track: Track) {
   return track.notions.map((n) => ({
@@ -34,6 +44,7 @@ export function notionSummaries(track: Track) {
     concept: n.concept,
     summary: n.summary,
     guardian: n.guardian,
+    lane: n.lane,
     stageIds: n.stages.map((s) => s.id),
     hasGuardian: Boolean(n.challenge),
   }));

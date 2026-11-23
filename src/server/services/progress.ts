@@ -58,6 +58,7 @@ export async function getSnapshot(db: Db, userId: string, trackSlug = "linux-deb
       ? {
           id: classroom.id,
           name: classroom.name,
+          notionSlugs: classroom.notionSlugs,
           releases: Object.fromEntries(
             Object.entries(classroom.releases).map(([slug, r]) => [
               slug,
@@ -120,7 +121,7 @@ export async function applyOps(db: Db, userId: string, ops: ProgressOp[], now = 
         const challenge = getNotion(op.notionSlug)?.notion.challenge;
         if (!challenge) break;
         // En classe, le gardien n'est disponible que pendant la fenêtre fixée par l'enseignant
-        const classroom = await getStudentClassroom(db, userId, trackSlug);
+        const classroom = await getStudentClassroom(db, userId, getNotion(op.notionSlug)?.track.slug ?? trackSlug);
         if (classroom && !guardianWindowOpen(classroom.releases[op.notionSlug], now)) break;
         const passed = op.score >= challenge.passingScore;
         const progress = await db.notionProgress.findUnique({ where: { userId_notionSlug: { userId, notionSlug: op.notionSlug } } });

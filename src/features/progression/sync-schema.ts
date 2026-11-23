@@ -48,6 +48,8 @@ export const progressSnapshotSchema = z.object({
     .object({
       id: z.string(),
       name: z.string(),
+      /** Notions du parcours de la classe : le planning ne s'applique qu'à celles-ci */
+      notionSlugs: z.array(z.string()).default([]),
       releases: z.record(z.string(), z.object({ gameOpensAt: z.string(), challengeOpensAt: z.string(), challengeClosesAt: z.string() })),
     })
     .nullable()

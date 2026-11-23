@@ -41,6 +41,13 @@ export const challengeSchema = z.object({
   bank: z.array(encounterSchema).min(1),
 });
 
+/**
+ * Univers visuel d'un parcours.
+ * archipel : les débuts (îles, mer, bateau) ; metro : les parcours avancés (ville, stations, lignes).
+ */
+export const universeSchema = z.enum(["archipel", "metro"]);
+export type Universe = z.infer<typeof universeSchema>;
+
 export const notionSchema = z.object({
   slug: z.string(),
   /** Ordre dans le parcours (1, 2, 3…) */
@@ -53,6 +60,12 @@ export const notionSchema = z.object({
   lessons: z.array(lessonSchema),
   stages: z.array(stageSchema),
   challenge: challengeSchema.optional(),
+  /**
+   * Voie sur le plan (Néo-Métro) : 0 = ligne principale, 1 = ligne de dérivation.
+   * Quand la voie change d'une notion à la suivante, le plan dessine un embranchement
+   * ou une jonction. Ignoré dans l'Archipel.
+   */
+  lane: z.number().int().min(0).max(1).default(0),
 });
 
 /** Rareté d'une carte de collection */
@@ -71,15 +84,10 @@ export const cardSchema = z.object({
   title: z.string(),
   rarity: raritySchema,
   text: z.string(),
+  /** Univers de la carte, rempli par le catalogue d'après son parcours */
+  universe: universeSchema.default("archipel"),
 });
 export type Card = z.infer<typeof cardSchema>;
-
-/**
- * Univers visuel d'un parcours.
- * archipel : les débuts (îles, mer, bateau) ; metro : les parcours avancés (à venir).
- */
-export const universeSchema = z.enum(["archipel", "metro"]);
-export type Universe = z.infer<typeof universeSchema>;
 
 export const trackSchema = z.object({
   slug: z.string(),

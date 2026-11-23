@@ -1,10 +1,9 @@
 "use client";
 
 import { AnimatePresence, motion, useAnimate } from "motion/react";
-import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { fireConfetti } from "@/components/fx/confetti";
-import { CloseIcon, FlameIcon, LifebuoyIcon, StarIcon } from "@/components/icons";
+import { CloseIcon, FlameIcon, LifebuoyIcon, StarIcon, TicketIcon } from "@/components/icons";
 import { GameButton, GameLink } from "@/components/ui/game-button";
 import type { Card, Stage } from "@/features/catalog/types";
 import { CardReveal, type RevealedCard } from "@/features/collection/card-reveal";
@@ -15,8 +14,9 @@ import { useHydratedProgress } from "@/features/progression/use-hydrated-progres
 import { useSound } from "@/features/sound/sound-provider";
 import { EncounterView } from "@/games/encounter-view";
 import { check, toPublicEncounter, type CheckResult } from "@/games/public";
-import { BoatArt } from "@/universes/archipel/boat-art";
-import { SeaWaves } from "@/universes/archipel/sea-waves";
+import { Backdrop, sceneClass, Vehicle } from "@/universes/universe-art";
+import { useWorldT } from "@/universes/world-text";
+import type { Universe } from "@/features/catalog/types";
 
 type Props = {
   notionSlug: string;
@@ -27,12 +27,13 @@ type Props = {
   /** Cartes de la notion (pour révéler celles gagnées) */
   cards: Card[];
   position: number;
+  universe: Universe;
 };
 
 type Phase = "intro" | "play" | "victory" | "defeat";
 
-export function StagePlayer({ notionSlug, place, stage, stageNumber, nextStageId, cards, position }: Props) {
-  const t = useTranslations("stage");
+export function StagePlayer({ notionSlug, place, stage, stageNumber, nextStageId, cards, position, universe }: Props) {
+  const t = useWorldT("stage", universe);
   const { play } = useSound();
   useHydratedProgress();
   const [phase, setPhase] = useState<Phase>("intro");
@@ -106,7 +107,7 @@ export function StagePlayer({ notionSlug, place, stage, stageNumber, nextStageId
     <div className="mx-auto max-w-2xl px-3 pb-20 pt-4">
       <AnimatePresence mode="wait">
         {phase === "intro" && (
-          <StageIntro key="intro" place={place} stageNumber={stageNumber} title={stage.title} description={stage.description} count={total} onDepart={() => setPhase("play")} />
+          <StageIntro key="intro" universe={universe} place={place} stageNumber={stageNumber} title={stage.title} description={stage.description} count={total} onDepart={() => setPhase("play")} />
         )}
 
         {phase === "play" && (
@@ -132,16 +133,16 @@ export function StagePlayer({ notionSlug, place, stage, stageNumber, nextStageId
               <div className="flex gap-1" aria-label={t("lives", { count: lives })}>
                 {Array.from({ length: MAX_HEARTS }).map((_, i) => (
                   <motion.span key={i} animate={i < lives ? { scale: 1, rotate: 0 } : { scale: [1.4, 0.85], rotate: 40 }}>
-                    <LifebuoyIcon filled={i < lives} className="size-8 text-ink" />
+                    {universe === "metro" ? <TicketIcon filled={i < lives} className="size-8 text-ink" /> : <LifebuoyIcon filled={i < lives} className="size-8 text-ink" />}
                   </motion.span>
                 ))}
               </div>
             </div>
 
             {/* La traversée : le bateau avance d'une bouée à l'autre */}
-            <div className="sea relative mb-4 h-16 overflow-hidden rounded-2xl" aria-label={t("progress", { current: index + 1, total })} role="img">
-              <SeaWaves />
-              <div className="absolute inset-x-6 top-[60%] border-t-[3px] border-dotted border-white/80" />
+            <div className={`${sceneClass(universe)} relative mb-4 h-16 overflow-hidden rounded-2xl`} aria-label={t("progress", { current: index + 1, total })} role="img">
+              <Backdrop universe={universe} />
+              <div className={`absolute inset-x-6 top-[60%] border-t-[3px] ${universe === "metro" ? "border-solid border-info/80" : "border-dotted border-white/80"}`} />
               {publicEncounters.map((e, i) => (
                 <span
                   key={e.id}
@@ -154,7 +155,7 @@ export function StagePlayer({ notionSlug, place, stage, stageNumber, nextStageId
                 animate={{ left: `calc(1.5rem + (100% - 3rem) * ${total > 1 ? index / (total - 1) : 0})` }}
                 transition={{ type: "spring", stiffness: 60, damping: 14 }}
               >
-                <BoatArt className="w-12" />
+                <Vehicle universe={universe} bobbing={universe !== "metro"} className="w-12" />
               </motion.div>
             </div>
 
@@ -173,6 +174,7 @@ export function StagePlayer({ notionSlug, place, stage, stageNumber, nextStageId
         {phase === "victory" && reward && (
           <Victory
             key="victory"
+            universe={universe}
             stars={reward.stars}
             xp={reward.xp}
             notionSlug={notionSlug}
@@ -184,7 +186,7 @@ export function StagePlayer({ notionSlug, place, stage, stageNumber, nextStageId
         {phase === "defeat" && (
           <motion.section key="defeat" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="paper rounded-[2rem] px-6 py-10 text-center">
             <motion.div initial={{ y: 0, rotate: 0 }} animate={{ y: 26, rotate: 18, opacity: 0.5 }} transition={{ duration: 2, ease: "easeIn" }} className="mx-auto w-24">
-              <BoatArt bobbing={false} className="w-24" />
+              <Vehicle universe={universe} bobbing={false} className="w-24" />
             </motion.div>
             <h1 className="mt-6 font-display text-4xl font-bold text-danger-text">{t("defeatTitle")}</h1>
             <p className="mx-auto mt-3 max-w-md text-lg text-muted">{t("defeatBody")}</p>
@@ -204,8 +206,8 @@ export function StagePlayer({ notionSlug, place, stage, stageNumber, nextStageId
   );
 }
 
-function StageIntro(props: { place: string; stageNumber: number; title: string; description: string; count: number; onDepart: () => void }) {
-  const t = useTranslations("stage");
+function StageIntro(props: { universe: Universe; place: string; stageNumber: number; title: string; description: string; count: number; onDepart: () => void }) {
+  const t = useWorldT("stage", props.universe);
   const { play } = useSound();
   const [leaving, setLeaving] = useState(false);
   const depart = () => {
@@ -216,16 +218,20 @@ function StageIntro(props: { place: string; stageNumber: number; title: string; 
   };
   return (
     <motion.section exit={{ opacity: 0, y: -10 }} className="paper overflow-hidden rounded-[2rem] text-center">
-      <div className="sea relative h-44 overflow-hidden">
-        <SeaWaves />
-        {/* le ponton */}
-        <div className="absolute bottom-6 left-0 h-3 w-28 rounded-r-md bg-wood shadow-[0_4px_0_var(--color-wood-deep)]" />
+      <div className={`${sceneClass(props.universe)} relative h-44 overflow-hidden`}>
+        <Backdrop universe={props.universe} />
+        {/* le ponton, ou le quai avec sa ligne jaune de sécurité */}
+        {props.universe === "metro" ? (
+          <div className="absolute inset-x-0 bottom-0 h-7 border-t-4 border-accent bg-line" />
+        ) : (
+          <div className="absolute bottom-6 left-0 h-3 w-28 rounded-r-md bg-wood shadow-[0_4px_0_var(--color-wood-deep)]" />
+        )}
         <motion.div
-          className="absolute bottom-5 left-16 w-24"
+          className={`absolute left-16 w-24 ${props.universe === "metro" ? "bottom-6" : "bottom-5"}`}
           animate={leaving ? { x: 420, y: -10, rotate: 4 } : { x: 0 }}
           transition={{ duration: 1.3, ease: [0.5, 0, 0.5, 1] }}
         >
-          <BoatArt className="w-24" />
+          <Vehicle universe={props.universe} bobbing={props.universe !== "metro"} className="w-24" />
         </motion.div>
       </div>
       <div className="px-6 pb-8 pt-6">
@@ -241,8 +247,8 @@ function StageIntro(props: { place: string; stageNumber: number; title: string; 
   );
 }
 
-function Victory({ stars, xp, notionSlug, nextHref, onReplay }: { stars: number; xp: number; notionSlug: string; nextHref: string | null; onReplay: () => void }) {
-  const t = useTranslations("stage");
+function Victory({ universe, stars, xp, notionSlug, nextHref, onReplay }: { universe: Universe; stars: number; xp: number; notionSlug: string; nextHref: string | null; onReplay: () => void }) {
+  const t = useWorldT("stage", universe);
   const { play } = useSound();
   const [shownXp, setShownXp] = useState(0);
   const [open, setOpen] = useState(false);
@@ -279,7 +285,7 @@ function Victory({ stars, xp, notionSlug, nextHref, onReplay }: { stars: number;
           <span className="absolute left-1/2 top-2 h-5 w-5 -translate-x-1/2 rounded bg-accent" />
         </div>
         <motion.div
-          className="absolute bottom-14 left-2 right-2 h-10 origin-bottom-left rounded-t-[3rem] bg-[#c2834a]"
+          className="absolute bottom-14 left-2 right-2 h-10 origin-bottom-left rounded-t-[3rem] bg-wood-light"
           animate={open ? { rotate: -28, y: -6 } : { rotate: 0 }}
           transition={{ type: "spring", stiffness: 160, damping: 10 }}
         />

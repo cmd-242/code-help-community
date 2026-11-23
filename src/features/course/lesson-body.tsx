@@ -36,7 +36,7 @@ export function LessonBody({ blocks }: { blocks: LessonBlock[] }) {
           case "code":
             return (
               <figure key={i}>
-                <pre className="overflow-x-auto rounded-2xl bg-ink px-4 py-3 font-mono text-[0.95rem] leading-relaxed text-[#e9f7f5]">
+                <pre className="overflow-x-auto rounded-2xl bg-panel px-4 py-3 font-mono text-[0.95rem] leading-relaxed text-on-panel">
                   <code>{b.code}</code>
                 </pre>
                 {b.caption && <figcaption className="mt-1.5 text-base italic text-muted">{inline(b.caption)}</figcaption>}

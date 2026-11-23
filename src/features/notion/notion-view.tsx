@@ -2,20 +2,24 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter } from "next-intl";
 import { ChestIcon, LockIcon, LogbookIcon, StarIcon } from "@/components/icons";
 import { GameLink } from "@/components/ui/game-button";
 import type { NotionSummary } from "@/features/catalog/queries";
 import { useProgress } from "@/features/progression/progress-store";
 import { useNotionStates } from "@/features/progression/use-notion-states";
 import { useSound } from "@/features/sound/sound-provider";
-import { CreatureArt } from "@/universes/archipel/creature-art";
+import type { Universe } from "@/features/catalog/types";
+import { GuardianPortrait } from "@/universes/universe-art";
+import { useWorldT } from "@/universes/world-text";
 
 type Props = {
   notions: NotionSummary[];
   index: number;
   stages: { id: string; title: string; description: string; xp: number; count: number }[];
   lessons: { id: string; title: string; minutes: number }[];
+  universe: Universe;
+  mapHref: string;
 };
 
 /**
@@ -23,8 +27,8 @@ type Props = {
  * les épreuves (côté ouvert : le jeu), le cours (côté fermé) et le gardien (grand challenge).
  * Dans l'Archipel : les criques, le journal de bord et le gardien de l'île.
  */
-export function NotionView({ notions, index, stages, lessons }: Props) {
-  const t = useTranslations("notion");
+export function NotionView({ notions, index, stages, lessons, universe, mapHref }: Props) {
+  const t = useWorldT("notion", universe);
   const format = useFormatter();
   const { play } = useSound();
   const { ready, states } = useNotionStates(notions);
@@ -48,7 +52,7 @@ export function NotionView({ notions, index, stages, lessons }: Props) {
                 ? t("notScheduled")
                 : t("blocked", { name: notions[index - 1]?.guardian.name ?? "" })}
         </p>
-        <GameLink href="/app" variant="secondary" className="mt-6">
+        <GameLink href={mapHref} variant="secondary" className="mt-6">
           {t("backToMap")}
         </GameLink>
       </div>
@@ -78,7 +82,7 @@ export function NotionView({ notions, index, stages, lessons }: Props) {
               >
                 <span
                   className={`grid size-14 shrink-0 place-items-center rounded-2xl font-display text-2xl font-bold ${
-                    !unlocked ? "bg-line text-muted" : stars > 0 ? "bg-success text-ink" : "bg-primary text-white"
+                    !unlocked ? "bg-line text-muted" : stars > 0 ? "bg-success text-on-success" : "bg-primary text-on-primary"
                   }`}
                 >
                   {unlocked ? i + 1 : <LockIcon className="size-6" />}
@@ -133,7 +137,7 @@ export function NotionView({ notions, index, stages, lessons }: Props) {
                 href={`/app/notion/${notion.slug}/cours/${l.id}`}
                 onPointerEnter={() => play("hover")}
                 onClick={() => play("page")}
-                className="flex h-full items-start gap-3 rounded-3xl bg-sand p-4 shadow-[0_6px_0_#e2c27f] transition hover:-translate-y-0.5"
+                className="flex h-full items-start gap-3 rounded-3xl bg-sand p-4 shadow-[0_6px_0_var(--color-sand-edge)] transition hover:-translate-y-0.5"
               >
                 <LogbookIcon className="mt-0.5 size-7 shrink-0 text-wood-deep" />
                 <span>
@@ -151,7 +155,8 @@ export function NotionView({ notions, index, stages, lessons }: Props) {
       {/* Le gardien */}
       {notion.hasGuardian && (
         <section aria-labelledby="guardian-title" className="paper relative overflow-hidden rounded-[2rem] p-6 sm:flex sm:items-center sm:gap-6">
-          <CreatureArt
+          <GuardianPortrait
+            universe={universe}
             position={notion.position}
             className={`mx-auto w-40 shrink-0 ${state.gate === "ready" || state.status === "cleared" ? "animate-bob" : "opacity-40 grayscale"}`}
           />

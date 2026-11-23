@@ -35,3 +35,13 @@ export const jetbrains = localFont({
     { path: "../fonts/jetbrains-mono-latin-600-normal.woff2", weight: "600" },
   ],
 });
+
+/** Néo-Métro : lettres de panneaux de station, condensées et très lisibles */
+export const signal = localFont({
+  variable: "--font-signal",
+  display: "swap",
+  src: [
+    { path: "../fonts/barlow-semi-condensed-latin-600-normal.woff2", weight: "600" },
+    { path: "../fonts/barlow-semi-condensed-latin-700-normal.woff2", weight: "700" },
+  ],
+});

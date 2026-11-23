@@ -39,7 +39,7 @@ export function LevelUpWatcher() {
     <AnimatePresence>
       {shown !== null && (
         <motion.div
-          className="fixed inset-0 z-[80] grid place-items-center bg-ink/60 p-6 backdrop-blur-sm"
+          className="fixed inset-0 z-[80] grid place-items-center bg-panel/70 p-6 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

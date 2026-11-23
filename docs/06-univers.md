@@ -20,7 +20,7 @@ Le passage de l'Archipel à la ville est un **grand moment** (le bateau accoste 
 - Le contenu choisit son univers : `Track.universe` (`"archipel"` | `"metro"`) et `Track.world` (nom de la carte).
 - Les notions ont un nom de lieu neutre (`place`) et une position (`position`) : ni « étage », ni « île » dans le code.
 - Les routes sont neutres : `/app/notion/[slug]`, `/etape/[id]`, `/cours/[id]`, `/gardien`.
-- Les **jetons de rôle** (`page`, `surface`, `ink`, `muted`, `primary`, `accent`, `success`, `info`…) sont communs à tous les univers ; leurs valeurs sont définies dans `src/app/globals.css`. Un nouvel univers les redéfinira sous `[data-universe="metro"]`.
+- Les **jetons de rôle** (`page`, `surface`, `ink`, `muted`, `primary`, `accent`, `success`, `info`…) sont communs à tous les univers ; leurs valeurs sont définies dans `src/app/globals.css`. Néo-Métro les redéfinit sous `[data-universe="metro"]` et, pour toute une page, dès qu'un élément `[data-universe-marker="metro"]` y figure (`UniverseMarker`, qui bascule aussi les sons). Rôles ajoutés : `panel`/`on-panel`, `on-primary`, `on-success`, `sand`, `track`, `label`.
 - Les illustrations propres à un univers vivent dans `src/universes/<univers>/` (Archipel : mer, îles, bateau, créatures, carte, accueil).
 - Les noms d'effets sonores sont neutres (`enter`, `whoosh`, `bossHit`…) : chaque univers peut fournir sa version.
 
@@ -69,3 +69,13 @@ Synthétisé en direct par `src/features/sound/sound-engine.ts` (Web Audio), auc
 3. Tout nouveau son passe par le moteur sonore (pas de fichier audio).
 4. Tester chaque écran à 360 px de large et avec le son coupé.
 5. Ne jamais dessiner de personnage, logo ou mascotte existants : uniquement des créations originales.
+
+
+## Néo-Métro, tel que construit
+
+- **La ville** : ciel de nuit, deux rangées d'immeubles tirés avec une graine fixe (identiques serveur/client), viaduc où passe une rame (`src/universes/metro/city-scene.tsx`). Police de panneaux : Barlow Semi Condensed (`--font-signal`).
+- **Le plan** : une notion = une station. Ligne principale à gauche ; une notion sur la voie 1 (`Notion.lane`) provoque un embranchement puis une jonction, comme une branche Git. Le trait s'allume derrière l'apprenant (`metro-map.tsx`).
+- **Les gardiens** : trois machines (contrôleur, drone, signal) déclinées en couleurs (`guardian-art.tsx`).
+- **Les sons** : bourdonnement de la ville, rames lointaines, carillon de station, piano électrique ; effets de relais, portes, alarme (`src/features/sound/metro-sounds.ts`).
+- **Vocabulaire** : les écrans communs lisent leurs textes via `useWorldT` ; la variante `metro.<clé>` (messages) remplace celle de l'Archipel (tronçon, station, ticket).
+- **Entrée** : `MetroPortal` sur le camp ; deux portes se ferment sur l'écran. Le parcours est ouvert à tous, sans prérequis (règle 10 bis).

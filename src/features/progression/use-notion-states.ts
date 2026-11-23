@@ -33,7 +33,7 @@ export function useNotionStates(notions: NotionSummary[]): { ready: boolean; sta
         ? { gameOpensAt: new Date(raw.gameOpensAt), challengeOpensAt: new Date(raw.challengeOpensAt), challengeClosesAt: new Date(raw.challengeClosesAt) }
         : null;
       // En classe, une notion que l'enseignant n'a pas encore programmée reste fermée
-      const unscheduled = Boolean(classroom) && !raw;
+      const unscheduled = Boolean(classroom?.notionSlugs.includes(f.slug)) && !raw;
       const stars = f.stageIds.reduce((n, id) => n + (stageStars[id] ?? 0), 0);
       const stagesDone = f.stageIds.filter((id) => (stageStars[id] ?? 0) > 0).length;
       const input = {

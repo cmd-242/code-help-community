@@ -175,6 +175,7 @@ export async function getStudentClassroom(db: Db, userId: string, trackSlug: str
   return {
     id: c.id,
     name: c.name,
+    notionSlugs: getTrack(trackSlug)?.notions.map((n) => n.slug) ?? [],
     releases: Object.fromEntries(c.releases.map((r) => [r.notionSlug, toDates(r)])),
   };
 }

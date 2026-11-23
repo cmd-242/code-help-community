@@ -10,7 +10,7 @@ export function GuestBanner() {
   const { data: session, isPending } = authClient.useSession();
   if (isPending || session) return null;
   return (
-    <div className="mt-4 flex flex-col gap-3 rounded-[2rem] bg-ink p-5 text-white sm:flex-row sm:items-center">
+    <div className="mt-4 flex flex-col gap-3 rounded-[2rem] bg-panel p-5 text-on-panel sm:flex-row sm:items-center">
       <p className="flex-1">
         <span className="block font-display text-xl font-semibold">{t("bannerTitle")}</span>
         <span className="text-[#c9dbe6]">{t("bannerBody")}</span>

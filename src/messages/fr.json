@@ -26,7 +26,7 @@
   "levelUp": {
     "title": "Niveau supérieur !",
     "body": "Tu passes niveau {level} : te voilà {rank}.",
-    "continue": "Reprendre la mer"
+    "continue": "Continuer l'aventure"
   },
   "game": {
     "multiple": "Plusieurs réponses possibles.",
@@ -67,7 +67,20 @@
     "nextStage": "Crique suivante",
     "backToNotion": "Retour à l'île",
     "replay": "Rejouer",
-    "newCards": "{count, plural, one {Nouvelle carte !} other {# nouvelles cartes !}}"
+    "newCards": "{count, plural, one {Nouvelle carte !} other {# nouvelles cartes !}}",
+    "metro": {
+      "lives": "{count, plural, =0 {Plus aucun ticket} one {# ticket restant} other {# tickets restants}}",
+      "defeatTitle": "Le train est resté à quai",
+      "defeatBody": "Trois erreurs, et plus de ticket. Relis le cours ou repars tout de suite : chaque essai t'apprend quelque chose.",
+      "retry": "Repartir du quai",
+      "where": "{place}, tronçon {stage}",
+      "encounters": "{count, plural, one {# épreuve t'attend} other {# épreuves t'attendent}}. Tu as trois tickets.",
+      "depart": "Fermer les portes",
+      "victoryTitle": "Tronçon validé !",
+      "starsHint3": "Aucun accroc sur la ligne. Trois étoiles.",
+      "nextStage": "Tronçon suivant",
+      "backToNotion": "Retour à la station"
+    }
   },
   "guardian": {
     "label": "Le gardien de l'île",
@@ -88,7 +101,14 @@
     "lostXp": "Ton courage te rapporte quand même {xp} XP.",
     "trainAgain": "S'entraîner encore",
     "retry": "Retenter",
-    "trophy": "Carte légendaire !"
+    "trophy": "Carte légendaire !",
+    "metro": {
+      "label": "Le gardien de la station",
+      "rules": "Chaque bonne réponse le fait reculer. Le minuteur tourne : atteins le seuil avant la fin et la voie vers la station suivante s'ouvre.",
+      "loading": "Le gardien surgit du tunnel…",
+      "wonBody": "{name} s'éteint dans une gerbe d'étincelles. Score : {score} %.",
+      "setSail": "Monter dans la rame"
+    }
   },
   "map": {
     "stop": "Île {position}",
@@ -155,7 +175,23 @@
     "guardianReady": "Il t'attend. Si tu le bats, la route vers l'île suivante s'ouvre.",
     "guardianRematch": "Le réaffronter",
     "guardianFace": "Affronter le gardien",
-    "notScheduled": "Ton enseignant n'a pas encore ouvert cette île pour la classe."
+    "notScheduled": "Ton enseignant n'a pas encore ouvert cette île pour la classe.",
+    "metro": {
+      "stop": "Station {position}",
+      "sealed": "Cette station est encore fermée. Elle sera accessible le {date}.",
+      "soon": "Cette station est en travaux : son contenu est en cours d'écriture.",
+      "blocked": "Tu dois d'abord vaincre {name} pour rejoindre cette station.",
+      "stagesTitle": "Les tronçons",
+      "stagesHint": "Chaque tronçon est une série d'épreuves. Trois tickets par tronçon, jusqu'à trois étoiles à gagner.",
+      "stageNumber": "Tronçon {n}, {count} épreuves",
+      "stageLocked": "Termine le tronçon précédent pour ouvrir celui-ci.",
+      "courseTitle": "Le manuel de la ligne",
+      "courseHint": "Le cours de la station. Chaque page lue rapporte de l'XP.",
+      "guardianExploreFirst": "Le gardien n'affronte que ceux qui ont parcouru toute la station : {done} tronçons sur {total}.",
+      "guardianClosed": "Le gardien est reparti dans le tunnel. Demande à ton enseignant de rouvrir le défi.",
+      "guardianReady": "Il t'attend. Si tu le bats, la voie vers la station suivante s'ouvre.",
+      "notScheduled": "Ton enseignant n'a pas encore ouvert cette station pour la classe."
+    }
   },
   "course": {
     "chapter": "Journal de bord, {place}",
@@ -164,7 +200,12 @@
     "toPractice": "Passer aux criques",
     "backToNotion": "Retour à l'île",
     "read": "Page apprise.",
-    "markRead": "J'ai lu cette page (+{xp} XP)"
+    "markRead": "J'ai lu cette page (+{xp} XP)",
+    "metro": {
+      "chapter": "Manuel de la ligne, {place}",
+      "toPractice": "Passer aux tronçons",
+      "backToNotion": "Retour à la station"
+    }
   },
   "home": {
     "brand": "Code Help Community",
@@ -194,14 +235,14 @@
       "linux": "L'Archipel du Shell",
       "python": "Les Îles du Serpent",
       "javascript": "Les Îles des Scripts",
-      "git": "Les Îles du Temps",
+      "git": "Git, à Néo-Métro",
       "network": "Le Détroit des Paquets",
       "security": "La Baie Fortifiée"
     },
     "seaOpen": "Ouvert",
     "seaSoon": "Bientôt",
     "cityTitle": "Et après les îles : la ville",
-    "cityBody": "Quand tu maîtriseras les bases, ton bateau accostera à Néo-Métro, la ville des experts : des lignes de métro, des parcours avancés et des pare-feu à pirater.",
+    "cityBody": "Quand tu maîtrises les bases, descends à Néo-Métro, la ville des experts : des stations de métro, des lignes à suivre et des gardiens mécaniques. Le parcours Git est déjà ouvert.",
     "teachersTitle": "Tu enseignes ? Amène ta classe",
     "roles": {
       "rhythm": {
@@ -378,5 +419,31 @@
     "saved": "Planning enregistré.",
     "invalid": "Une date manque ou n'est pas dans l'ordre : ouverture, puis gardien, puis fin du gardien.",
     "save": "Enregistrer le planning"
+  },
+  "metroMap": {
+    "metaTitle": "Néo-Métro",
+    "backToArchipel": "Retour à l'archipel",
+    "entrance": "Entrée de la station",
+    "planTitle": "Plan du réseau",
+    "planLabel": "Plan du réseau {name}",
+    "laneMain": "Ligne principale",
+    "laneBranch": "Ligne de dérivation",
+    "stop": "Station {position}",
+    "cleared": "Station validée",
+    "guardianAwaits": "{name} garde la station",
+    "stars": "{count} étoiles sur {max}",
+    "opensOn": "Accessible le {date}",
+    "soon": "Travaux en cours",
+    "blocked": "Bats d'abord le gardien précédent",
+    "notScheduled": "Pas encore ouverte par ton enseignant",
+    "youAreHere": "Ton train est ici",
+    "legend": "Un trait plein et lumineux : la voie que tu as parcourue. Un trait sombre : la suite du trajet."
+  },
+  "portal": {
+    "title": "Néo-Métro",
+    "lede": "La ville des experts. Ouverte à tous, sans prérequis : descends dans le métro, suis les lignes et bats les gardiens mécaniques des stations.",
+    "line": "{title} · {count} stations",
+    "go": "Descendre dans le métro",
+    "going": "Les portes se ferment…"
   }
 }
