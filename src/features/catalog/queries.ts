@@ -1,8 +1,5 @@
 import "server-only";
-import { gitTrack } from "@content/git";
-import { linuxTrack } from "@content/linux";
-import { phpTrack } from "@content/php";
-import { pythonTrack } from "@content/python";
+import { allTracks } from "@content";
 import { toPublicEncounter } from "@/games/public";
 import { trackSchema, type Notion, type Track } from "./types";
 
@@ -10,7 +7,7 @@ import { trackSchema, type Notion, type Track } from "./types";
  * Lecture du catalogue. Pour l'instant le contenu vient des fichiers `content/`
  * (versionnés avec le code) ; il sera ensuite synchronisé en base de données.
  */
-const tracks: Track[] = [linuxTrack, pythonTrack, phpTrack, gitTrack].map((input) => {
+const tracks: Track[] = allTracks.map((input) => {
   const track = trackSchema.parse(input);
   return { ...track, cards: track.cards.map((c) => ({ ...c, universe: track.universe })) };
 });

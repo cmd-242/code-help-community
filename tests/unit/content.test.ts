@@ -1,13 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { gitTrack } from "@content/git";
-import { linuxTrack } from "@content/linux";
+import { allTracks } from "@content";
 import { mapHref } from "@/features/catalog/paths";
 import { trackSchema } from "@/features/catalog/types";
 import { countBlanks, grade } from "@/games/grading";
 import { solutionOf } from "@/games/public";
 import type { Encounter } from "@/games/schemas";
 
-const tracks = [linuxTrack, gitTrack].map((t) => trackSchema.parse(t));
+const tracks = allTracks.map((t) => trackSchema.parse(t));
 const encountersOf = (track: (typeof tracks)[number]): Encounter[] =>
   track.notions.flatMap((n) => [...n.stages.flatMap((s) => s.encounters), ...(n.challenge?.bank ?? [])]);
 

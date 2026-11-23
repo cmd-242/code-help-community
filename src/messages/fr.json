@@ -464,7 +464,15 @@
       "linux": "Linux",
       "python": "Python",
       "php": "PHP",
-      "git": "Git"
+      "git": "Git",
+      "html-css": "HTML et CSS",
+      "javascript": "JavaScript",
+      "sql": "SQL",
+      "reseaux": "Réseaux",
+      "securite": "Sécurité",
+      "docker": "Docker",
+      "aws": "AWS",
+      "gcp": "Google Cloud"
     },
     "universe": {
       "archipel": "Archipel · pour débuter",
