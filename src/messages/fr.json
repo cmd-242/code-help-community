@@ -1,0 +1,226 @@
+{
+  "meta": {
+    "title": "Code Help Community — apprendre l'informatique en jouant",
+    "short": "Code Help Community",
+    "description": "Chaque semaine, ton enseignant ouvre un nouvel étage du donjon. Explore, lis le grimoire, affronte le gardien et progresse en Linux, code, Git, réseaux et cloud."
+  },
+  "sound": {
+    "mute": "Couper le son",
+    "unmute": "Activer le son"
+  },
+  "hud": {
+    "home": "Retour au camp",
+    "level": "Niveau {level}",
+    "xpTitle": "{current} XP sur {needed} pour le prochain niveau",
+    "xp": "{current} / {needed} XP",
+    "streakTitle": "{count, plural, =0 {Aucune série en cours : joue aujourd'hui pour l'allumer} one {# jour d'affilée} other {# jours d'affilée}}"
+  },
+  "ranks": {
+    "novice": "Porteur de torche",
+    "explorer": "Explorateur",
+    "pathfinder": "Arpenteur des galeries",
+    "runebreaker": "Briseur de runes",
+    "shellmaster": "Maître du shell"
+  },
+  "levelUp": {
+    "title": "Niveau supérieur",
+    "body": "Tu atteins le niveau {level} : te voilà {rank}.",
+    "continue": "Reprendre l'exploration"
+  },
+  "game": {
+    "multiple": "Plusieurs réponses possibles.",
+    "parsonsTarget": "Ton parchemin : {count, plural, one {# ligne} other {# lignes}} à placer dans l'ordre",
+    "removeLine": "Retirer la ligne {line}",
+    "moveUp": "Monter la ligne",
+    "moveDown": "Descendre la ligne",
+    "parsonsPool": "Touche une ligne pour la poser. Attention : certaines sont des pièges.",
+    "blankEmpty": "Trou {n}, vide",
+    "blankFilled": "Trou rempli avec {value}, touche pour retirer",
+    "fillBank": "Touche un mot pour remplir le trou suivant.",
+    "predictLabel": "Qu'affiche le terminal ?",
+    "predictPlaceholder": "Écris la sortie",
+    "checking": "Le donjon vérifie…",
+    "submit": "Valider",
+    "correct": "Coup juste",
+    "wrong": "Raté",
+    "solution": "La bonne réponse :",
+    "continue": "Continuer"
+  },
+  "stage": {
+    "hearts": "{count, plural, =0 {Plus aucun cœur} one {# cœur restant} other {# cœurs restants}}",
+    "progress": "Rencontre {current} sur {total}",
+    "combo": "Série ×{count}",
+    "defeatTitle": "Tu t'es effondré",
+    "defeatBody": "Trois erreurs, et la torche s'est éteinte. Relis le grimoire ou retente directement : chaque essai t'apprend quelque chose.",
+    "retry": "Rallumer la torche",
+    "readGrimoire": "Lire le grimoire",
+    "where": "Étage {floor}, salle {stage}",
+    "encounters": "{count, plural, one {# épreuve t'attend} other {# épreuves t'attendent}} derrière cette porte. Tu as trois cœurs.",
+    "enter": "Pousser la porte",
+    "victoryTitle": "Salle conquise",
+    "starsLabel": "{count, plural, one {# étoile} other {# étoiles}} sur 3",
+    "starsHint1": "Tu as survécu de justesse. Rejoue pour décrocher les trois étoiles.",
+    "starsHint2": "Presque parfait. Une seule erreur te sépare des trois étoiles.",
+    "starsHint3": "Sans une égratignure. Trois étoiles.",
+    "nextStage": "Salle suivante",
+    "backToFloor": "Retour à l'étage",
+    "replay": "Rejouer"
+  },
+  "guardian": {
+    "floorGuardian": "Gardien de l'étage {floor}",
+    "rules": "Chaque bonne réponse le frappe. Le sablier tourne : si tu atteins le seuil avant la fin, l'escalier vers l'étage suivant s'ouvre.",
+    "error": "Le gardien ne répond pas. Vérifie ta connexion, puis réessaie.",
+    "loading": "Le gardien se lève…",
+    "engage": "Affronter le gardien",
+    "hp": "Vie du gardien",
+    "question": "Question {current} sur {total}",
+    "strike": "Frapper",
+    "wonTitle": "Gardien vaincu",
+    "wonBody": "{name} s'effondre. Score : {score} %.",
+    "stairsOpen": "L'escalier vers l'étage {floor}, {room}, est maintenant ouvert.",
+    "descend": "Descendre",
+    "backToMap": "Retour à la carte",
+    "lostTitle": "Le gardien tient bon",
+    "lostBody": "Tu as obtenu {score} %. Il faut {needed} % pour le vaincre.",
+    "lostXp": "Ton courage te rapporte quand même {xp} XP.",
+    "trainAgain": "S'entraîner encore",
+    "retry": "Revenir au combat"
+  },
+  "map": {
+    "depth": "Étage −{floor}",
+    "opensOn": "S'ouvre le {date}",
+    "blocked": "Le gardien précédent bloque l'escalier",
+    "cleared": "Étage validé",
+    "stars": "{count} étoiles sur {max}",
+    "guardianAwaits": "Le gardien t'attend",
+    "explore": "{done} salles sur {total}",
+    "youAreHere": "Tu es ici",
+    "soon": "En cours d'écriture : bientôt ouvert"
+  },
+  "camp": {
+    "metaTitle": "Le camp",
+    "demoNotice": "Version de démonstration : ta progression est enregistrée sur cet appareil. Les comptes arrivent bientôt.",
+    "questTitle": "Étage {floor} : {room}",
+    "questProgress": "{done} / {total} salles",
+    "faceGuardian": "Affronter {name}",
+    "continue": "Reprendre l'exploration",
+    "start": "Commencer l'exploration",
+    "allDoneTitle": "Tous les étages ouverts sont conquis",
+    "questLabelFree": "Ta quête en cours",
+    "questLabelClass": "Quête de la semaine (ta classe)",
+    "allDoneBodyFree": "Tu as conquis tous les étages disponibles. De nouveaux étages et de nouveaux royaumes arrivent : en attendant, rejoue les salles pour décrocher toutes les étoiles.",
+    "allDoneBodyClass": "Ton enseignant ouvrira le prochain étage lundi. En attendant, rejoue les salles pour décrocher toutes les étoiles."
+  },
+  "floor": {
+    "depth": "Étage −{floor}",
+    "sealed": "Cet étage est encore scellé. Il s'ouvrira le {date}.",
+    "blocked": "Tu dois d'abord vaincre {name} pour descendre ici.",
+    "backToMap": "Retour à la carte",
+    "dungeonTitle": "Le donjon",
+    "dungeonHint": "Les salles s'ouvrent l'une après l'autre. Trois cœurs par salle, jusqu'à trois étoiles à gagner.",
+    "stageNumber": "Salle {n} · {count} épreuves",
+    "stars": "{count, plural, one {# étoile} other {# étoiles}} sur 3",
+    "stageLocked": "Termine la salle précédente pour ouvrir celle-ci.",
+    "grimoireTitle": "Le grimoire",
+    "grimoireHint": "Le cours de la semaine. Chaque page lue rapporte de l'XP.",
+    "lessonRead": "Lu",
+    "lessonMinutes": "{minutes} min de lecture",
+    "guardianLabel": "Le grand challenge",
+    "guardianDefeated": "Tu l'as vaincu. Tu peux le réaffronter pour t'entraîner.",
+    "guardianExploreFirst": "Le gardien n'affronte que ceux qui ont exploré tout l'étage : {done} salles sur {total}.",
+    "guardianNotYet": "Le gardien dort encore. Ton enseignant le réveillera bientôt.",
+    "guardianClosed": "La salle du gardien est fermée. Demande à ton enseignant de la rouvrir.",
+    "guardianReady": "Il t'attend. Si tu le bats, l'étage suivant s'ouvre.",
+    "guardianRematch": "Le réaffronter",
+    "guardianFace": "Affronter le gardien",
+    "soon": "Cet étage est en cours d'écriture. Il s'ouvrira dès que son contenu sera prêt."
+  },
+  "grimoire": {
+    "chapter": "Étage {floor} · {room}",
+    "minutes": "{minutes} minutes de lecture",
+    "nextPage": "Page suivante : {title}",
+    "toDungeon": "Passer à la pratique",
+    "backToFloor": "Retour à l'étage",
+    "read": "Page apprise.",
+    "markRead": "J'ai lu cette page (+{xp} XP)"
+  },
+  "home": {
+    "brand": "Code Help Community",
+    "headline": "Apprends l'informatique en conquérant un donjon.",
+    "lede": "Linux, le code, Git, les réseaux, la sécurité, le cloud : chaque domaine est un donjon, chaque étage une notion. Seul à ton rythme, ou avec ta classe.",
+    "enter": "Entrer dans le donjon",
+    "teacher": "Je suis enseignant",
+    "torchHint": "Promène ta torche sur le mur : tout ce qui y est gravé, tu vas l'apprendre.",
+    "weekTitle": "Comment on progresse",
+    "steps": {
+      "choose": {
+        "title": "Choisis ton royaume",
+        "body": "Linux, Python, Git, réseaux, cloud… Tu commences où tu veux, sans inscription dans une école."
+      },
+      "explore": {
+        "title": "Explore et apprends",
+        "body": "Des salles à conquérir en jouant, et un grimoire pour comprendre. À ton rythme, depuis chez toi, même sur téléphone."
+      },
+      "guardian": {
+        "title": "Bats le gardien",
+        "body": "Un combat chronométré valide la notion. Tu le bats : l'escalier vers l'étage suivant s'ouvre."
+      }
+    },
+    "kingdomsTitle": "Les royaumes",
+    "kingdomsLede": "Chaque domaine est un donjon à part entière, avec ses étages et ses gardiens.",
+    "kingdoms": {
+      "linux": "Les Catacombes du Shell",
+      "python": "La Tour du Serpent",
+      "javascript": "La Forge des Scripts",
+      "git": "Les Branches du Temps",
+      "network": "Le Labyrinthe des Paquets",
+      "security": "La Citadelle",
+      "cloud": "Les Royaumes du Ciel"
+    },
+    "kingdomOpen": "Ouvert",
+    "kingdomSoon": "Bientôt",
+    "teachersTitle": "Tu enseignes ? Amène ta classe",
+    "roles": {
+      "rhythm": {
+        "title": "Tu donnes le rythme",
+        "body": "Tu choisis quand chaque étage s'ouvre pour chacune de tes classes, et quand le gardien se réveille."
+      },
+      "watch": {
+        "title": "Tu vois qui décroche",
+        "body": "Progression, temps passé, notions difficiles : tu repères l'étudiant en difficulté avant l'examen, pas après."
+      },
+      "mentors": {
+        "title": "Les mentors coachent",
+        "body": "Des équipes encadrées par un mentor, pour les classes comme pour les autodidactes."
+      }
+    },
+    "teachersSoon": "Les classes sont une option : sans enseignant, tout le donjon reste accessible. L'espace enseignant est en cours de construction.",
+    "footerTitle": "Pas besoin d'école pour entrer. La torche est allumée."
+  },
+  "rhythm": {
+    "label": "Ton rythme",
+    "goalTitle": "Ton objectif de la semaine",
+    "goalProgress": "{earned} / {target} XP",
+    "goalHint": "Personne ne te presse : tu choisis ton objectif, la flamme fait le reste.",
+    "goalReached": "Objectif atteint. Tout ce que tu gagnes en plus est du bonus.",
+    "goalPick": "Choisir ton objectif",
+    "goals": {
+      "calm": "Tranquille, {xp} XP",
+      "steady": "Régulier, {xp} XP",
+      "intense": "Acharné, {xp} XP"
+    },
+    "classTitle": "Ton enseignant donne le rythme",
+    "classBody": "Les étages s'ouvrent selon le planning de ta classe, et le gardien se réveille aux dates prévues.",
+    "modeTitle": "Comment tu apprends",
+    "modes": {
+      "free": {
+        "title": "Librement",
+        "body": "Seul, à ton rythme : chaque gardien vaincu ouvre l'étage suivant."
+      },
+      "classroom": {
+        "title": "Avec ma classe (démo)",
+        "body": "Ton enseignant ouvre un étage par semaine."
+      }
+    }
+  }
+}

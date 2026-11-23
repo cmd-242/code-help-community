@@ -1,15 +1,29 @@
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
+
 # Instructions pour le projet Code Help Community
 
 Ce fichier s'adresse aux développeurs **et** aux assistants IA (Claude, Copilot, Cursor…) qui travaillent sur ce dépôt. Lis-le avant toute modification.
 
 ## Contexte en 30 secondes
 
-Plateforme d'**apprentissage de l'informatique en jouant**, pour des étudiants peu motivés. Chaque semaine, l'enseignant **débloque des notions** pour sa classe. L'étudiant révise chez lui via :
-- un **côté ouvert** : un jeu en étapes (XP, étoiles, badges, séries) ;
-- un **côté fermé** : le cours et les consignes ;
-- puis un **grand challenge** qui valide la notion et ouvre la suivante.
+Plateforme **ouverte** d'apprentissage de l'informatique en jouant. **L'utilisateur de base est un apprenant libre (autodidacte), sans école ni enseignant** : il choisit ses parcours et progresse à son rythme. Les écoles, enseignants et mentors sont une **option** qui ajoute un rythme et un suivi, jamais une condition pour apprendre.
 
-Rôles : étudiant, enseignant (plusieurs classes possibles, il ne voit **que** ses classes), mentor (coache des équipes), responsable d'établissement, super-admin.
+Chaque notion (un « étage » du donjon) a :
+- un **côté ouvert** : un jeu en étapes (XP, étoiles, badges, séries) ;
+- un **côté fermé** : le cours (le grimoire) et les consignes ;
+- un **grand challenge** (le gardien) qui valide la notion et ouvre la suivante.
+
+Déblocage : **libre** par défaut (gardien précédent vaincu) ; **en classe** (option), le planning de l'enseignant s'ajoute.
+
+Rôles : apprenant (tout le monde), mentor, enseignant (plusieurs classes possibles, il ne voit **que** ses classes), responsable d'établissement, super-admin.
 Domaines : programmation (plusieurs langages), Linux, Git, réseaux, sécurité, AWS, Google Cloud… extensibles par contenu.
 
 Documentation détaillée dans `docs/` :
@@ -18,11 +32,12 @@ Documentation détaillée dans `docs/` :
 3. `docs/03-architecture-nextjs.md` — pile technique et règles d'architecture
 4. `docs/04-modele-de-donnees.md` — schéma Prisma de référence
 5. `docs/05-roadmap.md` — phases et cases à cocher
+6. `docs/06-design-donjon.md` — univers visuel, son, animations
 
 ## Pile technique (ne pas en changer sans décision écrite)
 
 - **Next.js 16** App Router, **tout** se fait dans cette application (pas de back-end séparé).
-- TypeScript **strict**, React 19, Tailwind CSS v4, shadcn/ui.
+- TypeScript **strict**, React 19, Tailwind CSS v4, **système de design « Donjon » maison** (`docs/06-design-donjon.md`), Motion pour les animations. shadcn/ui seulement pour les futurs écrans d'administration.
 - PostgreSQL + **Prisma 7** (`prisma.config.ts`, client généré dans `src/generated/prisma`).
 - Better Auth (e-mail + Google), Zod, React Hook Form, Zustand (état du jeu), next-intl.
 - Exécution du code étudiant **dans le navigateur** (Web Worker, Pyodide, PGlite, isomorphic-git, shell simulé).
@@ -36,13 +51,11 @@ Avant d'utiliser une API de Next.js, vérifie la documentation correspondant à 
 pnpm install
 docker compose up -d          # Postgres + MinIO en local
 pnpm db:migrate               # prisma migrate dev
-pnpm db:seed                  # données de démo
 pnpm dev                      # http://localhost:3000
 pnpm lint && pnpm typecheck && pnpm test   # à lancer avant chaque commit
-pnpm test:e2e                 # Playwright
 ```
 
-(Ces scripts sont à créer en phase 0 ; garde ces noms.)
+À venir : `pnpm db:seed` et `pnpm test:e2e` (Playwright). Le contenu pédagogique vit dans `content/` et est validé par `tests/unit/content.test.ts`.
 
 ## Règles obligatoires
 
@@ -58,7 +71,8 @@ pnpm test:e2e                 # Playwright
 7. **Server Components par défaut**. `"use client"` seulement pour l'interactivité, le plus bas possible dans l'arbre.
 8. Lecture des données dans `features/<x>/queries.ts`, écriture dans `features/<x>/actions.ts`, logique métier dans `src/server/services/`. Pas de `fetch` vers sa propre API depuis un Server Component.
 9. Route Handlers (`app/api/`) uniquement pour SSE, cron, exports, webhooks.
-10. Le déblocage d'une notion est **calculé à la lecture** (dates du planning + prérequis + dérogations). Ne pas créer de cron pour débloquer.
+10. Le déblocage d'une notion est **calculé à la lecture** (`features/progression/unlock.ts`) : prérequis, plus dates du planning et dérogations **seulement en classe**. Ne pas créer de cron pour débloquer.
+10 bis. **Toute fonctionnalité doit marcher pour un apprenant libre** (sans établissement, sans classe, sans enseignant). Le cadre scolaire s'ajoute par-dessus et ne doit jamais devenir un prérequis.
 11. Les XP sont des **événements** (`XpEvent`), jamais un compteur qu'on incrémente.
 12. Nouveau type d'exercice = nouveau moteur dans `src/games/<type>/` déclaré dans `src/games/registry.ts` (schéma Zod + composant + correcteur pur). Nouveau domaine = **contenu uniquement**.
 13. Charger les modules lourds (Pyodide, xterm, React Flow, CodeMirror) avec `next/dynamic`.
@@ -69,6 +83,8 @@ pnpm test:e2e                 # Playwright
 16. Pas de `any`. Les types viennent de Prisma et de Zod (`z.infer`).
 17. Toute règle métier (déblocage, calcul de score, attribution de badge, série) a des **tests unitaires**.
 18. Mobile d'abord : tester chaque écran à 360 px de large. Accessibilité : navigation clavier, `aria-*`, contrastes.
+18 bis. Sons via `useSound()` uniquement (synthèse Web Audio, jamais de fichier audio) ; toujours respecter `prefers-reduced-motion`.
+18 ter. Avec `cacheComponents`, ne jamais lire l'heure (`new Date()`) ni `Math.random()` pendant le rendu : le faire après hydratation, dans un gestionnaire d'événement ou dans une Server Action.
 
 ### Git
 19. Branches : `feat/…`, `fix/…`, `docs/…`, `chore/…`. Pas de commit direct sur `main`.
@@ -80,9 +96,12 @@ pnpm test:e2e                 # Playwright
 
 | Terme (UI, français) | Modèle (code) | Définition |
 |---|---|---|
-| Établissement | `Institution` | École ou université |
+| Apprenant | `User` | Toute personne qui apprend, avec ou sans école |
+| Inscription à un parcours | `TrackEnrollment` | Parcours suivi, en mode libre (`FREE`) ou en classe (`CLASSROOM`) |
+| Guilde | `Team` (`GUILD`) | Équipe ouverte d'apprenants libres |
+| Établissement | `Institution` | École ou université (optionnel) |
 | Niveau | `Level` | L1, L2, BTS1… |
-| Classe | `Classroom` | Groupe d'étudiants suivi par un ou plusieurs enseignants |
+| Classe | `Classroom` | Groupe d'étudiants suivi par un ou plusieurs enseignants (optionnel) |
 | Domaine | `Domain` | Python, Linux, Git, Réseau, Sécurité, AWS… |
 | Parcours | `Track` | Suite ordonnée de notions dans un domaine |
 | Notion | `Notion` | Unité hebdomadaire : jeu + cours + grand challenge |
@@ -91,4 +110,4 @@ pnpm test:e2e                 # Playwright
 | Grand challenge | `Challenge` | Test final qui valide la notion |
 | Déblocage | `NotionRelease` | Planning d'une notion pour une classe |
 | Dérogation | `StudentOverride` | Exception individuelle accordée par l'enseignant |
-| Équipe | `Team` | 3 à 6 étudiants, coachés par un mentor |
+| Équipe | `Team` (`CLASS_TEAM`) | 3 à 6 étudiants d'une classe, coachés par un mentor |

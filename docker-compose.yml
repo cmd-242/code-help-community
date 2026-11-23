@@ -1,0 +1,26 @@
+# Services locaux : PostgreSQL + MinIO (stockage compatible S3)
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: chc
+      POSTGRES_PASSWORD: chc
+      POSTGRES_DB: chc
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: chc
+      MINIO_ROOT_PASSWORD: chc-secret
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+volumes:
+  db-data:
+  minio-data:

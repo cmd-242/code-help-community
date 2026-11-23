@@ -1,25 +1,25 @@
 # Code Help Community
 
-**Apprendre l'informatique en jouant, au rythme de sa classe.**
+**Apprendre l'informatique en jouant, à son rythme. Seul, ou avec sa classe.**
 
-Plateforme web où les étudiants révisent chez eux en jouant, pendant que l'enseignant pilote le rythme et suit la progression de chacun.
+Plateforme web ouverte où chacun apprend l'informatique en jouant, à son rythme, sans avoir besoin d'une école. Les enseignants et les mentors peuvent, en option, y amener leurs classes pour donner un rythme et suivre la progression.
 
 ## Le principe
 
-1. Chaque semaine, l'enseignant **débloque une ou plusieurs notions** pour sa classe.
-2. L'étudiant révise :
+1. L'apprenant choisit un **royaume** (Linux, Python, Git, réseaux, cloud…) : chaque notion est un étage du donjon.
+2. Il progresse :
    - côté **jeu** : des étapes à réussir, des étoiles, des XP, des badges, des séries de jours ;
-   - côté **cours** : les leçons et les consignes de la semaine.
-3. En fin de semaine, il passe le **grand challenge** de la notion. Validé : la notion suivante s'ouvre. Raté : un rattrapage ciblé, puis une nouvelle tentative.
-4. L'enseignant voit en direct qui avance, qui bloque et qui décroche, et peut relancer.
+   - côté **cours** : le grimoire, avec les leçons et les consignes.
+3. Il affronte le **gardien** (grand challenge) de la notion. Vaincu : l'étage suivant s'ouvre. Raté : il révise et retente.
+4. Il se fixe son propre **objectif hebdomadaire** ; série de jours, XP et niveaux entretiennent la motivation.
 
-Enseignants (une ou plusieurs classes), étudiants, mentors qui coachent des équipes et responsables d'établissement se retrouvent sur la même plateforme.
+**En option, avec une classe** : l'enseignant ouvre un étage par semaine, voit qui avance et qui décroche, et peut relancer. Des mentors coachent des équipes de classe ou des guildes d'autodidactes.
 
 Domaines prévus : programmation (Python, JavaScript, Java, C, SQL…), Linux, Git, réseaux, sécurité, AWS, Google Cloud, et d'autres à venir.
 
 ## Technique
 
-Une seule application **Next.js 16** (App Router) pour le front, le back et l'API · TypeScript · PostgreSQL + Prisma 7 · Tailwind CSS + shadcn/ui · exécution du code des étudiants directement dans le navigateur.
+Une seule application **Next.js 16** (App Router) pour le front, le back et l'API · TypeScript · PostgreSQL + Prisma 7 · Tailwind CSS + système de design « Donjon » · exécution du code des apprenants directement dans le navigateur.
 
 ## Documentation
 
@@ -31,7 +31,18 @@ Une seule application **Next.js 16** (App Router) pour le front, le back et l'AP
 | [Architecture Next.js](docs/03-architecture-nextjs.md) | Pile technique, organisation du code, règles |
 | [Modèle de données](docs/04-modele-de-donnees.md) | Schéma Prisma de référence |
 | [Feuille de route](docs/05-roadmap.md) | Phases et tâches |
+| [Univers Donjon](docs/06-design-donjon.md) | Design, son, animations |
+
+## Lancer le projet
+
+```bash
+pnpm install
+pnpm dev            # http://localhost:3000
+pnpm test           # tests unitaires
+```
+
+La version actuelle fonctionne sans base de données : la progression est stockée dans le navigateur (mode démo).
 
 ## État
 
-📐 Phase de cadrage terminée. Prochaine étape : **phase 0** (initialisation du projet Next.js) — voir la [feuille de route](docs/05-roadmap.md).
+Phase 0 en cours : l'espace étudiant est jouable (accueil, carte du donjon, 3 étages Linux, mini-jeux, grimoire, combats de gardiens, son et animations). Prochaine étape : comptes, classes et base de données — voir la [feuille de route](docs/05-roadmap.md).

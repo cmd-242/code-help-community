@@ -4,7 +4,13 @@ Base **PostgreSQL**, accès via **Prisma 7**. Le schéma ci-dessous est la réf�
 
 ## Vue d'ensemble
 
+L'apprenant libre est le cas de base : un `User` sans établissement, inscrit à des parcours (`TrackEnrollment`, mode `FREE`). Tout le bloc « établissement / classe » est optionnel.
+
 ```
+User ── TrackEnrollment (mode FREE ou CLASSROOM) ── Track
+     └─ Team (GUILD : guilde ouverte, ou CLASS_TEAM : équipe de classe)
+
+Option classe :
 Institution ─┬─ Level ── Classroom ─┬─ Enrollment ── User (étudiant)
              │                      ├─ ClassroomTeacher ── User (enseignant)
              │                      ├─ Team ─┬─ TeamMember ── User
@@ -27,6 +33,12 @@ Traçabilité : StudentOverride, AuditLog
 
 ## Points de conception
 
+- **Apprentissage libre d'abord** : `User.institutionId`, `Classroom.levelId` et `Team.classroomId` sont optionnels. Un apprenant n'a besoin que d'un compte et d'une `TrackEnrollment`.
+- **Mode par parcours** : `TrackEnrollment.mode` dit si le planning d'une classe s'applique à ce parcours. Sans planning (`FREE`), un étage s'ouvre dès que le gardien précédent est vaincu.
+- **Progression indépendante de la classe** : `NotionProgress`, `StageAttempt`, `XpEvent` sont rattachés à l'apprenant. Quitter ou rejoindre une classe ne fait rien perdre.
+- **Objectif hebdomadaire** : `User.weeklyGoalXp`, comparé aux `XpEvent` de la semaine.
+
+- **Salles à plusieurs épreuves** : une étape (`Stage`) contient une liste de rencontres, chacune avec son propre type de mini-jeu ; `Stage.config` stocke donc `{ encounters: [...] }` et `Stage.gameType` vaut `"encounters"`.
 - **Exercices génériques** : `Stage.config` et `Question.config` sont du JSON dont la forme dépend de `gameType`. Chaque moteur de jeu fournit son schéma Zod pour valider ce JSON.
 - **Tests cachés** : `Question.config` peut contenir les réponses et tests cachés. Il ne doit **jamais** être envoyé tel quel au navigateur ; une fonction `toPublicQuestion()` retire ces champs.
 - **Tirage figé** : `ChallengeAttempt.questionIds` mémorise les questions tirées pour une tentative, afin que recharger la page ne change pas le sujet.
@@ -50,6 +62,7 @@ datasource db {
 
 // ─────────────── Organisation ───────────────
 
+// Un compte est toujours un apprenant ; les autres rôles s'ajoutent (option).
 enum Role {
   STUDENT
   TEACHER
@@ -79,10 +92,13 @@ model User {
   pseudonym     String?   // affiché dans les classements si l'étudiant le souhaite
   avatarUrl     String?
   role          Role      @default(STUDENT)
+  weeklyGoalXp  Int       @default(250) // objectif hebdomadaire choisi par l'apprenant libre
+  timeZone      String    @default("Africa/Lagos")
   createdAt     DateTime  @default(now())
   lastActiveAt  DateTime?
 
   institution     Institution?       @relation(fields: [institutionId], references: [id])
+  trackEnrollments TrackEnrollment[]
   enrollments     Enrollment[]
   teaching        ClassroomTeacher[]
   teamMemberships TeamMember[]
@@ -113,21 +129,36 @@ model Level {
   @@unique([institutionId, name])
 }
 
+// Une classe est optionnelle. Elle peut exister sans établissement
+// (formateur indépendant, club, association) : levelId est alors vide.
 model Classroom {
   id           String   @id @default(cuid())
-  levelId      String
+  levelId      String?
   name         String   // ex. "L1 - Groupe A"
   schoolYear   String   // ex. "2026-2027"
   inviteCode   String   @unique
   archivedAt   DateTime?
   createdAt    DateTime @default(now())
 
-  level         Level              @relation(fields: [levelId], references: [id])
+  level         Level?             @relation(fields: [levelId], references: [id])
   teachers      ClassroomTeacher[]
   enrollments   Enrollment[]
   teams         Team[]
   releases      NotionRelease[]
   announcements Announcement[]
+  trackEnrollments TrackEnrollment[]
+  assignedTracks   ClassroomTrack[]
+}
+
+// Parcours assignés à une classe par l'enseignant
+model ClassroomTrack {
+  classroomId String
+  trackId     String
+
+  classroom Classroom @relation(fields: [classroomId], references: [id])
+  track     Track     @relation(fields: [trackId], references: [id])
+
+  @@id([classroomId, trackId])
 }
 
 enum TeacherRole {
@@ -157,12 +188,19 @@ model Enrollment {
   @@id([classroomId, userId])
 }
 
-model Team {
-  id          String @id @default(cuid())
-  classroomId String
-  name        String
+enum TeamKind {
+  CLASS_TEAM // équipe créée par un enseignant dans une classe
+  GUILD // guilde ouverte d'apprenants libres
+}
 
-  classroom Classroom    @relation(fields: [classroomId], references: [id])
+model Team {
+  id          String   @id @default(cuid())
+  kind        TeamKind @default(GUILD)
+  classroomId String? // vide pour une guilde
+  name        String
+  isOpen      Boolean  @default(true) // une guilde ouverte accepte de nouveaux membres
+
+  classroom Classroom?   @relation(fields: [classroomId], references: [id])
   members   TeamMember[]
   mentors   TeamMentor[]
 }
@@ -210,6 +248,8 @@ model Track {
   domain      Domain       @relation(fields: [domainId], references: [id])
   institution Institution? @relation(fields: [institutionId], references: [id])
   notions     Notion[]
+  enrollments TrackEnrollment[]
+  classrooms  ClassroomTrack[]
 
   @@unique([domainId, slug])
 }
@@ -330,7 +370,31 @@ model Challenge {
   attempts ChallengeAttempt[]
 }
 
-// ─────────────── Planning hebdomadaire ───────────────
+// ─────────────── Inscription à un parcours ───────────────
+
+enum LearningMode {
+  FREE // autodidacte : progression sans planning (par défaut)
+  CLASSROOM // le planning de la classe s'applique à ce parcours
+}
+
+// Un apprenant suit un parcours, librement ou via une classe.
+// Passer d'une classe au mode libre (ou l'inverse) ne fait rien perdre :
+// la progression est rattachée à l'apprenant, pas à la classe.
+model TrackEnrollment {
+  userId      String
+  trackId     String
+  mode        LearningMode @default(FREE)
+  classroomId String? // renseigné si mode = CLASSROOM
+  startedAt   DateTime     @default(now())
+
+  user      User       @relation(fields: [userId], references: [id])
+  track     Track      @relation(fields: [trackId], references: [id])
+  classroom Classroom? @relation(fields: [classroomId], references: [id])
+
+  @@id([userId, trackId])
+}
+
+// ─────────────── Planning hebdomadaire (option classe) ───────────────
 
 model NotionRelease {
   id                String   @id @default(cuid())
