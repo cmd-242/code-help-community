@@ -70,7 +70,7 @@ export const pyNotion2: NotionInput = {
       xp: 60,
       encounters: [
         { id: "y2-3-a", type: "predict", prompt: "Qu'affiche ce programme ?", code: "print(5 == 5)", accepted: ["True"], explanation: "5 est égal à 5.", skill: "py-logic" },
-        { id: "y2-3-b", type: "predict", prompt: "Qu'affiche ce programme ?", code: "print(True and False)", accepted: ["False"], explanation: "and exige que les deux soient vrais.", skill: "py-logic" },
+        {"id": "y2-3-b", "type": "code", "language": "python", "prompt": "Écris la fonction signe(n) : elle renvoie \"zéro\" si n vaut 0, sinon \"non nul\".", "starter": "def signe(n):\n    pass", "harness": "print(signe(0))\nprint(signe(7))", "accepted": ["zéro\nnon nul"], "solution": "def signe(n):\n    if n == 0:\n        return \"zéro\"\n    return \"non nul\"", "explanation": "== compare ; if choisit la branche.", "skill": "py-logic"},
         { id: "y2-3-c", type: "predict", prompt: "Qu'affiche ce programme ?", code: "print(True or False)", accepted: ["True"], explanation: "or suffit qu'un seul soit vrai.", skill: "py-logic" },
         { id: "y2-3-d", type: "qcm", prompt: "Pour comparer deux valeurs, on écrit…", choices: ["==", "=", "=>", ":="], answer: [0], explanation: "== compare, = affecte.", skill: "py-logic" },
       ],

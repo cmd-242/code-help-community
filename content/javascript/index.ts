@@ -1,4 +1,4 @@
-import { C, co, fl, P, ps, pr, q, T, track, W } from "../kit";
+import { C, co, fl, P, pr, q, T, track, W } from "../kit";
 
 export const javascriptTrack = track(
   {
@@ -33,20 +33,20 @@ export const javascriptTrack = track(
       stages: [
         ["let ou const ?", "Choisis le bon mot-clé.", [
           q("js-let", "Quel mot-clé déclare une variable qu'on ne pourra pas réaffecter ?", ["const", "let", "var", "static"], 0, "const interdit la réaffectation."),
-          pr("js-let", "Qu'affiche ce script ?", "let score = 10;\nscore = score + 5;\nconsole.log(score);", "15", "score passe de 10 à 15."),
+          co("js-let", "Déclare une variable score qui vaut 10, ajoute-lui 5, puis affiche-la.", "javascript", "// ton code ici", "", "15", "let score = 10;\nscore = score + 5;\nconsole.log(score);", "let permet de modifier la valeur ; on affiche avec console.log."),
           q("js-let", "Que provoque ce code ?", ["Une erreur", "Il affiche 2", "Il affiche 1", "Rien"], 0, "Une constante ne peut pas être réaffectée.", "const x = 1;\nx = 2;"),
           fl("js-let", "Déclare une variable modifiable.", "{{0}} points = 0;", "let", ["let", "const", "int", "dim"], "let déclare une variable dont la valeur peut changer."),
         ]],
         ["Les types", "Nombre ou texte ?", [
           pr("js-types", "Qu'affiche ce script ?", "console.log(typeof \"3\");", "string", "Entre guillemets : c'est un texte."),
-          pr("js-types", "Qu'affiche ce script ?", "console.log(\"3\" + 4);", "34", "Avec un texte, + colle."),
+          co("js-types", "Affiche la somme des nombres 3 et 4 (pas leur concaténation).", "javascript", "const a = \"3\";\nconst b = 4;\n// affiche la somme", "", "7", "const a = \"3\";\nconst b = 4;\nconsole.log(Number(a) + b);", "Number(a) convertit le texte en nombre avant d'additionner."),
           pr("js-types", "Qu'affiche ce script ?", "console.log(3 + 4);", "7", "Deux nombres : addition."),
           q("js-types", "Quel type donne typeof true ?", ["boolean", "string", "number", "bit"], 0, "true et false sont des booléens."),
         ]],
         ["Comparer sans piège", "== contre ===.", [
           q("js-compare", "Que vaut 5 === \"5\" ?", ["false", "true", "Erreur", "undefined"], 0, "=== compare aussi le type."),
           q("js-compare", "Que vaut 5 == \"5\" ?", ["true", "false", "Erreur", "undefined"], 0, "== convertit : 5 et \"5\" sont égaux."),
-          pr("js-compare", "Qu'affiche ce script ?", "const age = 20;\nif (age >= 18) {\n  console.log(\"majeur\");\n} else {\n  console.log(\"mineur\");\n}", "majeur", "20 >= 18 est vrai."),
+          co("js-compare", "Écris la fonction estMajeur(age) : elle renvoie true à partir de 18 ans, sinon false.", "javascript", "function estMajeur(age) {\n  // ton code ici\n}", "console.log(estMajeur(20));\nconsole.log(estMajeur(15));\nconsole.log(estMajeur(18));", "true\nfalse\ntrue", "function estMajeur(age) {\n  return age >= 18;\n}", ">= 18 inclut 18 ; la comparaison renvoie déjà un booléen."),
           q("js-compare", "Quel opérateur est recommandé pour tester l'égalité ?", ["===", "==", "=", "!"], 0, "L'égalité stricte évite les conversions surprises."),
         ]],
       ],
@@ -95,17 +95,17 @@ export const javascriptTrack = track(
           pr("js-array", "Qu'affiche ce script ?", "const t = [\"a\", \"b\", \"c\"];\nconsole.log(t[1]);", "b", "Indices depuis 0."),
           pr("js-array", "Qu'affiche ce script ?", "const t = [5, 6, 7];\nconsole.log(t.length);", "3", "length donne le nombre d'éléments."),
           q("js-array", "Quelle méthode ajoute à la fin d'un tableau ?", ["push", "add", "append", "put"], 0, "push."),
-          pr("js-array", "Qu'affiche ce script ?", "const t = [1, 2];\nt.push(3);\nconsole.log(t.length);", "3", "Après push, il y a 3 éléments."),
+          co("js-array", "Ajoute la valeur 4 à la fin du tableau, puis affiche sa longueur.", "javascript", "const t = [1, 2, 3];\n// ton code ici", "", "4", "const t = [1, 2, 3];\nt.push(4);\nconsole.log(t.length);", "push ajoute à la fin ; length compte les éléments."),
         ]],
         ["map et filter", "Transforme sans boucler.", [
-          pr("js-map", "Qu'affiche ce script ?", "const r = [1, 2, 3].map((x) => x * 2);\nconsole.log(r.join(\"-\"));", "2-4-6", "map double chaque valeur ; join les assemble."),
-          pr("js-map", "Qu'affiche ce script ?", "const r = [1, 2, 3, 4].filter((x) => x > 2);\nconsole.log(r.length);", "2", "Seuls 3 et 4 passent le test."),
+          co("js-map", "Avec map, affiche chaque nombre du tableau multiplié par 10, sur une ligne séparée par des tirets.", "javascript", "const t = [1, 2, 3];\n// ton code ici", "", "10-20-30", "const t = [1, 2, 3];\nconsole.log(t.map((x) => x * 10).join(\"-\"));", "map transforme chaque valeur, join les assemble."),
+          co("js-map", "Avec filter, affiche seulement les nombres pairs du tableau (séparés par des espaces).", "javascript", "const t = [1, 2, 3, 4, 5, 6];\n// ton code ici", "", "2 4 6", "const t = [1, 2, 3, 4, 5, 6];\nconsole.log(t.filter((x) => x % 2 === 0).join(\" \"));", "x % 2 === 0 est vrai pour les pairs."),
           q("js-map", "Quelle méthode garde seulement les éléments qui passent un test ?", ["filter", "map", "push", "join"], 0, "filter."),
-          ps("js-loop", "Affiche chaque fruit.", ["for (const f of fruits) {", "  console.log(f);", "}"], ["for f in fruits {"], "for…of parcourt les éléments."),
+          co("js-loop", "Avec for…of, affiche chaque fruit sur sa propre ligne.", "javascript", "const fruits = [\"pomme\", \"poire\", \"figue\"];\n// ton code ici", "", "pomme\npoire\nfigue", "const fruits = [\"pomme\", \"poire\", \"figue\"];\nfor (const f of fruits) {\n  console.log(f);\n}", "for…of donne chaque valeur à son tour."),
         ]],
       ],
       challenge: [
-        pr("js-func", "Qu'affiche ce script ?", "const add = (a, b) => a + b;\nconsole.log(add(2, 5));", "7", "2 + 5."),
+        co("js-func", "Écris la fonction somme(a, b) qui renvoie a + b.", "javascript", "function somme(a, b) {\n  // ton code ici\n}", "console.log(somme(2, 5));\nconsole.log(somme(-1, 1));", "7\n0", "function somme(a, b) {\n  return a + b;\n}", "return renvoie le résultat à l'appelant."),
         q("js-func", "À quoi sert return ?", ["À renvoyer un résultat", "À afficher", "À boucler", "À déclarer"], 0, "return renvoie la valeur à l'appelant."),
         pr("js-array", "Qu'affiche ce script ?", "const t = [9, 8, 7];\nconsole.log(t[0]);", "9", "Première case."),
         pr("js-map", "Qu'affiche ce script ?", "console.log([1, 2, 3].map((x) => x + 1).join(\",\"));", "2,3,4", "On ajoute 1 à chacun."),
@@ -201,7 +201,7 @@ export const javascriptTrack = track(
           q("js-fetch", "Que fait reponse.json() ?", ["Lit le corps de la réponse comme du JSON", "Envoie du JSON", "Supprime la réponse", "Teste le statut"], 0, "C'est une promesse qui donne l'objet."),
         ]],
         ["Lire du JSON", "Transforme texte et objets.", [
-          pr("js-json", "Qu'affiche ce script ?", "const o = JSON.parse('{\"nom\":\"Aya\"}');\nconsole.log(o.nom);", "Aya", "parse transforme le texte JSON en objet."),
+          co("js-json", "Transforme ce texte JSON en objet, puis affiche la ville.", "javascript", "const texte = '{\"nom\":\"Aya\",\"ville\":\"Lagos\"}';\n// ton code ici", "", "Lagos", "const texte = '{\"nom\":\"Aya\",\"ville\":\"Lagos\"}';\nconsole.log(JSON.parse(texte).ville);", "JSON.parse décode le texte en objet."),
           q("js-json", "Quelle fonction transforme un objet en texte JSON ?", ["JSON.stringify", "JSON.parse", "JSON.text", "JSON.to"], 0, "stringify."),
           q("js-json", "Quel texte est du JSON valide ?", ["{\"a\": 1}", "{a: 1}", "{'a': 1}", "a = 1"], 0, "Clés et textes entre guillemets doubles."),
           pr("js-json", "Qu'affiche ce script ?", "const o = JSON.parse('[1,2,3]');\nconsole.log(o.length);", "3", "Un tableau JSON devient un tableau."),

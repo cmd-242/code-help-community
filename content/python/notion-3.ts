@@ -47,7 +47,7 @@ export const pyNotion3: NotionInput = {
         { id: "y3-1-a", type: "predict", prompt: "Qu'affiche ce programme ?", code: "fruits = [\"pomme\", \"poire\", \"kiwi\"]\nprint(fruits[1])", accepted: ["poire"], explanation: "La case 1 est la deuxième.", skill: "py-list" },
         { id: "y3-1-b", type: "predict", prompt: "Qu'affiche ce programme ?", code: "notes = [12, 15, 9]\nprint(len(notes))", accepted: ["3"], explanation: "len compte les éléments.", skill: "py-list" },
         { id: "y3-1-c", type: "qcm", prompt: "Comment ajouter un élément à la fin d'une liste ?", choices: ["liste.append(x)", "liste.add(x)", "liste.push(x)", "liste += x"], answer: [0], explanation: "append ajoute à la fin.", skill: "py-list" },
-        { id: "y3-1-d", type: "predict", prompt: "Qu'affiche ce programme ?", code: "t = [4, 5, 6]\nprint(t[-1])", accepted: ["6"], explanation: "-1 désigne le dernier élément.", skill: "py-list" },
+        {"id": "y3-1-d", "type": "code", "language": "python", "prompt": "Ajoute 4 à la fin de la liste, puis affiche sa longueur.", "starter": "nombres = [1, 2, 3]\n# ton code ici", "accepted": ["4"], "solution": "nombres = [1, 2, 3]\nnombres.append(4)\nprint(len(nombres))", "explanation": "append ajoute à la fin, len compte les éléments.", "skill": "py-list"},
       ],
     },
     {
@@ -58,7 +58,7 @@ export const pyNotion3: NotionInput = {
       encounters: [
         { id: "y3-2-a", type: "predict", prompt: "Qu'affiche ce programme (sur une seule ligne, séparé par des espaces) ?", code: "for i in range(3):\n    print(i, end=\" \")", accepted: ["0 1 2", "0 1 2 "], explanation: "range(3) donne 0, 1, 2.", skill: "py-for" },
         { id: "y3-2-b", type: "predict", prompt: "Qu'affiche ce programme ?", code: "total = 0\nfor n in [1, 2, 3]:\n    total += n\nprint(total)", accepted: ["6"], explanation: "On additionne 1, 2 et 3.", skill: "py-for" },
-        { id: "y3-2-c", type: "parsons", prompt: "Affiche chaque fruit.", lines: ["for fruit in fruits:", "    print(fruit)"], distractors: ["for fruit of fruits:"], explanation: "for élément in liste:", skill: "py-for" },
+        {"id": "y3-2-c", "type": "code", "language": "python", "prompt": "Avec une boucle for, affiche chaque fruit sur sa ligne.", "starter": "fruits = [\"pomme\", \"poire\", \"figue\"]\n# ton code ici", "accepted": ["pomme\npoire\nfigue"], "solution": "fruits = [\"pomme\", \"poire\", \"figue\"]\nfor fruit in fruits:\n    print(fruit)", "explanation": "for … in parcourt la liste ; le bloc est indenté.", "skill": "py-for"},
         { id: "y3-2-d", type: "qcm", prompt: "Que donne list(range(4)) ?", choices: ["[0, 1, 2, 3]", "[1, 2, 3, 4]", "[0, 1, 2, 3, 4]", "[4]"], answer: [0], explanation: "range(4) s'arrête avant 4.", skill: "py-for" },
       ],
     },
@@ -70,7 +70,7 @@ export const pyNotion3: NotionInput = {
       encounters: [
         { id: "y3-3-a", type: "predict", prompt: "Qu'affiche ce programme (une valeur par ligne, lis-les de haut en bas collées) ?", code: "n = 3\nwhile n > 0:\n    print(n, end=\"\")\n    n = n - 1", accepted: ["321"], explanation: "n vaut 3, puis 2, puis 1.", skill: "py-while" },
         { id: "y3-3-b", type: "qcm", prompt: "Que se passe-t-il si la condition d'un while ne devient jamais fausse ?", choices: ["La boucle ne s'arrête jamais", "Python corrige", "Une seule répétition", "Une erreur de syntaxe"], answer: [0], explanation: "C'est une boucle infinie.", skill: "py-while" },
-        { id: "y3-3-c", type: "fill", prompt: "Sors de la boucle dès que n vaut 3.", template: "for n in range(10):\n    if n == 3:\n        {{0}}", answers: ["break"], bank: ["break", "stop", "exit", "continue"], explanation: "break arrête la boucle.", skill: "py-while" },
+        {"id": "y3-3-c", "type": "code", "language": "python", "prompt": "Avec une boucle while, affiche les nombres de 1 à 3.", "starter": "n = 1\n# ton code ici", "accepted": ["1\n2\n3"], "solution": "n = 1\nwhile n <= 3:\n    print(n)\n    n += 1", "explanation": "La condition devient fausse quand n dépasse 3 : la boucle s'arrête.", "skill": "py-while"},
         { id: "y3-3-d", type: "qcm", prompt: "Quelle boucle choisir pour répéter exactement 5 fois ?", choices: ["for i in range(5)", "while True", "if i < 5", "repeat 5"], answer: [0], explanation: "for avec range quand on connaît le nombre de tours.", skill: "py-for" },
       ],
     },

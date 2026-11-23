@@ -67,7 +67,7 @@ export const pyNotion5: NotionInput = {
       xp: 60,
       encounters: [
         { id: "y5-3-a", type: "predict", prompt: "Qu'affiche ce programme ?", code: "try:\n    print(int(\"abc\"))\nexcept ValueError:\n    print(\"oups\")", accepted: ["oups"], explanation: "L'erreur est rattrapée par except.", skill: "py-try" },
-        { id: "y5-3-b", type: "predict", prompt: "Qu'affiche ce programme ?", code: "try:\n    x = 10 / 2\nexcept ZeroDivisionError:\n    print(\"zéro\")\nelse:\n    print(\"ok\")", accepted: ["ok"], explanation: "Aucune erreur : le bloc else s'exécute.", skill: "py-try" },
+        {"id": "y5-3-b", "type": "code", "language": "python", "prompt": "Écris diviser(a, b) : elle renvoie a / b, ou \"impossible\" si b vaut 0 (avec try / except).", "starter": "def diviser(a, b):\n    pass", "harness": "print(diviser(6, 3))\nprint(diviser(1, 0))", "accepted": ["2.0\nimpossible"], "solution": "def diviser(a, b):\n    try:\n        return a / b\n    except ZeroDivisionError:\n        return \"impossible\"", "explanation": "except ZeroDivisionError rattrape précisément cette erreur.", "skill": "py-try"},
         { id: "y5-3-c", type: "qcm", prompt: "Quel bloc s'exécute toujours, erreur ou non ?", choices: ["finally", "else", "except", "try"], answer: [0], explanation: "finally passe dans tous les cas.", skill: "py-try" },
         { id: "y5-3-d", type: "qcm", prompt: "Pourquoi rattraper une erreur précise plutôt que toutes ?", choices: ["Pour ne pas cacher de vrais bugs", "C'est plus lent autrement", "Python l'interdit", "Il n'y a pas de raison"], answer: [0], explanation: "Un except trop large masque des problèmes.", skill: "py-try" },
       ],

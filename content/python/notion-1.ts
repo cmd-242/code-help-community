@@ -48,7 +48,7 @@ export const pyNotion1: NotionInput = {
         { id: "y1-1-a", type: "qcm", prompt: "Quelle fonction affiche du texte en Python ?", choices: ["print()", "echo", "show()", "write()"], answer: [0], explanation: "print() affiche à l'écran.", skill: "py-print" },
         { id: "y1-1-b", type: "predict", prompt: "Qu'affiche ce programme ?", code: "print(2 + 3)", accepted: ["5"], explanation: "Python calcule puis affiche 5.", skill: "py-print" },
         { id: "y1-1-c", type: "qcm", prompt: "Comment écrit-on un commentaire ?", choices: ["# commentaire", "// commentaire", "-- commentaire", "<!-- commentaire -->"], answer: [0], explanation: "En Python, le commentaire commence par #.", skill: "py-print" },
-        { id: "y1-1-d", type: "fill", prompt: "Affiche le mot Salut.", template: "{{0}}(\"Salut\")", answers: ["print"], bank: ["print", "echo", "say", "log"], explanation: "print() affiche son contenu.", skill: "py-print" },
+        {"id": "y1-1-d", "type": "code", "language": "python", "prompt": "Affiche le mot Salut.", "starter": "# ton code ici", "accepted": ["Salut"], "solution": "print(\"Salut\")", "explanation": "print affiche le texte entre guillemets.", "skill": "py-print"},
       ],
     },
     {
@@ -59,7 +59,7 @@ export const pyNotion1: NotionInput = {
       encounters: [
         { id: "y1-2-a", type: "predict", prompt: "Qu'affiche ce programme ?", code: "age = 17\nage = age + 1\nprint(age)", accepted: ["18"], explanation: "On remplace age par age + 1.", skill: "py-variables" },
         { id: "y1-2-b", type: "qcm", prompt: "Quel nom de variable est valide ?", choices: ["mon_score", "2score", "mon-score", "mon score"], answer: [0], explanation: "Lettres, chiffres et _ : pas de chiffre au début, ni de tiret ni d'espace.", skill: "py-variables" },
-        { id: "y1-2-c", type: "predict", prompt: "Qu'affiche ce programme ?", code: "nom = \"Aya\"\nprint(\"Salut\", nom)", accepted: ["Salut Aya"], explanation: "print sépare les éléments par une espace.", skill: "py-variables" },
+        {"id": "y1-2-c", "type": "code", "language": "python", "prompt": "Crée deux variables a (4) et b (6), puis affiche leur somme.", "starter": "# ton code ici", "accepted": ["10"], "solution": "a = 4\nb = 6\nprint(a + b)", "explanation": "Les variables gardent les valeurs, + les additionne.", "skill": "py-variables"},
         { id: "y1-2-d", type: "qcm", prompt: "Que fait x = 5 ?", choices: ["Range 5 dans x", "Compare x et 5", "Affiche 5", "Supprime x"], answer: [0], explanation: "= est l'affectation.", skill: "py-variables" },
       ],
     },
