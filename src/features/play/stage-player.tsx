@@ -3,9 +3,9 @@
 import { AnimatePresence, motion, useAnimate } from "motion/react";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
-import { FlameIcon, HeartIcon, StarIcon, TorchIcon } from "@/components/icons";
 import { fireConfetti } from "@/components/fx/confetti";
-import { RuneButton, RuneLink } from "@/components/ui/rune-button";
+import { CloseIcon, FlameIcon, LifebuoyIcon, StarIcon } from "@/components/icons";
+import { GameButton, GameLink } from "@/components/ui/game-button";
 import type { Stage } from "@/features/catalog/types";
 import { MAX_HEARTS, stageXp, starsFromHearts } from "@/features/gamification/rules";
 import { useProgress } from "@/features/progression/progress-store";
@@ -13,10 +13,12 @@ import { useHydratedProgress } from "@/features/progression/use-hydrated-progres
 import { useSound } from "@/features/sound/sound-provider";
 import { EncounterView } from "@/games/encounter-view";
 import { check, toPublicEncounter } from "@/games/public";
+import { BoatArt } from "@/universes/archipel/boat-art";
+import { SeaWaves } from "@/universes/archipel/sea-waves";
 
 type Props = {
-  floorSlug: string;
-  floorNumber: number;
+  notionSlug: string;
+  place: string;
   stage: Stage;
   stageNumber: number;
   nextStageId: string | null;
@@ -24,22 +26,23 @@ type Props = {
 
 type Phase = "intro" | "play" | "victory" | "defeat";
 
-export function StagePlayer({ floorSlug, floorNumber, stage, stageNumber, nextStageId }: Props) {
+export function StagePlayer({ notionSlug, place, stage, stageNumber, nextStageId }: Props) {
   const t = useTranslations("stage");
   const { play } = useSound();
   useHydratedProgress();
   const [phase, setPhase] = useState<Phase>("intro");
   const [index, setIndex] = useState(0);
-  const [hearts, setHearts] = useState(MAX_HEARTS);
+  const [lives, setLives] = useState(MAX_HEARTS);
   const [combo, setCombo] = useState(0);
   const [run, setRun] = useState(0);
   const [reward, setReward] = useState<{ stars: number; xp: number } | null>(null);
   const [scope, animate] = useAnimate();
   const publicEncounters = useMemo(() => stage.encounters.map(toPublicEncounter), [stage]);
+  const total = publicEncounters.length;
 
   const restart = () => {
     setIndex(0);
-    setHearts(MAX_HEARTS);
+    setLives(MAX_HEARTS);
     setCombo(0);
     setReward(null);
     setRun((r) => r + 1);
@@ -53,23 +56,22 @@ export function StagePlayer({ floorSlug, floorNumber, stage, stageNumber, nextSt
     } else {
       play("wrong");
       setCombo(0);
-      setHearts((h) => h - 1);
+      setLives((h) => h - 1);
       if (scope.current) void animate(scope.current, { x: [0, -10, 9, -7, 5, 0] }, { duration: 0.4 });
     }
   };
 
   const onContinue = () => {
-    if (hearts <= 0) {
+    if (lives <= 0) {
       play("defeat");
       setPhase("defeat");
       return;
     }
-    if (index + 1 < publicEncounters.length) {
+    if (index + 1 < total) {
       setIndex((i) => i + 1);
       return;
     }
-    // Victoire
-    const stars = starsFromHearts(hearts);
+    const stars = starsFromHearts(lives);
     const state = useProgress.getState();
     const previous = state.stageStars[stage.id] ?? 0;
     const xp = stageXp(stage.xp, previous, stars);
@@ -78,62 +80,66 @@ export function StagePlayer({ floorSlug, floorNumber, stage, stageNumber, nextSt
     setReward({ stars, xp });
     setPhase("victory");
     play("victory");
-    fireConfetti(stars === 3 ? "gold" : "moss");
+    fireConfetti(stars === 3 ? "gold" : "fresh");
   };
 
   return (
-    <div className="mx-auto max-w-2xl px-4 pb-20 pt-6">
+    <div className="mx-auto max-w-2xl px-3 pb-20 pt-4">
       <AnimatePresence mode="wait">
         {phase === "intro" && (
-          <StageIntro
-            key="intro"
-            floorNumber={floorNumber}
-            stageNumber={stageNumber}
-            title={stage.title}
-            description={stage.description}
-            count={publicEncounters.length}
-            onEnter={() => setPhase("play")}
-          />
+          <StageIntro key="intro" place={place} stageNumber={stageNumber} title={stage.title} description={stage.description} count={total} onDepart={() => setPhase("play")} />
         )}
 
         {phase === "play" && (
           <motion.section key={`play-${run}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <div className="mb-6 flex items-center justify-between gap-4">
-              <div className="flex gap-1" aria-label={t("hearts", { count: hearts })}>
-                {Array.from({ length: MAX_HEARTS }).map((_, i) => (
-                  <motion.span
-                    key={i}
-                    animate={i < hearts ? { scale: 1, opacity: 1 } : { scale: [1.5, 0.8], opacity: 0.35 }}
-                    className={i < hearts ? "text-ember drop-shadow-[0_0_8px_rgba(228,87,46,0.8)]" : "text-stone-edge"}
-                  >
-                    <HeartIcon className="size-7" filled={i < hearts} />
-                  </motion.span>
-                ))}
-              </div>
-              <ol className="flex flex-1 items-center justify-center gap-1.5" aria-label={t("progress", { current: index + 1, total: publicEncounters.length })}>
-                {publicEncounters.map((e, i) => (
-                  <li key={e.id} className={i <= index ? "text-torch" : "text-stone-edge"}>
-                    <TorchIcon className={`size-5 ${i === index ? "animate-flicker drop-shadow-[0_0_6px_rgba(242,165,65,0.9)]" : ""} ${i > index ? "opacity-40 grayscale" : ""}`} />
-                  </li>
-                ))}
-              </ol>
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <GameLink href={`/app/notion/${notionSlug}`} variant="secondary" className="size-12 !min-h-12 !rounded-full !p-0" aria-label={t("quit")}>
+                <CloseIcon />
+              </GameLink>
               <AnimatePresence>
                 {combo >= 2 && (
                   <motion.span
                     key={combo}
-                    initial={{ scale: 0.3, rotate: -15, opacity: 0 }}
+                    initial={{ scale: 0.3, rotate: -12, opacity: 0 }}
                     animate={{ scale: 1, rotate: 0, opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="flex items-center gap-1 font-display text-xl text-torch-bright torchlight"
+                    className="flex items-center gap-1 rounded-full bg-accent px-3 py-1 font-display text-lg font-bold"
                   >
-                    <FlameIcon className="size-5 text-ember" />
+                    <FlameIcon className="size-5 text-primary" />
                     {t("combo", { count: combo })}
                   </motion.span>
                 )}
               </AnimatePresence>
+              <div className="flex gap-1" aria-label={t("lives", { count: lives })}>
+                {Array.from({ length: MAX_HEARTS }).map((_, i) => (
+                  <motion.span key={i} animate={i < lives ? { scale: 1, rotate: 0 } : { scale: [1.4, 0.85], rotate: 40 }}>
+                    <LifebuoyIcon filled={i < lives} className="size-8 text-ink" />
+                  </motion.span>
+                ))}
+              </div>
             </div>
 
-            <div ref={scope} className="stone rounded-2xl border border-stone-edge/60 p-5 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)] sm:p-7">
+            {/* La traversée : le bateau avance d'une bouée à l'autre */}
+            <div className="sea relative mb-4 h-16 overflow-hidden rounded-2xl" aria-label={t("progress", { current: index + 1, total })} role="img">
+              <SeaWaves />
+              <div className="absolute inset-x-6 top-[60%] border-t-[3px] border-dotted border-white/80" />
+              {publicEncounters.map((e, i) => (
+                <span
+                  key={e.id}
+                  className={`absolute top-[60%] size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full ${i < index ? "bg-accent" : "bg-white"}`}
+                  style={{ left: `calc(1.5rem + (100% - 3rem) * ${total > 1 ? i / (total - 1) : 0})` }}
+                />
+              ))}
+              <motion.div
+                className="absolute top-0.5 w-12 -translate-x-1/2"
+                animate={{ left: `calc(1.5rem + (100% - 3rem) * ${total > 1 ? index / (total - 1) : 0})` }}
+                transition={{ type: "spring", stiffness: 60, damping: 14 }}
+              >
+                <BoatArt className="w-12" />
+              </motion.div>
+            </div>
+
+            <div ref={scope} className="paper rounded-[2rem] p-5 sm:p-7">
               <EncounterView
                 key={`${run}-${index}`}
                 encounter={publicEncounters[index]}
@@ -150,23 +156,26 @@ export function StagePlayer({ floorSlug, floorNumber, stage, stageNumber, nextSt
             key="victory"
             stars={reward.stars}
             xp={reward.xp}
-            floorSlug={floorSlug}
-            nextHref={nextStageId ? `/app/etage/${floorSlug}/etape/${nextStageId}` : null}
+            notionSlug={notionSlug}
+            nextHref={nextStageId ? `/app/notion/${notionSlug}/etape/${nextStageId}` : null}
             onReplay={restart}
           />
         )}
 
         {phase === "defeat" && (
-          <motion.section key="defeat" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="py-10 text-center">
-            <p className="carved text-6xl text-ember">{t("defeatTitle")}</p>
-            <p className="mx-auto mt-4 max-w-md text-lg text-parchment-dim">{t("defeatBody")}</p>
+          <motion.section key="defeat" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="paper rounded-[2rem] px-6 py-10 text-center">
+            <motion.div initial={{ y: 0, rotate: 0 }} animate={{ y: 26, rotate: 18, opacity: 0.5 }} transition={{ duration: 2, ease: "easeIn" }} className="mx-auto w-24">
+              <BoatArt bobbing={false} className="w-24" />
+            </motion.div>
+            <h1 className="mt-6 font-display text-4xl font-bold text-danger-text">{t("defeatTitle")}</h1>
+            <p className="mx-auto mt-3 max-w-md text-lg text-muted">{t("defeatBody")}</p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-              <RuneButton onClick={restart} sfx="torch">
+              <GameButton onClick={restart} sfx="whoosh">
                 {t("retry")}
-              </RuneButton>
-              <RuneLink variant="stone" href={`/app/etage/${floorSlug}#grimoire`} sfx="page">
-                {t("readGrimoire")}
-              </RuneLink>
+              </GameButton>
+              <GameLink variant="secondary" href={`/app/notion/${notionSlug}#cours`} sfx="page">
+                {t("readCourse")}
+              </GameLink>
             </div>
           </motion.section>
         )}
@@ -175,112 +184,115 @@ export function StagePlayer({ floorSlug, floorNumber, stage, stageNumber, nextSt
   );
 }
 
-function StageIntro(props: {
-  floorNumber: number;
-  stageNumber: number;
-  title: string;
-  description: string;
-  count: number;
-  onEnter: () => void;
-}) {
+function StageIntro(props: { place: string; stageNumber: number; title: string; description: string; count: number; onDepart: () => void }) {
   const t = useTranslations("stage");
   const { play } = useSound();
-  const [opening, setOpening] = useState(false);
-  const push = () => {
-    if (opening) return;
-    setOpening(true);
-    play("door");
-    window.setTimeout(props.onEnter, 1250);
+  const [leaving, setLeaving] = useState(false);
+  const depart = () => {
+    if (leaving) return;
+    setLeaving(true);
+    play("enter");
+    window.setTimeout(props.onDepart, 1300);
   };
   return (
-    <motion.section exit={{ opacity: 0, scale: 1.08 }} transition={{ duration: 0.4 }} className="text-center">
-      <p className="text-torch">{t("where", { floor: props.floorNumber, stage: props.stageNumber })}</p>
-      <h1 className="carved torchlight mt-2 text-5xl text-torch-bright text-balance sm:text-6xl">{props.title}</h1>
-      <p className="mx-auto mt-3 max-w-md text-lg text-parchment">{props.description}</p>
-      <p className="mt-1 text-parchment-dim">{t("encounters", { count: props.count })}</p>
-
-      {/* Porte de pierre : elle s'ouvre quand l'étudiant la pousse */}
-      <button
-        type="button"
-        onClick={push}
-        disabled={opening}
-        aria-label={t("enter")}
-        className="arch group relative mx-auto mt-8 block h-64 w-52 overflow-hidden border-4 border-stone-edge bg-abyss-deep shadow-[0_0_0_6px_#1f3138,0_30px_60px_-20px_rgba(0,0,0,0.9)]"
-      >
-        <span className="absolute inset-0 bg-[radial-gradient(circle_at_50%_70%,rgba(255,210,122,0.9),rgba(242,165,65,0.35)_35%,transparent_70%)] animate-flicker" />
-        {(["left", "right"] as const).map((side) => (
-          <motion.span
-            key={side}
-            aria-hidden
-            className={`stone absolute inset-y-0 w-1/2 ${side === "left" ? "left-0 border-r-2" : "right-0 border-l-2"} border-abyss-deep`}
-            animate={opening ? { x: side === "left" ? "-100%" : "100%" } : { x: 0 }}
-            transition={{ duration: 1.1, ease: [0.65, 0, 0.35, 1] }}
-          >
-            <span className={`absolute top-[55%] size-3.5 rounded-full bg-torch shadow-[0_0_10px_#f2a541] ${side === "left" ? "right-3" : "left-3"}`} />
-            <span className="absolute inset-x-3 top-8 h-px bg-abyss-deep/60" />
-            <span className="absolute inset-x-3 bottom-10 h-px bg-abyss-deep/60" />
-          </motion.span>
-        ))}
-      </button>
-      <RuneButton className="mt-8" disabled={opening} onClick={push} sfx="torch">
-        {t("enter")}
-      </RuneButton>
+    <motion.section exit={{ opacity: 0, y: -10 }} className="paper overflow-hidden rounded-[2rem] text-center">
+      <div className="sea relative h-44 overflow-hidden">
+        <SeaWaves />
+        {/* le ponton */}
+        <div className="absolute bottom-6 left-0 h-3 w-28 rounded-r-md bg-wood shadow-[0_4px_0_var(--color-wood-deep)]" />
+        <motion.div
+          className="absolute bottom-5 left-16 w-24"
+          animate={leaving ? { x: 420, y: -10, rotate: 4 } : { x: 0 }}
+          transition={{ duration: 1.3, ease: [0.5, 0, 0.5, 1] }}
+        >
+          <BoatArt className="w-24" />
+        </motion.div>
+      </div>
+      <div className="px-6 pb-8 pt-6">
+        <p className="font-bold text-info-deep">{t("where", { place: props.place, stage: props.stageNumber })}</p>
+        <h1 className="mt-1 font-display text-4xl font-bold leading-tight text-balance">{props.title}</h1>
+        <p className="mx-auto mt-2 max-w-md text-lg text-muted">{props.description}</p>
+        <p className="mt-1 text-muted">{t("encounters", { count: props.count })}</p>
+        <GameButton className="mt-7 w-full sm:w-auto" disabled={leaving} onClick={depart} sfx="click">
+          {t("depart")}
+        </GameButton>
+      </div>
     </motion.section>
   );
 }
 
-function Victory({ stars, xp, floorSlug, nextHref, onReplay }: { stars: number; xp: number; floorSlug: string; nextHref: string | null; onReplay: () => void }) {
+function Victory({ stars, xp, notionSlug, nextHref, onReplay }: { stars: number; xp: number; notionSlug: string; nextHref: string | null; onReplay: () => void }) {
   const t = useTranslations("stage");
   const { play } = useSound();
   const [shownXp, setShownXp] = useState(0);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const timers: number[] = [];
-    for (let i = 0; i < stars; i++) timers.push(window.setTimeout(() => play("unlock"), 500 + i * 420));
-    const start = 600 + stars * 420;
+    timers.push(window.setTimeout(() => {
+      setOpen(true);
+      play("unlock");
+    }, 500));
+    const start = 1100 + stars * 300;
     const steps = Math.min(24, xp);
     for (let i = 1; i <= steps; i++) {
-      timers.push(
-        window.setTimeout(() => {
-          setShownXp(Math.round((xp * i) / steps));
-          play("xp");
-        }, start + i * 45),
-      );
+      timers.push(window.setTimeout(() => {
+        setShownXp(Math.round((xp * i) / steps));
+        play("xp");
+      }, start + i * 45));
     }
     return () => timers.forEach((id) => window.clearTimeout(id));
   }, [stars, xp, play]);
 
   return (
-    <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="py-8 text-center">
-      <p className="carved torchlight text-6xl text-torch-bright">{t("victoryTitle")}</p>
-      <div className="mt-8 flex justify-center gap-3" aria-label={t("starsLabel", { count: stars })}>
+    <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="paper rounded-[2rem] px-6 py-10 text-center">
+      <h1 className="font-display text-4xl font-bold">{t("victoryTitle")}</h1>
+
+      {/* le coffre s'ouvre */}
+      <div className="relative mx-auto mt-6 h-32 w-40" aria-hidden>
+        <motion.span
+          className="absolute left-1/2 top-2 h-24 w-24 -translate-x-1/2 rounded-full bg-accent/60 blur-xl"
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={open ? { opacity: 1, scale: 1.3 } : {}}
+        />
+        <div className="absolute bottom-0 left-2 right-2 h-16 rounded-b-xl rounded-t-sm bg-wood shadow-[0_6px_0_var(--color-wood-deep)]">
+          <span className="absolute left-1/2 top-2 h-5 w-5 -translate-x-1/2 rounded bg-accent" />
+        </div>
+        <motion.div
+          className="absolute bottom-14 left-2 right-2 h-10 origin-bottom-left rounded-t-[3rem] bg-[#c2834a]"
+          animate={open ? { rotate: -28, y: -6 } : { rotate: 0 }}
+          transition={{ type: "spring", stiffness: 160, damping: 10 }}
+        />
+      </div>
+
+      <div className="mt-4 flex justify-center gap-3" aria-label={t("starsLabel", { count: stars })}>
         {[0, 1, 2].map((i) => (
           <motion.span
             key={i}
-            initial={{ scale: 0, rotate: -90 }}
-            animate={{ scale: i < stars ? [0, 1.35, 1] : 1, rotate: 0 }}
-            transition={{ delay: 0.5 + i * 0.42, duration: 0.5 }}
-            className={i < stars ? "text-torch drop-shadow-[0_0_14px_rgba(242,165,65,0.9)]" : "text-stone-edge"}
+            initial={{ scale: 0, y: 30 }}
+            animate={{ scale: i < stars ? [0, 1.35, 1] : 1, y: 0 }}
+            transition={{ delay: 0.8 + i * 0.3, duration: 0.5 }}
+            className={i < stars ? "text-accent-deep" : "text-line"}
           >
-            <StarIcon className={i === 1 ? "size-20 -translate-y-3" : "size-16"} filled={i < stars} />
+            <StarIcon className={i === 1 ? "size-16 -translate-y-2" : "size-13"} filled={i < stars} />
           </motion.span>
         ))}
       </div>
-      <p className="mt-6 font-display text-5xl tabular-nums text-moss runeglow">+{shownXp} XP</p>
-      <p className="mx-auto mt-3 max-w-sm text-parchment-dim">{t(`starsHint${stars}` as "starsHint1")}</p>
-      <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
+      <p className="mt-4 font-display text-5xl font-bold tabular-nums text-success-deep">+{shownXp} XP</p>
+      <p className="mx-auto mt-2 max-w-sm text-muted">{t(`starsHint${stars}` as "starsHint1")}</p>
+      <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
         {nextHref ? (
-          <RuneLink href={nextHref} sfx="door">
+          <GameLink href={nextHref} sfx="enter">
             {t("nextStage")}
-          </RuneLink>
+          </GameLink>
         ) : (
-          <RuneLink href={`/app/etage/${floorSlug}`} sfx="door">
-            {t("backToFloor")}
-          </RuneLink>
+          <GameLink href={`/app/notion/${notionSlug}`} sfx="enter">
+            {t("backToNotion")}
+          </GameLink>
         )}
-        <RuneButton variant="stone" onClick={onReplay}>
+        <GameButton variant="secondary" onClick={onReplay}>
           {t("replay")}
-        </RuneButton>
+        </GameButton>
       </div>
     </motion.section>
   );

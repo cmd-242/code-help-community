@@ -1,37 +1,37 @@
 /**
- * Moteur sonore procédural du donjon.
+ * Moteur sonore procédural — univers Archipel.
  * Tous les sons sont synthétisés avec la Web Audio API : aucun fichier audio
  * à télécharger (léger sur réseau lent) et aucun problème de droits.
  *
- * Le contexte audio ne démarre qu'après un geste de l'utilisateur
- * (règle des navigateurs) via `unlock()`.
+ * Les noms d'effets sont neutres (« enter », « whoosh »…) : un autre univers
+ * (Néo-Métro) pourra fournir ses propres sons pour les mêmes noms.
+ *
+ * Le contexte audio ne démarre qu'après un geste de l'utilisateur (`unlock()`).
  */
 
 export type SfxName =
   | "hover"
   | "click"
+  | "pick"
+  | "drop"
+  | "page"
   | "correct"
   | "wrong"
   | "xp"
   | "levelUp"
   | "unlock"
-  | "door"
-  | "torch"
+  | "enter"
+  | "whoosh"
   | "bossHit"
   | "bossRoar"
   | "victory"
-  | "defeat"
-  | "page"
-  | "pick"
-  | "drop";
+  | "defeat";
 
-type Ctx = AudioContext;
-
-// Gamme de ré dorien : sonorité médiévale et mystérieuse
-const D_DORIAN = [146.83, 164.81, 174.61, 196.0, 220.0, 246.94, 261.63, 293.66];
+// Pentatonique majeure de do : sonorité lumineuse, « tropicale »
+const PENTA = [261.63, 293.66, 329.63, 392.0, 440.0, 523.25, 587.33, 659.25];
 
 export class SoundEngine {
-  private ctx: Ctx | null = null;
+  private ctx: AudioContext | null = null;
   private master: GainNode | null = null;
   private sfxBus: GainNode | null = null;
   private ambientBus: GainNode | null = null;
@@ -56,7 +56,6 @@ export class SoundEngine {
       this.ctx = new AC();
       this.master = this.ctx.createGain();
       this.master.gain.value = 0.8;
-      // Compresseur : évite la saturation quand plusieurs sons se superposent
       const comp = this.ctx.createDynamicsCompressor();
       comp.threshold.value = -14;
       comp.ratio.value = 4;
@@ -79,7 +78,7 @@ export class SoundEngine {
     this.master.gain.setTargetAtTime(muted ? 0 : 0.8, t, 0.08);
   }
 
-  // ───────────────────────── Ambiance ─────────────────────────
+  // ───────────────────────── Ambiance : bord de mer ─────────────────────────
 
   startAmbient() {
     if (!this.ctx || !this.ambientBus || this.ambientOn) return;
@@ -88,45 +87,34 @@ export class SoundEngine {
     const t = ctx.currentTime;
     this.ambientBus.gain.cancelScheduledValues(t);
     this.ambientBus.gain.setValueAtTime(this.ambientBus.gain.value, t);
-    this.ambientBus.gain.linearRampToValueAtTime(0.55, t + 4);
+    this.ambientBus.gain.linearRampToValueAtTime(0.6, t + 4);
 
-    // 1. Bourdon grave : deux sinus légèrement désaccordés (battement lent)
-    for (const [freq, vol] of [
-      [55, 0.16],
-      [55.4, 0.12],
-      [82.4, 0.05],
+    // Deux couches de vagues : bruit filtré dont le volume monte et descend lentement
+    for (const [rate, cutoff, vol, pan] of [
+      [0.09, 520, 0.16, -0.5],
+      [0.13, 900, 0.1, 0.5],
     ] as const) {
-      const o = ctx.createOscillator();
-      o.type = "sine";
-      o.frequency.value = freq;
-      const g = ctx.createGain();
-      g.gain.value = vol;
-      o.connect(g).connect(this.ambientBus);
-      o.start();
-      this.ambientNodes.push(o, g);
+      const src = ctx.createBufferSource();
+      src.buffer = this.noiseBuffer;
+      src.loop = true;
+      const lp = ctx.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.value = cutoff;
+      const swell = ctx.createGain();
+      swell.gain.value = vol;
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = rate;
+      const lfoDepth = ctx.createGain();
+      lfoDepth.gain.value = vol * 0.95;
+      lfo.connect(lfoDepth).connect(swell.gain);
+      const panner = ctx.createStereoPanner();
+      panner.pan.value = pan;
+      src.connect(lp).connect(swell).connect(panner).connect(this.ambientBus);
+      src.start(t, Math.random() * 1.5);
+      lfo.start(t);
+      this.ambientNodes.push(src, lp, swell, lfo, lfoDepth, panner);
     }
 
-    // 2. Vent dans les galeries : bruit filtré dont la fréquence ondule
-    const wind = ctx.createBufferSource();
-    wind.buffer = this.noiseBuffer;
-    wind.loop = true;
-    const bp = ctx.createBiquadFilter();
-    bp.type = "bandpass";
-    bp.frequency.value = 420;
-    bp.Q.value = 0.9;
-    const lfo = ctx.createOscillator();
-    lfo.frequency.value = 0.07;
-    const lfoGain = ctx.createGain();
-    lfoGain.gain.value = 260;
-    lfo.connect(lfoGain).connect(bp.frequency);
-    const windGain = ctx.createGain();
-    windGain.gain.value = 0.05;
-    wind.connect(bp).connect(windGain).connect(this.ambientBus);
-    wind.start();
-    lfo.start();
-    this.ambientNodes.push(wind, bp, lfo, lfoGain, windGain);
-
-    // 3. Gouttes d'eau aléatoires, 4. crépitements de torche, 5. harpe lointaine
     const loop = (fn: () => void, min: number, max: number) => {
       const tick = () => {
         if (!this.ambientOn) return;
@@ -135,9 +123,10 @@ export class SoundEngine {
       };
       this.ambientTimers.push(window.setTimeout(tick, min + Math.random() * (max - min)));
     };
-    loop(() => this.drip(), 2200, 6500);
-    loop(() => this.crackle(), 700, 2600);
-    loop(() => this.harp(), 3800, 7600);
+    loop(() => this.seagull(), 6000, 15000);
+    loop(() => this.bell(this.ambientBus!, 0.05), 14000, 30000);
+    loop(() => this.melody(), 4200, 8500);
+    loop(() => this.creak(), 9000, 20000);
   }
 
   stopAmbient() {
@@ -159,43 +148,68 @@ export class SoundEngine {
     }, 1400);
   }
 
-  private drip() {
+  /** Cri de mouette : glissando aigu avec léger vibrato, au loin */
+  private seagull() {
     const ctx = this.ctx!;
-    const t = ctx.currentTime;
-    const o = ctx.createOscillator();
-    o.type = "sine";
-    const f = 900 + Math.random() * 900;
-    o.frequency.setValueAtTime(f, t);
-    o.frequency.exponentialRampToValueAtTime(f * 2.4, t + 0.06);
-    const g = this.env(t, 0.003, 0.18, 0.07);
+    const cries = 1 + Math.floor(Math.random() * 3);
     const pan = ctx.createStereoPanner();
     pan.pan.value = Math.random() * 1.6 - 0.8;
-    const verb = this.echo(0.21, 0.42, this.ambientBus!);
-    o.connect(g).connect(pan).connect(verb);
-    o.start(t);
-    o.stop(t + 0.3);
+    pan.connect(this.ambientBus!);
+    for (let i = 0; i < cries; i++) {
+      const t = ctx.currentTime + i * 0.32;
+      const o = ctx.createOscillator();
+      o.type = "triangle";
+      const f = 1500 + Math.random() * 400;
+      o.frequency.setValueAtTime(f * 0.8, t);
+      o.frequency.linearRampToValueAtTime(f, t + 0.05);
+      o.frequency.exponentialRampToValueAtTime(f * 0.62, t + 0.26);
+      const vib = ctx.createOscillator();
+      vib.frequency.value = 28;
+      const vibDepth = ctx.createGain();
+      vibDepth.gain.value = 40;
+      vib.connect(vibDepth).connect(o.frequency);
+      const bp = ctx.createBiquadFilter();
+      bp.type = "bandpass";
+      bp.frequency.value = 1600;
+      bp.Q.value = 2;
+      const g = this.env(t, 0.03, 0.26, 0.035);
+      o.connect(bp).connect(g).connect(pan);
+      o.start(t);
+      vib.start(t);
+      o.stop(t + 0.35);
+      vib.stop(t + 0.35);
+    }
   }
 
-  private crackle() {
+  /** Quelques notes de marimba, comme une musique de port au loin */
+  private melody() {
+    const t = this.ctx!.currentTime;
+    const start = Math.floor(Math.random() * 4);
+    const count = 2 + Math.floor(Math.random() * 3);
+    for (let i = 0; i < count; i++) {
+      const note = PENTA[(start + i * (Math.random() > 0.5 ? 1 : 2)) % PENTA.length];
+      this.marimba(note, t + i * 0.24, 0.05, this.ambientBus!);
+    }
+  }
+
+  /** Craquement du bois de la coque */
+  private creak() {
     const ctx = this.ctx!;
     const t = ctx.currentTime;
     const n = ctx.createBufferSource();
     n.buffer = this.noiseBuffer;
-    const hp = ctx.createBiquadFilter();
-    hp.type = "highpass";
-    hp.frequency.value = 2400;
-    const g = this.env(t, 0.001, 0.03, 0.02 + Math.random() * 0.03);
-    n.connect(hp).connect(g).connect(this.ambientBus!);
+    const bp = ctx.createBiquadFilter();
+    bp.type = "bandpass";
+    bp.Q.value = 18;
+    bp.frequency.setValueAtTime(380, t);
+    bp.frequency.linearRampToValueAtTime(240, t + 0.5);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(0.09, t + 0.15);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.6);
+    n.connect(bp).connect(g).connect(this.ambientBus!);
     n.start(t, Math.random());
-    n.stop(t + 0.06);
-  }
-
-  private harp() {
-    const ctx = this.ctx!;
-    const t = ctx.currentTime;
-    const base = D_DORIAN[Math.floor(Math.random() * D_DORIAN.length)] * 2;
-    const notes = Math.random() > 0.6 ? [base, base * 1.5] : [base];
-    notes.forEach((f, i) => this.pluck(f, t + i * 0.32, 0.035, this.ambientBus!));
+    n.stop(t + 0.65);
   }
 
   // ───────────────────────── Effets ─────────────────────────
@@ -207,117 +221,111 @@ export class SoundEngine {
       case "hover": {
         if (performance.now() - this.lastHover < 60) return;
         this.lastHover = performance.now();
-        this.tone("triangle", 1320, t, 0.04, 0.025);
+        this.droplet(t, 1400, 0.03);
         return;
       }
       case "click":
-        this.thud(t, 180, 0.12, 0.25);
-        this.tone("square", 760, t, 0.03, 0.03);
+        this.woodKnock(t, 0.3);
         return;
       case "pick":
-        this.tone("triangle", 520, t, 0.05, 0.08, 780);
+        this.woodKnock(t, 0.2, 620);
         return;
       case "drop":
-        this.thud(t, 140, 0.08, 0.2);
-        this.tone("triangle", 660, t, 0.05, 0.05);
+        this.woodKnock(t, 0.25, 360);
+        this.droplet(t + 0.04, 900, 0.03);
         return;
       case "page":
-        this.noiseSweep(t, 0.22, 3000, 900, 0.07);
+        this.noiseSweep(t, 0.22, 3200, 1000, 0.08);
         return;
-      case "correct": {
-        // arpège ascendant lumineux + scintillement
-        [587.33, 739.99, 880, 1174.66].forEach((f, i) => this.pluck(f, t + i * 0.055, 0.16));
-        this.shimmer(t + 0.18);
+      case "correct":
+        [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => this.marimba(f, t + i * 0.06, 0.2));
+        this.sparkle(t + 0.22, 5);
         return;
-      }
       case "wrong": {
+        // « bonk » sourd puis petit plouf
         const o = this.ctx!.createOscillator();
-        o.type = "sawtooth";
-        o.frequency.setValueAtTime(220, t);
-        o.frequency.exponentialRampToValueAtTime(70, t + 0.35);
-        const lp = this.ctx!.createBiquadFilter();
-        lp.type = "lowpass";
-        lp.frequency.value = 900;
-        const g = this.env(t, 0.005, 0.38, 0.22);
-        o.connect(lp).connect(g).connect(this.sfxBus);
+        o.type = "sine";
+        o.frequency.setValueAtTime(240, t);
+        o.frequency.exponentialRampToValueAtTime(90, t + 0.25);
+        const g = this.env(t, 0.004, 0.3, 0.35);
+        o.connect(g).connect(this.sfxBus);
         o.start(t);
-        o.stop(t + 0.45);
-        this.thud(t, 90, 0.3, 0.45);
+        o.stop(t + 0.35);
+        this.splash(t + 0.08, 0.12);
         return;
       }
       case "xp":
-        this.tone("square", 1568 + Math.random() * 120, t, 0.06, 0.04, 2093);
+        this.tone("square", 1975 + Math.random() * 100, t, 0.05, 0.035);
+        this.tone("square", 2637, t + 0.045, 0.06, 0.03);
         return;
-      case "levelUp": {
-        // petite fanfare : ré – fa# – la – ré, puis accord tenu
-        const seq = [293.66, 369.99, 440, 587.33];
-        seq.forEach((f, i) => {
-          this.tone("sawtooth", f, t + i * 0.11, 0.18, 0.07);
-          this.tone("square", f * 2, t + i * 0.11, 0.12, 0.025);
-        });
-        [293.66, 369.99, 440, 587.33].forEach((f) => this.pad(f, t + 0.48, 1.4, 0.07));
-        this.shimmer(t + 0.5);
-        this.shimmer(t + 0.8);
+      case "levelUp":
+        // fanfare de tambour d'acier, accord, cloche
+        [392, 523.25, 659.25, 783.99, 1046.5].forEach((f, i) => this.steelDrum(f, t + i * 0.1, 0.22));
+        [523.25, 659.25, 783.99].forEach((f) => this.steelDrum(f, t + 0.6, 0.18));
+        this.bell(this.sfxBus, 0.12, t + 0.6);
+        this.sparkle(t + 0.6, 8);
         return;
-      }
       case "unlock": {
-        // serrure + coffre qui s'ouvre + carillon
-        this.thud(t, 300, 0.05, 0.3);
-        this.thud(t + 0.09, 220, 0.06, 0.3);
-        this.noiseSweep(t + 0.14, 0.4, 600, 2600, 0.12);
-        [880, 1108.73, 1318.51, 1760].forEach((f, i) => this.pluck(f, t + 0.3 + i * 0.07, 0.12));
+        // couvercle du coffre qui grince, puis pluie de pièces
+        const n = this.ctx!.createBufferSource();
+        n.buffer = this.noiseBuffer;
+        const bp = this.ctx!.createBiquadFilter();
+        bp.type = "bandpass";
+        bp.Q.value = 14;
+        bp.frequency.setValueAtTime(300, t);
+        bp.frequency.linearRampToValueAtTime(700, t + 0.3);
+        const g = this.env(t, 0.05, 0.3, 0.2);
+        n.connect(bp).connect(g).connect(this.sfxBus);
+        n.start(t, Math.random());
+        n.stop(t + 0.4);
+        for (let i = 0; i < 9; i++) this.tone("square", 1800 + Math.random() * 1400, t + 0.3 + i * 0.045, 0.06, 0.025);
         return;
       }
-      case "door": {
-        // lourde porte de pierre qui glisse
-        this.noiseSweep(t, 1.6, 120, 380, 0.35);
-        this.thud(t + 1.45, 60, 0.6, 0.7);
+      case "enter":
+        // cloche du bateau + voile qui se gonfle
+        this.bell(this.sfxBus, 0.18, t);
+        this.noiseSweep(t + 0.1, 1.0, 300, 1200, 0.18);
         return;
-      }
-      case "torch":
-        this.noiseSweep(t, 0.5, 400, 3200, 0.2);
+      case "whoosh":
+        this.splash(t, 0.2);
         return;
       case "bossHit":
-        this.thud(t, 110, 0.25, 0.7);
-        this.noiseSweep(t, 0.18, 2500, 500, 0.25);
-        this.tone("square", 196, t, 0.12, 0.08, 98);
+        this.splash(t, 0.35);
+        this.thud(t, 120, 0.25, 0.6);
         return;
       case "bossRoar": {
+        // grondement de créature marine + bulles
         const o = this.ctx!.createOscillator();
         o.type = "sawtooth";
-        o.frequency.setValueAtTime(70, t);
-        o.frequency.linearRampToValueAtTime(110, t + 0.4);
-        o.frequency.exponentialRampToValueAtTime(45, t + 1.6);
+        o.frequency.setValueAtTime(65, t);
+        o.frequency.linearRampToValueAtTime(95, t + 0.5);
+        o.frequency.exponentialRampToValueAtTime(42, t + 1.6);
         const trem = this.ctx!.createOscillator();
-        trem.frequency.value = 23;
+        trem.frequency.value = 17;
         const tremGain = this.ctx!.createGain();
-        tremGain.gain.value = 18;
+        tremGain.gain.value = 14;
         trem.connect(tremGain).connect(o.frequency);
         const lp = this.ctx!.createBiquadFilter();
         lp.type = "lowpass";
-        lp.frequency.value = 600;
-        const g = this.env(t, 0.15, 1.6, 0.4);
+        lp.frequency.value = 500;
+        const g = this.env(t, 0.2, 1.5, 0.4);
         o.connect(lp).connect(g).connect(this.sfxBus);
         o.start(t);
         trem.start(t);
         o.stop(t + 1.8);
         trem.stop(t + 1.8);
-        this.noiseSweep(t, 1.4, 200, 700, 0.15);
+        this.bubbles(t + 0.3, 10);
         return;
       }
-      case "victory": {
-        const seq = [293.66, 440, 587.33, 739.99, 880];
-        seq.forEach((f, i) => this.pluck(f, t + i * 0.09, 0.18));
-        [293.66, 440, 587.33, 739.99].forEach((f) => this.pad(f, t + 0.45, 2.2, 0.08));
-        [0.5, 0.75, 1.0].forEach((d) => this.shimmer(t + d));
+      case "victory":
+        [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((f, i) => this.steelDrum(f, t + i * 0.09, 0.2));
+        [523.25, 659.25, 783.99].forEach((f) => this.marimba(f, t + 0.55, 0.18));
+        this.sparkle(t + 0.5, 10);
         return;
-      }
-      case "defeat": {
-        [440, 392, 349.23, 293.66].forEach((f, i) => this.tone("triangle", f, t + i * 0.22, 0.35, 0.1));
-        this.pad(146.83, t + 0.9, 1.8, 0.08);
-        this.pad(174.61, t + 0.9, 1.8, 0.06);
+      case "defeat":
+        [659.25, 587.33, 523.25, 392].forEach((f, i) => this.marimba(f, t + i * 0.2, 0.16));
+        this.bubbles(t + 0.8, 8);
         return;
-      }
     }
   }
 
@@ -332,7 +340,6 @@ export class SoundEngine {
     return buf;
   }
 
-  /** Enveloppe attaque / décroissance */
   private env(t: number, attack: number, decay: number, peak: number) {
     const g = this.ctx!.createGain();
     g.gain.setValueAtTime(0.0001, t);
@@ -341,87 +348,109 @@ export class SoundEngine {
     return g;
   }
 
-  /** Écho simple pour donner l'impression d'une grande salle */
-  private echo(delay: number, feedback: number, dest: AudioNode) {
-    const ctx = this.ctx!;
-    const input = ctx.createGain();
-    const d = ctx.createDelay(1);
-    d.delayTime.value = delay;
-    const fb = ctx.createGain();
-    fb.gain.value = feedback;
-    const lp = ctx.createBiquadFilter();
-    lp.type = "lowpass";
-    lp.frequency.value = 2200;
-    input.connect(dest);
-    input.connect(d);
-    d.connect(lp);
-    lp.connect(fb);
-    fb.connect(d);
-    lp.connect(dest);
-    // Libère la boucle de retour une fois l'écho éteint
-    window.setTimeout(() => {
-      input.disconnect();
-      fb.disconnect();
-      lp.disconnect();
-    }, 3000);
-    return input;
-  }
-
-  private tone(type: OscillatorType, freq: number, t: number, dur: number, vol: number, toFreq?: number) {
+  private tone(type: OscillatorType, freq: number, t: number, dur: number, vol: number) {
     const o = this.ctx!.createOscillator();
     o.type = type;
     o.frequency.setValueAtTime(freq, t);
-    if (toFreq) o.frequency.exponentialRampToValueAtTime(toFreq, t + dur);
     const g = this.env(t, 0.005, dur, vol);
     o.connect(g).connect(this.sfxBus!);
     o.start(t);
     o.stop(t + dur + 0.05);
   }
 
-  /** Corde pincée (harpe / luth) */
-  private pluck(freq: number, t: number, vol: number, bus: AudioNode = this.sfxBus!) {
+  /** Marimba : fondamentale + harmonique 4 très brève */
+  private marimba(freq: number, t: number, vol: number, bus: AudioNode = this.sfxBus!) {
+    const ctx = this.ctx!;
+    for (const [mult, v, decay] of [
+      [1, vol, 0.55],
+      [4, vol * 0.35, 0.08],
+    ] as const) {
+      const o = ctx.createOscillator();
+      o.type = "sine";
+      o.frequency.value = freq * mult;
+      const g = this.env(t, 0.003, decay, v);
+      o.connect(g).connect(bus);
+      o.start(t);
+      o.stop(t + decay + 0.05);
+    }
+  }
+
+  /** Tambour d'acier : partiels légèrement désaccordés */
+  private steelDrum(freq: number, t: number, vol: number) {
+    const ctx = this.ctx!;
+    for (const [mult, v] of [
+      [1, vol],
+      [2.01, vol * 0.5],
+      [3.02, vol * 0.2],
+    ] as const) {
+      const o = ctx.createOscillator();
+      o.type = "sine";
+      o.frequency.value = freq * mult;
+      const g = this.env(t, 0.004, 0.7, v);
+      o.connect(g).connect(this.sfxBus!);
+      o.start(t);
+      o.stop(t + 0.8);
+    }
+  }
+
+  /** Cloche de navire : partiels inharmoniques à longue résonance */
+  private bell(bus: AudioNode, vol: number, t = this.ctx!.currentTime) {
+    const ctx = this.ctx!;
+    const base = 660;
+    for (const [mult, v, decay] of [
+      [1, vol, 2.4],
+      [2.76, vol * 0.5, 1.4],
+      [5.4, vol * 0.25, 0.8],
+      [0.5, vol * 0.3, 2.8],
+    ] as const) {
+      const o = ctx.createOscillator();
+      o.type = "sine";
+      o.frequency.value = base * mult;
+      const g = this.env(t, 0.004, decay, v);
+      o.connect(g).connect(bus);
+      o.start(t);
+      o.stop(t + decay + 0.1);
+    }
+  }
+
+  private woodKnock(t: number, vol: number, freq = 480) {
     const ctx = this.ctx!;
     const o = ctx.createOscillator();
     o.type = "triangle";
-    o.frequency.value = freq;
-    const o2 = ctx.createOscillator();
-    o2.type = "sine";
-    o2.frequency.value = freq * 2.01;
-    const g = this.env(t, 0.004, 0.9, vol);
-    const g2 = this.env(t, 0.004, 0.35, vol * 0.4);
-    o.connect(g).connect(bus);
-    o2.connect(g2).connect(bus);
+    o.frequency.setValueAtTime(freq, t);
+    o.frequency.exponentialRampToValueAtTime(freq * 0.7, t + 0.08);
+    const g = this.env(t, 0.002, 0.09, vol);
+    const bp = ctx.createBiquadFilter();
+    bp.type = "bandpass";
+    bp.frequency.value = freq * 1.5;
+    bp.Q.value = 3;
+    o.connect(bp).connect(g).connect(this.sfxBus!);
     o.start(t);
-    o2.start(t);
-    o.stop(t + 1);
-    o2.stop(t + 0.5);
+    o.stop(t + 0.12);
   }
 
-  private pad(freq: number, t: number, dur: number, vol: number) {
-    const ctx = this.ctx!;
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.linearRampToValueAtTime(vol, t + 0.25);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    const lp = ctx.createBiquadFilter();
-    lp.type = "lowpass";
-    lp.frequency.value = 1800;
-    for (const det of [-6, 6]) {
-      const o = ctx.createOscillator();
-      o.type = "sawtooth";
-      o.frequency.value = freq;
-      o.detune.value = det;
-      o.connect(lp);
-      o.start(t);
-      o.stop(t + dur + 0.1);
-    }
-    lp.connect(g).connect(this.sfxBus!);
+  private droplet(t: number, freq: number, vol: number) {
+    const o = this.ctx!.createOscillator();
+    o.type = "sine";
+    o.frequency.setValueAtTime(freq, t);
+    o.frequency.exponentialRampToValueAtTime(freq * 2.2, t + 0.05);
+    const g = this.env(t, 0.003, 0.07, vol);
+    o.connect(g).connect(this.sfxBus!);
+    o.start(t);
+    o.stop(t + 0.1);
   }
 
-  private shimmer(t: number) {
-    for (let i = 0; i < 6; i++) {
-      this.tone("sine", 2400 + Math.random() * 2200, t + i * 0.035, 0.12, 0.025);
-    }
+  private bubbles(t: number, count: number) {
+    for (let i = 0; i < count; i++) this.droplet(t + i * (0.05 + Math.random() * 0.08), 500 + Math.random() * 700, 0.05);
+  }
+
+  private sparkle(t: number, count: number) {
+    for (let i = 0; i < count; i++) this.tone("sine", 2600 + Math.random() * 2200, t + i * 0.04, 0.12, 0.022);
+  }
+
+  private splash(t: number, vol: number) {
+    this.noiseSweep(t, 0.45, 2400, 400, vol);
+    this.bubbles(t + 0.15, 4);
   }
 
   private thud(t: number, freq: number, dur: number, vol: number) {
@@ -441,12 +470,12 @@ export class SoundEngine {
     n.buffer = this.noiseBuffer;
     const bp = ctx.createBiquadFilter();
     bp.type = "bandpass";
-    bp.Q.value = 1.2;
+    bp.Q.value = 1.1;
     bp.frequency.setValueAtTime(from, t);
     bp.frequency.exponentialRampToValueAtTime(to, t + dur);
     const g = ctx.createGain();
     g.gain.setValueAtTime(0.0001, t);
-    g.gain.linearRampToValueAtTime(vol, t + dur * 0.3);
+    g.gain.linearRampToValueAtTime(vol, t + dur * 0.25);
     g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     n.connect(bp).connect(g).connect(this.sfxBus!);
     n.start(t, Math.random());

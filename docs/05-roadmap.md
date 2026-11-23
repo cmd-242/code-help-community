@@ -12,7 +12,9 @@ Durées indicatives pour une petite équipe (1 à 2 développeurs). Chaque phase
 - [ ] Première migration, script de seed, client `src/server/db.ts`.
 - [ ] Authentification (e-mail + Google) et rôles.
 - [ ] `proxy.ts`, `src/server/permissions.ts` et tests des règles de visibilité.
-- [x] Système de design « Donjon », moteur sonore, espace étudiant (voir `docs/06`).
+- [x] Univers Archipel (design, sons, animations) et structure multi-univers (voir `docs/06`).
+- [ ] Univers Néo-Métro pour les parcours avancés, passage du port à la ville.
+- [ ] Collection de cartes (une commande maîtrisée = une carte), commune aux deux univers.
 - [ ] Mise en page des espaces enseignant, mentor, admin.
 - [ ] Intégration continue (GitHub Actions : lint, types, tests, build).
 
@@ -22,7 +24,7 @@ Objectif : n'importe qui peut créer un compte, choisir un parcours et progresse
 
 - [ ] Comptes (e-mail + Google), profil, pseudonyme.
 - [ ] Progression enregistrée en base (`TrackEnrollment`, `NotionProgress`, `StageAttempt`, `XpEvent`) à la place du stockage local de la démo.
-- [x] Déblocage libre : un étage s'ouvre dès que le gardien précédent est vaincu.
+- [x] Déblocage libre : une notion s'ouvre dès que le gardien précédent est vaincu.
 - [x] Objectif hebdomadaire personnel, série de jours, XP, niveaux, étoiles (en démo).
 - [ ] Badges.
 - [x] Moteurs de jeu : QCM, Parsons, texte à trous, prédire la sortie.
@@ -30,7 +32,7 @@ Objectif : n'importe qui peut créer un compte, choisir un parcours et progresse
 - [x] Grand challenge : tirage aléatoire et correction côté serveur, chronomètre, combat de gardien.
 - [ ] Grand challenge : tentatives enregistrées, délai de recharge après une défaite, rattrapage ciblé.
 - [ ] Catalogue : choisir parmi plusieurs royaumes et parcours.
-- [ ] Contenu Linux débutant complet (étages 1 à 3 rédigés, 4 à 6 à écrire), puis Python débutant.
+- [ ] Contenu Linux débutant complet (îles 1 à 3 rédigées, 4 à 6 à écrire), puis Python débutant.
 - [ ] Rappels choisis par l'apprenant (notifications, e-mail).
 
 **Critère de sortie** : 40 % des nouveaux apprenants encore actifs après 4 semaines.

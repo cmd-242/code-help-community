@@ -72,7 +72,7 @@
 │  ├─ app/
 │  │  ├─ (public)/             # accueil, à propos, vérification de certificat
 │  │  ├─ (auth)/               # connexion, inscription, rejoindre une classe
-│  │  ├─ (etudiant)/app/       # espace de l'apprenant (libre ou en classe) : camp, carte, jeu, grimoire, gardien
+│  │  ├─ (etudiant)/app/       # espace de l'apprenant : carte, notion/[slug] (etape, cours, gardien)
 │  │  ├─ (enseignant)/prof/    # classes, planning, suivi, contenus
 │  │  ├─ (mentor)/mentor/      # équipes, revues
 │  │  ├─ (admin)/admin/        # établissement, utilisateurs
@@ -90,6 +90,7 @@
 │  │  ├─ gamification/
 │  │  ├─ suivi/
 │  │  └─ ...                   # chacun : components/, actions.ts, queries.ts, schemas.ts
+│  ├─ universes/               # habillages de jeu : archipel/ (puis metro/)
 │  ├─ games/                   # moteurs de mini-jeux
 │  │  ├─ registry.ts           # type → { Composant, schéma Zod, correcteur }
 │  │  ├─ qcm/

@@ -1,28 +1,32 @@
 import localFont from "next/font/local";
 
 // Polices embarquées dans le dépôt (pas d'appel réseau au build).
-export const grenze = localFont({
-  variable: "--font-grenze",
+
+/** Titres et boutons : arrondie, chaleureuse, lisible sur petit écran */
+export const fredoka = localFont({
+  variable: "--font-fredoka",
   display: "swap",
   src: [
-    { path: "../fonts/grenze-gotisch-latin-500-normal.woff2", weight: "500" },
-    { path: "../fonts/grenze-gotisch-latin-700-normal.woff2", weight: "700" },
-    { path: "../fonts/grenze-gotisch-latin-900-normal.woff2", weight: "900" },
+    { path: "../fonts/fredoka-latin-500-normal.woff2", weight: "500" },
+    { path: "../fonts/fredoka-latin-600-normal.woff2", weight: "600" },
+    { path: "../fonts/fredoka-latin-700-normal.woff2", weight: "700" },
   ],
 });
 
-export const alegreya = localFont({
-  variable: "--font-alegreya",
+/** Texte courant */
+export const nunito = localFont({
+  variable: "--font-nunito",
   display: "swap",
   src: [
-    { path: "../fonts/alegreya-sans-latin-400-normal.woff2", weight: "400" },
-    { path: "../fonts/alegreya-sans-latin-400-italic.woff2", weight: "400", style: "italic" },
-    { path: "../fonts/alegreya-sans-latin-500-normal.woff2", weight: "500" },
-    { path: "../fonts/alegreya-sans-latin-700-normal.woff2", weight: "700" },
-    { path: "../fonts/alegreya-sans-latin-800-normal.woff2", weight: "800" },
+    { path: "../fonts/nunito-latin-400-normal.woff2", weight: "400" },
+    { path: "../fonts/nunito-latin-400-italic.woff2", weight: "400", style: "italic" },
+    { path: "../fonts/nunito-latin-600-normal.woff2", weight: "600" },
+    { path: "../fonts/nunito-latin-700-normal.woff2", weight: "700" },
+    { path: "../fonts/nunito-latin-800-normal.woff2", weight: "800" },
   ],
 });
 
+/** Code et commandes uniquement */
 export const jetbrains = localFont({
   variable: "--font-jetbrains",
   display: "swap",

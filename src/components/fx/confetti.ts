@@ -3,8 +3,8 @@
 import confetti from "canvas-confetti";
 
 const palettes = {
-  gold: ["#ffd27a", "#f2a541", "#fff1c1", "#c47a22"],
-  moss: ["#7fe0c2", "#b5f5df", "#ffd27a", "#3e8f7a"],
+  gold: ["#ffcf6b", "#e8503f", "#2ec4d6", "#fff8ec"],
+  fresh: ["#6bcb77", "#2ec4d6", "#ffcf6b", "#fff8ec"],
 };
 
 /** Pluie d'étincelles (désactivée si l'utilisateur réduit les animations) */

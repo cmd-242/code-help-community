@@ -12,13 +12,13 @@ Les éléments marqués ✨ sont des idées ajoutées au-delà de la vision de d
 - **[MVP]** Inscription / connexion par e-mail + mot de passe, et connexion Google. Aucune école requise.
 - **[MVP]** Profil : pseudonyme (affiché dans les classements), avatar, langue, fuseau horaire.
 - **[MVP]** Rôles cumulables : apprenant (tout le monde), mentor, enseignant, responsable d'établissement, super-admin.
-- **[V2]** ✨ **Test de positionnement** à l'inscription : quelques questions pour proposer le bon royaume et le bon étage de départ (un développeur confirmé ne recommence pas à zéro).
+- **[V2]** ✨ **Test de positionnement** à l'inscription : quelques questions pour proposer le bon parcours, le bon point de départ et le bon univers (Archipel ou Néo-Métro) (un développeur confirmé ne recommence pas à zéro).
 - **[MVP]** Données personnelles : consentement, export et suppression du compte.
 
 ## B. Apprentissage libre (autodidactes) : le mode par défaut
 
 - **[MVP]** Choisir librement ses royaumes et ses parcours, en suivre plusieurs en parallèle.
-- **[MVP]** Progression **sans planning** : un étage s'ouvre dès que le gardien précédent est vaincu.
+- **[MVP]** Progression **sans planning** : une notion s'ouvre dès que le gardien précédent est vaincu.
 - **[MVP]** **Objectif hebdomadaire personnel** choisi par l'apprenant (tranquille, régulier, acharné) avec jauge de la semaine. *(fait en démo)*
 - **[MVP]** Série de jours actifs, XP, niveaux, étoiles : la motivation ne dépend pas d'un enseignant.
 - **[V2]** ✨ Rappels doux choisis par l'apprenant (« ton objectif est à 60 %, il reste 2 jours ») par notification ou e-mail, avec heures de silence.
