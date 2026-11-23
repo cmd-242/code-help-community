@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getTrack, notionSummaries } from "@/features/catalog/queries";
+import { GuestBanner } from "@/features/account/guest-banner";
 import { CollectionTeaser } from "@/features/collection/collection-teaser";
 import { NextStop } from "@/features/map/next-stop";
 import { RhythmPanel } from "@/features/map/rhythm-panel";
@@ -12,7 +13,6 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function CampPage() {
-  const t = await getTranslations("camp");
   const track = getTrack();
   if (!track) return null;
   const notions = notionSummaries(track);
@@ -20,6 +20,7 @@ export default async function CampPage() {
   return (
     <div className="mx-auto max-w-3xl px-3 pb-24 pt-5">
       <NextStop notions={notions} />
+      <GuestBanner />
       <RhythmPanel />
       <CollectionTeaser cards={track.cards} positions={Object.fromEntries(track.notions.map((n) => [n.slug, n.position]))} />
 
@@ -34,7 +35,6 @@ export default async function CampPage() {
         <div className="mt-5">
           <ArchipelagoMap notions={notions} />
         </div>
-        <p className="mx-auto mt-4 max-w-md text-center text-sm text-muted">{t("demoNotice")}</p>
       </section>
     </div>
   );

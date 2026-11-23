@@ -33,11 +33,15 @@ Traçabilité : StudentOverride, AuditLog
 
 ## Points de conception
 
+- **Contenu en fichiers, progression en base** : le contenu (`content/`) est versionné avec le code. La progression le référence par identifiant (`notionSlug`, `stageId`, `lessonId`, `cardId`) **sans clé étrangère**, pour que modifier le contenu ne casse jamais l'historique.
+- **Authentification** : tables `Session`, `Account`, `Verification` de Better Auth ; `User` porte aussi `emailVerified` et `image`.
+
 - **Apprentissage libre d'abord** : `User.institutionId`, `Classroom.levelId` et `Team.classroomId` sont optionnels. Un apprenant n'a besoin que d'un compte et d'une `TrackEnrollment`.
 - **Mode par parcours** : `TrackEnrollment.mode` dit si le planning d'une classe s'applique à ce parcours. Sans planning (`FREE`), une notion s'ouvre dès que le gardien précédent est vaincu.
 - **Progression indépendante de la classe** : `NotionProgress`, `StageAttempt`, `XpEvent` sont rattachés à l'apprenant. Quitter ou rejoindre une classe ne fait rien perdre.
 - **Objectif hebdomadaire** : `User.weeklyGoalXp`, comparé aux `XpEvent` de la semaine.
-- **Collection de cartes** : `UserCard` (carte possédée, brillante ou non), `SkillHit` (bonnes réponses par compétence, pour la maîtrise), `BoosterOpening` (un coffre par semaine). Ajoutés avec les comptes.
+- **Collection de cartes** : `UserCard` (carte possédée, brillante ou non), `SkillHit` (bonnes réponses par compétence, pour la maîtrise), `BoosterOpening` (un coffre par semaine).
+- **Série** : `ActiveDay` (un enregistrement par jour actif).
 
 - **Salles à plusieurs épreuves** : une étape (`Stage`) contient une liste de rencontres, chacune avec son propre type de mini-jeu ; `Stage.config` stocke donc `{ encounters: [...] }` et `Stage.gameType` vaut `"encounters"`.
 - **Exercices génériques** : `Stage.config` et `Question.config` sont du JSON dont la forme dépend de `gameType`. Chaque moteur de jeu fournit son schéma Zod pour valider ce JSON.
@@ -90,15 +94,23 @@ model User {
   institutionId String?
   email         String    @unique
   name          String
-  pseudonym     String?   // affiché dans les classements si l'étudiant le souhaite
-  avatarUrl     String?
+  emailVerified Boolean   @default(false)
+  image         String?
+  pseudonym     String?   // affiché dans les classements si l'apprenant le souhaite
   role          Role      @default(STUDENT)
   weeklyGoalXp  Int       @default(250) // objectif hebdomadaire choisi par l'apprenant libre
   timeZone      String    @default("Africa/Lagos")
   createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
   lastActiveAt  DateTime?
 
   institution     Institution?       @relation(fields: [institutionId], references: [id])
+  sessions        Session[]
+  accounts        Account[]
+  userCards       UserCard[]
+  skillHits       SkillHit[]
+  boosterOpenings BoosterOpening[]
+  activeDays      ActiveDay[]
   trackEnrollments TrackEnrollment[]
   enrollments     Enrollment[]
   teaching        ClassroomTeacher[]
@@ -110,12 +122,53 @@ model User {
   lessonViews     LessonView[]
   xpEvents        XpEvent[]
   badges          UserBadge[]
-  streak          Streak?
   notifications   Notification[]
   overrides       StudentOverride[]  @relation("OverrideStudent")
   grantedOverrides StudentOverride[] @relation("OverrideGrantedBy")
   posts           ForumPost[]
   authoredNotions Notion[]           @relation("NotionAuthor")
+}
+
+// ─────────────── Authentification (Better Auth) ───────────────
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  userId                String
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Level {
@@ -249,7 +302,6 @@ model Track {
   domain      Domain       @relation(fields: [domainId], references: [id])
   institution Institution? @relation(fields: [institutionId], references: [id])
   notions     Notion[]
-  enrollments TrackEnrollment[]
   classrooms  ClassroomTrack[]
 
   @@unique([domainId, slug])
@@ -274,7 +326,6 @@ model Notion {
   questions     Question[]
   challenge     Challenge?
   releases      NotionRelease[]
-  progress      NotionProgress[]
   forumThreads  ForumThread[]
 
   @@unique([trackId, slug])
@@ -300,20 +351,8 @@ model Lesson {
   minutes  Int?   // durée estimée
 
   notion Notion       @relation(fields: [notionId], references: [id])
-  views  LessonView[]
 }
 
-model LessonView {
-  lessonId    String
-  userId      String
-  completedAt DateTime?
-  secondsSpent Int     @default(0)
-
-  lesson Lesson @relation(fields: [lessonId], references: [id])
-  user   User   @relation(fields: [userId], references: [id])
-
-  @@id([lessonId, userId])
-}
 
 // Côté ouvert : jeu
 model Stage {
@@ -328,25 +367,8 @@ model Stage {
   xp       Int     @default(10)
 
   notion   Notion         @relation(fields: [notionId], references: [id])
-  attempts StageAttempt[]
 }
 
-model StageAttempt {
-  id         String   @id @default(cuid())
-  stageId    String
-  userId     String
-  success    Boolean
-  stars      Int      @default(0)
-  hintsUsed  Int      @default(0)
-  durationMs Int
-  answer     Json?
-  createdAt  DateTime @default(now())
-
-  stage Stage @relation(fields: [stageId], references: [id])
-  user  User  @relation(fields: [userId], references: [id])
-
-  @@index([userId, stageId])
-}
 
 // Banque de questions pour les grands challenges
 model Question {
@@ -367,8 +389,7 @@ model Challenge {
   questionCount   Int    @default(10)
   durationMinutes Int    @default(30)
 
-  notion   Notion             @relation(fields: [notionId], references: [id])
-  attempts ChallengeAttempt[]
+  notion Notion @relation(fields: [notionId], references: [id])
 }
 
 // ─────────────── Inscription à un parcours ───────────────
@@ -383,16 +404,15 @@ enum LearningMode {
 // la progression est rattachée à l'apprenant, pas à la classe.
 model TrackEnrollment {
   userId      String
-  trackId     String
+  trackSlug   String // le parcours est défini dans content/
   mode        LearningMode @default(FREE)
   classroomId String? // renseigné si mode = CLASSROOM
   startedAt   DateTime     @default(now())
 
-  user      User       @relation(fields: [userId], references: [id])
-  track     Track      @relation(fields: [trackId], references: [id])
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   classroom Classroom? @relation(fields: [classroomId], references: [id])
 
-  @@id([userId, trackId])
+  @@id([userId, trackSlug])
 }
 
 // ─────────────── Planning hebdomadaire (option classe) ───────────────
@@ -432,6 +452,9 @@ model StudentOverride {
 }
 
 // ─────────────── Progression et évaluation ───────────────
+// Le contenu pédagogique vit dans `content/` (versionné avec le code). La progression
+// le référence par identifiant (slug de notion, id d'étape, de leçon, de carte),
+// sans clé étrangère : modifier le contenu ne casse jamais l'historique.
 
 enum NotionStatus {
   LOCKED
@@ -444,17 +467,31 @@ enum NotionStatus {
 }
 
 model NotionProgress {
-  userId    String
-  notionId  String
-  status    NotionStatus @default(LOCKED)
-  bestScore Int?
-  passedAt  DateTime?
-  updatedAt DateTime     @updatedAt
+  userId     String
+  notionSlug String
+  status     NotionStatus @default(LOCKED)
+  bestScore  Int?
+  passedAt   DateTime?
+  updatedAt  DateTime     @updatedAt
 
-  user   User   @relation(fields: [userId], references: [id])
-  notion Notion @relation(fields: [notionId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@id([userId, notionId])
+  @@id([userId, notionSlug])
+}
+
+model StageAttempt {
+  id         String   @id @default(cuid())
+  userId     String
+  stageId    String
+  success    Boolean
+  stars      Int      @default(0)
+  hintsUsed  Int      @default(0)
+  durationMs Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, stageId])
 }
 
 enum AttemptStatus {
@@ -466,22 +503,21 @@ enum AttemptStatus {
 
 model ChallengeAttempt {
   id          String        @id @default(cuid())
-  challengeId String
   userId      String
-  status      AttemptStatus @default(IN_PROGRESS)
-  questionIds String[]      // tirage aléatoire figé pour cette tentative
+  notionSlug  String
+  status      AttemptStatus @default(GRADED)
+  questionIds String[]
   answers     Json          @default("{}")
   score       Int?
   passed      Boolean?
-  skillScores Json?         // { "boucles": 80, "conditions": 40 }
+  skillScores Json?
   startedAt   DateTime      @default(now())
   submittedAt DateTime?
 
-  challenge       Challenge        @relation(fields: [challengeId], references: [id])
-  user            User             @relation(fields: [userId], references: [id])
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   integrityEvents IntegrityEvent[]
 
-  @@index([userId, challengeId])
+  @@index([userId, notionSlug])
 }
 
 model IntegrityEvent {
@@ -491,7 +527,64 @@ model IntegrityEvent {
   details   Json?
   at        DateTime @default(now())
 
-  attempt ChallengeAttempt @relation(fields: [attemptId], references: [id])
+  attempt ChallengeAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+}
+
+model LessonView {
+  userId       String
+  lessonId     String
+  completedAt  DateTime?
+  secondsSpent Int       @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, lessonId])
+}
+
+// Jours où l'apprenant a été actif (pour la série)
+model ActiveDay {
+  userId String
+  day    String // AAAA-MM-JJ
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, day])
+}
+
+// ─────────────── Collection de cartes ───────────────
+
+model UserCard {
+  userId     String
+  cardId     String // id de carte du contenu (compétence ou "guardian:<slug>")
+  shiny      Boolean  @default(false)
+  obtainedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, cardId])
+}
+
+// Bonnes réponses par compétence (maîtrise des cartes)
+model SkillHit {
+  userId String
+  skill  String
+  count  Int    @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, skill])
+}
+
+// Un coffre par semaine (week = lundi AAAA-MM-JJ)
+model BoosterOpening {
+  userId   String
+  week     String
+  cardId   String?
+  openedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, week])
 }
 
 // ─────────────── Gamification ───────────────
@@ -500,11 +593,11 @@ model XpEvent {
   id        String   @id @default(cuid())
   userId    String
   amount    Int
-  reason    String   // "STAGE_COMPLETED", "CHALLENGE_PASSED", "FORUM_ANSWER_ACCEPTED"...
+  reason    String   // "stage", "guardian", "lesson", "booster", "import"…
   refId     String?
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
 }
@@ -529,15 +622,6 @@ model UserBadge {
   @@id([userId, badgeId])
 }
 
-model Streak {
-  userId         String    @id
-  current        Int       @default(0)
-  longest        Int       @default(0)
-  freezes        Int       @default(0)
-  lastActiveDate DateTime?
-
-  user User @relation(fields: [userId], references: [id])
-}
 
 // ─────────────── Communication ───────────────
 

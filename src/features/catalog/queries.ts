@@ -68,3 +68,28 @@ export function drawGuardianQuestions(notion: Notion, random: () => number = Mat
 export function cardsOfNotion(track: Track, notionSlug: string) {
   return track.cards.filter((c) => c.notion === notionSlug);
 }
+
+// ─── Recherches utilisées par le serveur pour valider la progression ───
+
+export function findStageById(stageId: string) {
+  for (const track of tracks)
+    for (const notion of track.notions) {
+      const stage = notion.stages.find((s) => s.id === stageId);
+      if (stage) return { track, notion, stage };
+    }
+  return undefined;
+}
+
+export function findLessonById(lessonId: string) {
+  for (const track of tracks)
+    for (const notion of track.notions) if (notion.lessons.some((l) => l.id === lessonId)) return { track, notion };
+  return undefined;
+}
+
+export function findCardById(cardId: string) {
+  for (const track of tracks) {
+    const card = track.cards.find((c) => c.id === cardId);
+    if (card) return { track, card };
+  }
+  return undefined;
+}
