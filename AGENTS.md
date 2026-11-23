@@ -1,3 +1,13 @@
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
+
 # Instructions pour le projet Code Help Community
 
 Ce fichier s'adresse aux développeurs **et** aux assistants IA (Claude, Copilot, Cursor…) qui travaillent sur ce dépôt. Lis-le avant toute modification.
@@ -18,11 +28,12 @@ Documentation détaillée dans `docs/` :
 3. `docs/03-architecture-nextjs.md` — pile technique et règles d'architecture
 4. `docs/04-modele-de-donnees.md` — schéma Prisma de référence
 5. `docs/05-roadmap.md` — phases et cases à cocher
+6. `docs/06-design-donjon.md` — univers visuel, son, animations
 
 ## Pile technique (ne pas en changer sans décision écrite)
 
 - **Next.js 16** App Router, **tout** se fait dans cette application (pas de back-end séparé).
-- TypeScript **strict**, React 19, Tailwind CSS v4, shadcn/ui.
+- TypeScript **strict**, React 19, Tailwind CSS v4, **système de design « Donjon » maison** (`docs/06-design-donjon.md`), Motion pour les animations. shadcn/ui seulement pour les futurs écrans d'administration.
 - PostgreSQL + **Prisma 7** (`prisma.config.ts`, client généré dans `src/generated/prisma`).
 - Better Auth (e-mail + Google), Zod, React Hook Form, Zustand (état du jeu), next-intl.
 - Exécution du code étudiant **dans le navigateur** (Web Worker, Pyodide, PGlite, isomorphic-git, shell simulé).
@@ -36,13 +47,11 @@ Avant d'utiliser une API de Next.js, vérifie la documentation correspondant à 
 pnpm install
 docker compose up -d          # Postgres + MinIO en local
 pnpm db:migrate               # prisma migrate dev
-pnpm db:seed                  # données de démo
 pnpm dev                      # http://localhost:3000
 pnpm lint && pnpm typecheck && pnpm test   # à lancer avant chaque commit
-pnpm test:e2e                 # Playwright
 ```
 
-(Ces scripts sont à créer en phase 0 ; garde ces noms.)
+À venir : `pnpm db:seed` et `pnpm test:e2e` (Playwright). Le contenu pédagogique vit dans `content/` et est validé par `tests/unit/content.test.ts`.
 
 ## Règles obligatoires
 
@@ -69,6 +78,8 @@ pnpm test:e2e                 # Playwright
 16. Pas de `any`. Les types viennent de Prisma et de Zod (`z.infer`).
 17. Toute règle métier (déblocage, calcul de score, attribution de badge, série) a des **tests unitaires**.
 18. Mobile d'abord : tester chaque écran à 360 px de large. Accessibilité : navigation clavier, `aria-*`, contrastes.
+18 bis. Sons via `useSound()` uniquement (synthèse Web Audio, jamais de fichier audio) ; toujours respecter `prefers-reduced-motion`.
+18 ter. Avec `cacheComponents`, ne jamais lire l'heure (`new Date()`) ni `Math.random()` pendant le rendu : le faire après hydratation, dans un gestionnaire d'événement ou dans une Server Action.
 
 ### Git
 19. Branches : `feat/…`, `fix/…`, `docs/…`, `chore/…`. Pas de commit direct sur `main`.

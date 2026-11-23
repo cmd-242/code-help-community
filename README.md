@@ -31,7 +31,18 @@ Une seule application **Next.js 16** (App Router) pour le front, le back et l'AP
 | [Architecture Next.js](docs/03-architecture-nextjs.md) | Pile technique, organisation du code, règles |
 | [Modèle de données](docs/04-modele-de-donnees.md) | Schéma Prisma de référence |
 | [Feuille de route](docs/05-roadmap.md) | Phases et tâches |
+| [Univers Donjon](docs/06-design-donjon.md) | Design, son, animations |
+
+## Lancer le projet
+
+```bash
+pnpm install
+pnpm dev            # http://localhost:3000
+pnpm test           # tests unitaires
+```
+
+La version actuelle fonctionne sans base de données : la progression est stockée dans le navigateur (mode démo).
 
 ## État
 
-📐 Phase de cadrage terminée. Prochaine étape : **phase 0** (initialisation du projet Next.js) — voir la [feuille de route](docs/05-roadmap.md).
+Phase 0 en cours : l'espace étudiant est jouable (accueil, carte du donjon, 3 étages Linux, mini-jeux, grimoire, combats de gardiens, son et animations). Prochaine étape : comptes, classes et base de données — voir la [feuille de route](docs/05-roadmap.md).

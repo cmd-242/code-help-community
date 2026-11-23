@@ -4,13 +4,16 @@ Durées indicatives pour une petite équipe (1 à 2 développeurs). Chaque phase
 
 ## Phase 0 — Fondations (semaines 1-2)
 
-- [ ] Initialiser Next.js 16 (TypeScript, Tailwind v4, App Router, `src/`).
-- [ ] ESLint, Prettier, Husky, Vitest, Playwright.
-- [ ] Docker Compose local : PostgreSQL + MinIO.
-- [ ] Prisma 7 : schéma (`docs/04`), première migration, script de seed.
+- [x] Initialiser Next.js 16 (TypeScript, Tailwind v4, App Router, `src/`).
+- [x] ESLint, Vitest.
+- [ ] Prettier, Husky, Playwright.
+- [x] Docker Compose local : PostgreSQL + MinIO.
+- [x] Prisma 7 : schéma et `prisma.config.ts`.
+- [ ] Première migration, script de seed, client `src/server/db.ts`.
 - [ ] Authentification (e-mail + Google) et rôles.
 - [ ] `proxy.ts`, `src/server/permissions.ts` et tests des règles de visibilité.
-- [ ] shadcn/ui, thème, mise en page des 4 espaces (étudiant, enseignant, mentor, admin).
+- [x] Système de design « Donjon », moteur sonore, espace étudiant (voir `docs/06`).
+- [ ] Mise en page des espaces enseignant, mentor, admin.
 - [ ] Intégration continue (GitHub Actions : lint, types, tests, build).
 
 ## Phase 1 — MVP « une classe pilote » (semaines 3-10)
@@ -19,14 +22,17 @@ Objectif : une classe réelle utilise la plateforme pendant 4 semaines sur **un 
 
 - [ ] Organisation : établissement, niveaux, classes, code d'invitation, import CSV.
 - [ ] Catalogue : domaines, parcours, notions, leçons MDX.
-- [ ] Moteurs de jeu : QCM, Parsons, texte à trous, prédire la sortie, écrire du code (Python via Pyodide), terminal Linux simulé.
-- [ ] Carte de progression, étoiles, XP, niveaux, badges de base, série quotidienne.
+- [x] Moteurs de jeu : QCM, Parsons, texte à trous, prédire la sortie.
+- [ ] Moteurs : écrire du code (Python via Pyodide), terminal Linux simulé.
+- [x] Carte de progression, étoiles, XP, niveaux, série quotidienne (stockés sur l'appareil en démo).
+- [ ] Badges ; progression enregistrée en base.
 - [ ] Planning hebdomadaire par classe et déblocage automatique.
-- [ ] Grand challenge : tirage aléatoire, chronomètre, sauvegarde auto, correction, rattrapage.
+- [x] Grand challenge : tirage aléatoire et correction côté serveur, chronomètre, combat de gardien.
+- [ ] Grand challenge : tentatives enregistrées en base, sauvegarde auto, rattrapage ciblé.
 - [ ] Dérogations individuelles.
 - [ ] Tableau de bord enseignant + fiche étudiant + alertes de décrochage.
 - [ ] Annonces de classe.
-- [ ] Contenu d'un parcours complet (6 à 8 notions) rédigé.
+- [ ] Contenu d'un parcours complet (6 à 8 notions) rédigé. *Linux débutant : étages 1 à 3 rédigés, 4 à 6 à écrire.*
 
 **Critère de sortie** : > 70 % des étudiants pilotes actifs chaque semaine pendant 4 semaines.
 

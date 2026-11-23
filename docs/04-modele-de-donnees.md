@@ -27,6 +27,7 @@ Traçabilité : StudentOverride, AuditLog
 
 ## Points de conception
 
+- **Salles à plusieurs épreuves** : une étape (`Stage`) contient une liste de rencontres, chacune avec son propre type de mini-jeu ; `Stage.config` stocke donc `{ encounters: [...] }` et `Stage.gameType` vaut `"encounters"`.
 - **Exercices génériques** : `Stage.config` et `Question.config` sont du JSON dont la forme dépend de `gameType`. Chaque moteur de jeu fournit son schéma Zod pour valider ce JSON.
 - **Tests cachés** : `Question.config` peut contenir les réponses et tests cachés. Il ne doit **jamais** être envoyé tel quel au navigateur ; une fonction `toPublicQuestion()` retire ces champs.
 - **Tirage figé** : `ChallengeAttempt.questionIds` mémorise les questions tirées pour une tentative, afin que recharger la page ne change pas le sujet.
