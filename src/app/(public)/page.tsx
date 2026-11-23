@@ -50,16 +50,16 @@ export default async function HomePage() {
           <Embers density={0.4} />
         </div>
 
-        {/* Une semaine : c'est une vraie séquence, d'où la numérotation */}
+        {/* La boucle de progression : c'est une vraie séquence, d'où la numérotation */}
         <section className="relative mx-auto max-w-4xl px-5 py-24" aria-labelledby="week-title">
           <h2 id="week-title" className="carved text-5xl text-torch-bright torchlight">
             {t("weekTitle")}
           </h2>
           <ol className="mt-12 grid gap-10 sm:grid-cols-3 sm:gap-6">
             {[
-              { icon: <DoorIcon className="size-9" />, k: "monday" },
-              { icon: <ScrollIcon className="size-9" />, k: "week" },
-              { icon: <SkullIcon className="size-9" />, k: "friday" },
+              { icon: <DoorIcon className="size-9" />, k: "choose" },
+              { icon: <ScrollIcon className="size-9" />, k: "explore" },
+              { icon: <SkullIcon className="size-9" />, k: "guardian" },
             ].map((step, i) => (
               <li key={step.k} className="relative">
                 <span className="font-display text-7xl leading-none text-stone-edge">{i + 1}</span>

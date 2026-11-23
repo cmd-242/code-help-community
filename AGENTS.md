@@ -14,12 +14,16 @@ Ce fichier s'adresse aux développeurs **et** aux assistants IA (Claude, Copilot
 
 ## Contexte en 30 secondes
 
-Plateforme d'**apprentissage de l'informatique en jouant**, pour des étudiants peu motivés. Chaque semaine, l'enseignant **débloque des notions** pour sa classe. L'étudiant révise chez lui via :
-- un **côté ouvert** : un jeu en étapes (XP, étoiles, badges, séries) ;
-- un **côté fermé** : le cours et les consignes ;
-- puis un **grand challenge** qui valide la notion et ouvre la suivante.
+Plateforme **ouverte** d'apprentissage de l'informatique en jouant. **L'utilisateur de base est un apprenant libre (autodidacte), sans école ni enseignant** : il choisit ses parcours et progresse à son rythme. Les écoles, enseignants et mentors sont une **option** qui ajoute un rythme et un suivi, jamais une condition pour apprendre.
 
-Rôles : étudiant, enseignant (plusieurs classes possibles, il ne voit **que** ses classes), mentor (coache des équipes), responsable d'établissement, super-admin.
+Chaque notion (un « étage » du donjon) a :
+- un **côté ouvert** : un jeu en étapes (XP, étoiles, badges, séries) ;
+- un **côté fermé** : le cours (le grimoire) et les consignes ;
+- un **grand challenge** (le gardien) qui valide la notion et ouvre la suivante.
+
+Déblocage : **libre** par défaut (gardien précédent vaincu) ; **en classe** (option), le planning de l'enseignant s'ajoute.
+
+Rôles : apprenant (tout le monde), mentor, enseignant (plusieurs classes possibles, il ne voit **que** ses classes), responsable d'établissement, super-admin.
 Domaines : programmation (plusieurs langages), Linux, Git, réseaux, sécurité, AWS, Google Cloud… extensibles par contenu.
 
 Documentation détaillée dans `docs/` :
@@ -67,7 +71,8 @@ pnpm lint && pnpm typecheck && pnpm test   # à lancer avant chaque commit
 7. **Server Components par défaut**. `"use client"` seulement pour l'interactivité, le plus bas possible dans l'arbre.
 8. Lecture des données dans `features/<x>/queries.ts`, écriture dans `features/<x>/actions.ts`, logique métier dans `src/server/services/`. Pas de `fetch` vers sa propre API depuis un Server Component.
 9. Route Handlers (`app/api/`) uniquement pour SSE, cron, exports, webhooks.
-10. Le déblocage d'une notion est **calculé à la lecture** (dates du planning + prérequis + dérogations). Ne pas créer de cron pour débloquer.
+10. Le déblocage d'une notion est **calculé à la lecture** (`features/progression/unlock.ts`) : prérequis, plus dates du planning et dérogations **seulement en classe**. Ne pas créer de cron pour débloquer.
+10 bis. **Toute fonctionnalité doit marcher pour un apprenant libre** (sans établissement, sans classe, sans enseignant). Le cadre scolaire s'ajoute par-dessus et ne doit jamais devenir un prérequis.
 11. Les XP sont des **événements** (`XpEvent`), jamais un compteur qu'on incrémente.
 12. Nouveau type d'exercice = nouveau moteur dans `src/games/<type>/` déclaré dans `src/games/registry.ts` (schéma Zod + composant + correcteur pur). Nouveau domaine = **contenu uniquement**.
 13. Charger les modules lourds (Pyodide, xterm, React Flow, CodeMirror) avec `next/dynamic`.
@@ -91,9 +96,12 @@ pnpm lint && pnpm typecheck && pnpm test   # à lancer avant chaque commit
 
 | Terme (UI, français) | Modèle (code) | Définition |
 |---|---|---|
-| Établissement | `Institution` | École ou université |
+| Apprenant | `User` | Toute personne qui apprend, avec ou sans école |
+| Inscription à un parcours | `TrackEnrollment` | Parcours suivi, en mode libre (`FREE`) ou en classe (`CLASSROOM`) |
+| Guilde | `Team` (`GUILD`) | Équipe ouverte d'apprenants libres |
+| Établissement | `Institution` | École ou université (optionnel) |
 | Niveau | `Level` | L1, L2, BTS1… |
-| Classe | `Classroom` | Groupe d'étudiants suivi par un ou plusieurs enseignants |
+| Classe | `Classroom` | Groupe d'étudiants suivi par un ou plusieurs enseignants (optionnel) |
 | Domaine | `Domain` | Python, Linux, Git, Réseau, Sécurité, AWS… |
 | Parcours | `Track` | Suite ordonnée de notions dans un domaine |
 | Notion | `Notion` | Unité hebdomadaire : jeu + cours + grand challenge |
@@ -102,4 +110,4 @@ pnpm lint && pnpm typecheck && pnpm test   # à lancer avant chaque commit
 | Grand challenge | `Challenge` | Test final qui valide la notion |
 | Déblocage | `NotionRelease` | Planning d'une notion pour une classe |
 | Dérogation | `StudentOverride` | Exception individuelle accordée par l'enseignant |
-| Équipe | `Team` | 3 à 6 étudiants, coachés par un mentor |
+| Équipe | `Team` (`CLASS_TEAM`) | 3 à 6 étudiants d'une classe, coachés par un mentor |

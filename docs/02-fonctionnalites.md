@@ -3,35 +3,47 @@
 Légende des priorités : **[MVP]** première version · **[V2]** deuxième phase · **[V3]** plus tard.
 Les éléments marqués ✨ sont des idées ajoutées au-delà de la vision de départ.
 
+**Principe** : tout fonctionne d'abord pour un **apprenant libre**, sans école ni enseignant. Les sections marquées *(option classe)* ajoutent le cadre scolaire par-dessus, sans rien retirer.
+
 ---
 
-## A. Comptes, organisation et accès
+## A. Comptes et profil
 
-- **[MVP]** Inscription / connexion par e-mail + mot de passe, et connexion Google.
-- **[MVP]** Rôles : étudiant, enseignant, mentor, responsable d'établissement, super-admin.
-- **[MVP]** Établissement → niveaux → classes → étudiants. Un enseignant peut avoir plusieurs classes sur plusieurs niveaux.
-- **[MVP]** Rejoindre une classe par **code d'invitation** ou lien (QR code affichable en salle). ✨
-- **[MVP]** Import CSV d'une liste d'étudiants par l'enseignant ou le responsable.
-- **[MVP]** Règle de visibilité stricte : un enseignant ne voit que les étudiants de ses classes ; un mentor que ses équipes.
-- **[V2]** Co-enseignement : plusieurs enseignants sur une même classe, avec droits différents (titulaire / assistant).
-- **[V2]** Années scolaires : archivage des classes en fin d'année, passage au niveau supérieur en un clic.
-- **[V3]** Multi-établissements (SaaS) avec isolation complète des données.
+- **[MVP]** Inscription / connexion par e-mail + mot de passe, et connexion Google. Aucune école requise.
+- **[MVP]** Profil : pseudonyme (affiché dans les classements), avatar, langue, fuseau horaire.
+- **[MVP]** Rôles cumulables : apprenant (tout le monde), mentor, enseignant, responsable d'établissement, super-admin.
+- **[V2]** ✨ **Test de positionnement** à l'inscription : quelques questions pour proposer le bon royaume et le bon étage de départ (un développeur confirmé ne recommence pas à zéro).
+- **[MVP]** Données personnelles : consentement, export et suppression du compte.
 
-## B. Catalogue pédagogique
+## B. Apprentissage libre (autodidactes) : le mode par défaut
+
+- **[MVP]** Choisir librement ses royaumes et ses parcours, en suivre plusieurs en parallèle.
+- **[MVP]** Progression **sans planning** : un étage s'ouvre dès que le gardien précédent est vaincu.
+- **[MVP]** **Objectif hebdomadaire personnel** choisi par l'apprenant (tranquille, régulier, acharné) avec jauge de la semaine. *(fait en démo)*
+- **[MVP]** Série de jours actifs, XP, niveaux, étoiles : la motivation ne dépend pas d'un enseignant.
+- **[V2]** ✨ Rappels doux choisis par l'apprenant (« ton objectif est à 60 %, il reste 2 jours ») par notification ou e-mail, avec heures de silence.
+- **[V2]** ✨ **Ligues publiques hebdomadaires** entre apprenants de niveau proche.
+- **[V2]** ✨ **Guildes** : petites équipes ouvertes d'apprenants libres qui progressent ensemble, avec un objectif commun.
+- **[V2]** ✨ **Mentors bénévoles** de la communauté qui accompagnent des guildes.
+- **[V2]** ✨ Parcours « carrière » qui enchaînent plusieurs royaumes (ex. *Administrateur système junior* : Linux → Réseaux → Git → Sécurité).
+- **[V3]** ✨ Projets libres guidés (construire un vrai script, un vrai serveur) pour le portfolio.
+- **[V3]** Rejoindre une classe plus tard **sans perdre sa progression**.
+
+## C. Catalogue pédagogique
 
 Structure : **Domaine → Parcours → Notion → (Jeu + Cours + Grand challenge)**.
 
 - **[MVP]** Domaines : Programmation, Linux, Git, Réseaux, Sécurité, Cloud (AWS, GCP)… extensibles sans code.
 - **[MVP]** Parcours (ex. « Python débutant », « Linux administrateur junior »), ordonnés en notions.
 - **[MVP]** Prérequis entre notions (graphe, pas seulement une liste).
-- **[MVP]** Éditeur de contenu enseignant (Markdown/MDX avec blocs interactifs : code exécutable, quiz, schéma).
+- **[MVP]** Éditeur de contenu pour les auteurs (équipe, enseignants, contributeurs) (Markdown/MDX avec blocs interactifs : code exécutable, quiz, schéma).
 - **[MVP]** Banque de questions par notion, réutilisable entre challenges.
 - **[V2]** Versionnement du contenu : modifier une notion ne casse pas les tentatives déjà faites.
 - **[V2]** Duplication et personnalisation d'un parcours existant par un enseignant.
-- **[V3]** ✨ Bibliothèque partagée entre enseignants (publier, noter, réutiliser les parcours des collègues).
+- **[V3]** ✨ Bibliothèque partagée : enseignants et contributeurs publient, notent et réutilisent des parcours.
 - **[V3]** ✨ Import de contenu depuis un dépôt Git (contenu « as code »).
 
-## C. Côté ouvert — le jeu
+## D. Côté ouvert — le jeu
 
 ### Structure du jeu
 - **[MVP]** Chaque notion est un **monde** composé d'**étapes** (niveaux) à difficulté croissante.
@@ -72,30 +84,35 @@ Chaque moteur est générique ; le contenu (JSON) dit quoi afficher et comment c
 - **[V2]** ✨ Monnaie virtuelle (gemmes) pour personnaliser l'avatar, acheter des gels de série ou des indices. Aucune valeur réelle.
 - **[V3]** ✨ Événements : « semaine Linux », double XP le week-end, défis inter-classes.
 
-## D. Côté fermé — le cours
+## E. Côté fermé — le cours
 
 - **[MVP]** Leçons par notion : texte, exemples de code exécutables, images, vidéos courtes (lien externe ou fichier compressé).
-- **[MVP]** **Instructions** de la semaine rédigées par l'enseignant (ce qu'il faut faire, pour quand).
+- **[MVP]** Consignes de la notion ; en classe, l'enseignant peut ajouter ses propres instructions de la semaine.
 - **[MVP]** Exercices guidés à la fin de chaque leçon.
 - **[MVP]** Suivi de lecture (leçon ouverte, terminée, temps passé).
 - **[V2]** ✨ Fiche-résumé téléchargeable (PDF) et **mode hors-ligne** pour réviser sans connexion.
 - **[V2]** ✨ Prise de notes personnelles attachées à une leçon.
 - **[V3]** ✨ Version audio des leçons (lecture automatique) pour réviser dans les transports.
 
-## E. Planning hebdomadaire et déblocage
+## F. Classes et établissements (option classe)
 
-- **[MVP]** L'enseignant planifie, **par classe**, les notions de chaque semaine :
-  - date d'ouverture du jeu ;
-  - date d'ouverture du cours ;
+Une classe ajoute un rythme et un suivi. Un étudiant en classe reste aussi un apprenant libre pour les autres parcours.
+
+- **[V2]** Établissement → niveaux → classes → étudiants. Un enseignant peut avoir plusieurs classes sur plusieurs niveaux. Un enseignant peut aussi créer une classe **sans établissement** (formateur indépendant, club, association) ✨.
+- **[V2]** Rejoindre une classe par **code d'invitation** ou lien (QR code affichable en salle) ✨.
+- **[V2]** Import CSV d'une liste d'étudiants.
+- **[V2]** Règle de visibilité stricte : un enseignant ne voit que les étudiants de ses classes, et uniquement sur les parcours assignés à la classe.
+- **[V2]** L'enseignant assigne des parcours à la classe et planifie, **par classe**, chaque notion :
+  - date d'ouverture du jeu et du cours ;
   - fenêtre du grand challenge (ouverture, fermeture, durée max) ;
   - seuil de réussite (ex. 70 %) et nombre de tentatives.
-- **[MVP]** Déblocage **automatique** à la date prévue (aucune action manuelle le jour J).
-- **[MVP]** La notion suivante n'est accessible qu'après **validation** du challenge précédent (sauf dérogation de l'enseignant).
-- **[MVP]** Dérogation individuelle : débloquer, prolonger ou rouvrir pour un étudiant (absence justifiée, handicap, etc.).
-- **[V2]** Vue calendrier du semestre par classe ; copier un planning d'une classe à une autre.
-- **[V2]** ✨ Rappels automatiques : « Le challenge ferme dans 24 h, il te reste 2 étapes ».
+- **[V2]** Ouverture **automatique** à la date prévue, calculée à la lecture (aucune tâche planifiée).
+- **[V2]** Dérogation individuelle : débloquer, prolonger ou rouvrir pour un étudiant.
+- **[V2]** Annonces et consignes de la semaine à la classe.
+- **[V3]** Co-enseignement (titulaire / assistant), années scolaires et archivage, vue calendrier du semestre, copie de planning entre classes.
+- **[V3]** Multi-établissements (SaaS) avec isolation complète des données.
 
-## F. Grand challenge (évaluation)
+## G. Grand challenge (évaluation)
 
 - **[MVP]** Test final par notion : mélange de questions (QCM, code, terminal, prédire la sortie…).
 - **[MVP]** Tirage **aléatoire** des questions dans la banque et ordre mélangé : deux étudiants n'ont pas le même sujet.
@@ -110,59 +127,60 @@ Chaque moteur est générique ; le contenu (JSON) dit quoi afficher et comment c
   - correction finale des exercices de code **côté serveur** avec tests cachés ;
   - rapport d'intégrité par tentative pour l'enseignant.
 - **[V2]** ✨ **Challenge d'équipe** : un défi collectif où chaque membre doit contribuer.
+- **[MVP]** ✨ En mode libre : tentatives illimitées, avec un **délai de recharge** entre deux combats perdus (le gardien « reprend des forces ») pour pousser à réviser plutôt qu'à deviner.
 - **[V3]** Mode « examen surveillé en salle » : l'enseignant ouvre le challenge en direct avec un code temporaire.
 
-## G. Suivi enseignant (surveillance bienveillante)
+## H. Suivi enseignant (option classe)
 
-- **[MVP]** Tableau de bord par classe : qui a commencé, avancement par notion, temps passé, dernière connexion.
-- **[MVP]** Fiche étudiant : historique, tentatives, réponses, points faibles.
-- **[MVP]** **Alertes de décrochage** : inactif depuis X jours, retard sur le planning, échecs répétés.
-- **[MVP]** Relance en un clic (message ou notification à un étudiant ou à un groupe filtré).
-- **[V2]** ✨ **Carte de chaleur** des notions et questions difficiles pour la classe (où faut-il réexpliquer en cours ?).
-- **[V2]** ✨ Statistiques par question (taux de réussite, pièges fréquents) pour améliorer les contenus.
-- **[V2]** Export des résultats (CSV/Excel) pour le bulletin officiel.
-- **[V2]** Vue multi-classes et comparaison entre classes d'un même niveau.
+- **[V2]** Tableau de bord par classe : qui a commencé, avancement par notion, temps passé, dernière connexion.
+- **[V2]** Fiche étudiant : historique, tentatives, réponses, points faibles.
+- **[V2]** **Alertes de décrochage** : inactif depuis X jours, retard sur le planning, échecs répétés.
+- **[V2]** Relance en un clic (message ou notification à un étudiant ou à un groupe filtré).
+- **[V3]** ✨ **Carte de chaleur** des notions et questions difficiles pour la classe (où faut-il réexpliquer en cours ?).
+- **[V3]** ✨ Statistiques par question (taux de réussite, pièges fréquents) pour améliorer les contenus.
+- **[V3]** Export des résultats (CSV/Excel) pour le bulletin officiel.
+- **[V3]** Vue multi-classes et comparaison entre classes d'un même niveau.
 - **[V3]** ✨ **Score de risque** prédictif d'échec, calculé chaque semaine.
 - **[V3]** ✨ Rapport hebdomadaire automatique envoyé par e-mail à l'enseignant (et optionnellement aux parents/tuteurs).
 
-## H. Équipes et mentors
+## I. Équipes, guildes et mentors
 
+- **[V2]** Guildes ouvertes pour les apprenants libres (voir B) et équipes de classe.
 - **[V2]** Création d'équipes par l'enseignant (manuelle ou automatique par niveau équilibré).
-- **[V2]** Assignation d'un ou plusieurs mentors par équipe.
+- **[V2]** Assignation d'un ou plusieurs mentors par équipe ou guilde (mentors de classe ou bénévoles).
 - **[V2]** Espace d'équipe : objectifs communs, XP d'équipe, classement des équipes.
 - **[V2]** Le mentor voit la progression de ses équipes, commente les tentatives, fait de la **revue de code**.
 - **[V2]** ✨ Prise de rendez-vous avec le mentor (créneaux de permanence) et lien de visio.
 - **[V3]** ✨ **Programmation en binôme** en temps réel (éditeur partagé).
 - **[V3]** ✨ Projets d'équipe sur plusieurs semaines avec jalons (mini-hackathon).
 
-## I. Communauté et entraide
+## J. Communauté et entraide
 
-- **[MVP]** Annonces de l'enseignant à sa classe.
-- **[V2]** **Forum questions/réponses par notion** ; la réponse validée par l'enseignant rapporte des XP à son auteur ✨.
+- **[V2]** **Forum questions/réponses par notion** ; la réponse validée (par un mentor, un enseignant ou les votes de la communauté) rapporte des XP à son auteur ✨.
 - **[V2]** Signalement et modération.
 - **[V2]** Notifications : dans l'application, par e-mail, et notifications push (application installable).
-- **[V3]** ✨ Profil public / **portfolio** de l'étudiant (badges, projets, certificats) partageable à un employeur.
+- **[V3]** ✨ Profil public / **portfolio** de l'apprenant (badges, projets, certificats) partageable à un employeur.
 
-## J. Assistant IA (tuteur)
+## K. Assistant IA (tuteur)
 
 - **[V2]** ✨ **Indices progressifs** dans le jeu (indice 1 : piste ; indice 2 : plus précis ; jamais la solution complète). Utiliser un indice retire une étoile.
 - **[V2]** ✨ Explication d'un message d'erreur en langage simple.
 - **[V2]** ✨ Aide à l'enseignant : proposer des questions et des variantes à partir d'une leçon (toujours relues et validées par l'enseignant avant publication).
 - **[V2]** **Désactivé automatiquement pendant les grands challenges.**
 
-## K. Certification et reconnaissance
+## L. Certification et reconnaissance
 
-- **[V2]** Attestation de validation d'un parcours (PDF) avec **QR code de vérification** ✨.
+- **[V2]** Attestation de validation d'un parcours (PDF), pour les apprenants libres comme pour les classes, avec **QR code de vérification** ✨.
 - **[V3]** Badges numériques ouverts (Open Badges) exportables.
 
-## L. Administration
+## M. Administration
 
 - **[MVP]** Gestion des utilisateurs, classes, niveaux, enseignants.
 - **[MVP]** Journal d'activité (qui a fait quoi : dérogations, modifications de notes).
 - **[V2]** Statistiques d'établissement.
 - **[V2]** Paramètres de l'établissement : logo, couleurs, seuils par défaut.
 
-## M. Qualités transverses
+## N. Qualités transverses
 
 - **[MVP]** Mobile d'abord, responsive, utilisable sur petit écran et réseau lent.
 - **[MVP]** Accessibilité (clavier, contrastes, lecteurs d'écran).

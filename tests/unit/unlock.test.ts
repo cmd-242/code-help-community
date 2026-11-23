@@ -10,9 +10,14 @@ const release = {
 const base: FloorInput = { release, now, previousCleared: true, cleared: false, stagesTotal: 3, stagesDone: 0 };
 
 describe("statut d'un étage", () => {
-  it("est scellé avant la date d'ouverture", () => {
+  it("en classe, est scellé avant la date d'ouverture", () => {
     expect(floorStatus({ ...base, now: new Date("2026-11-22T10:00:00") })).toBe("sealed");
-    expect(floorStatus({ ...base, release: null })).toBe("sealed");
+  });
+  it("en apprentissage libre, ne dépend que de la progression", () => {
+    expect(floorStatus({ ...base, release: null })).toBe("open");
+    expect(floorStatus({ ...base, release: null, previousCleared: false })).toBe("blocked");
+    expect(guardianGate({ ...base, release: null, stagesDone: 3 })).toBe("ready");
+    expect(guardianGate({ ...base, release: null, stagesDone: 1 })).toBe("explore-first");
   });
   it("est bloqué tant que le gardien précédent n'est pas vaincu", () => {
     expect(floorStatus({ ...base, previousCleared: false })).toBe("blocked");

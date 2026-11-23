@@ -35,13 +35,15 @@ export function FloorView({ floors, floorIndex, stages, lessons }: Props) {
 
   if (!ready) return <div className="mt-10 h-64 animate-pulse rounded-2xl bg-stone/40" />;
 
-  if (state.status === "sealed" || state.status === "blocked") {
+  if (state.status === "sealed" || state.status === "blocked" || state.status === "soon") {
     return (
       <div className="stone mx-auto mt-10 max-w-md rounded-2xl border border-stone-edge/60 p-8 text-center">
         <LockIcon className="mx-auto size-12 text-parchment-dim" />
         <p className="mt-4 text-lg text-parchment">
-          {state.status === "sealed"
-            ? t("sealed", { date: format.dateTime(state.release.gameOpensAt, { weekday: "long", day: "numeric", month: "long" }) })
+          {state.status === "soon"
+            ? t("soon")
+            : state.status === "sealed"
+            ? t("sealed", { date: state.release ? format.dateTime(state.release.gameOpensAt, { weekday: "long", day: "numeric", month: "long" }) : "" })
             : t("blocked", { name: floors[floorIndex - 1]?.guardian.name ?? "" })}
         </p>
         <RuneLink href="/app" variant="stone" className="mt-6">

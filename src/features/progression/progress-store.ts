@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { toDayKey } from "@/features/gamification/rules";
+import { toDayKey, type WeeklyGoal } from "@/features/gamification/rules";
 
 /**
  * Progression de l'étudiant — MODE DÉMO.
@@ -10,6 +10,14 @@ import { toDayKey } from "@/features/gamification/rules";
  * (phase 0, étape suivante). Les XP sont déjà enregistrés comme des événements
  * (règle n°11), ce qui rendra la migration vers `XpEvent` directe.
  */
+
+/**
+ * Façon d'apprendre :
+ *  - "free" : autodidacte, à son rythme (par défaut) ;
+ *  - "classroom" : rattaché à une classe, le planning de l'enseignant s'applique.
+ * Avec les comptes, ce sera déduit des inscriptions (`TrackEnrollment`).
+ */
+export type LearningMode = "free" | "classroom";
 
 export type XpEvent = { amount: number; reason: "stage" | "guardian" | "lesson"; ref: string; at: string };
 
@@ -20,6 +28,10 @@ type ProgressState = {
   guardianAttempts: Record<string, number>;
   lessonsRead: Record<string, true>;
   activeDays: string[];
+  mode: LearningMode;
+  weeklyGoal: WeeklyGoal;
+  setMode: (mode: LearningMode) => void;
+  setWeeklyGoal: (goal: WeeklyGoal) => void;
   addXp: (e: Omit<XpEvent, "at">) => void;
   recordStage: (stageId: string, stars: number) => void;
   recordGuardian: (notionSlug: string, score: number, passed: boolean) => void;
@@ -35,12 +47,16 @@ const initial = {
   guardianAttempts: {},
   lessonsRead: {},
   activeDays: [],
+  mode: "free" as LearningMode,
+  weeklyGoal: "steady" as WeeklyGoal,
 };
 
 export const useProgress = create<ProgressState>()(
   persist(
     (set) => ({
       ...initial,
+      setMode: (mode) => set({ mode }),
+      setWeeklyGoal: (weeklyGoal) => set({ weeklyGoal }),
       addXp: (e) => set((s) => ({ xpEvents: [...s.xpEvents, { ...e, at: new Date().toISOString() }] })),
       recordStage: (stageId, stars) =>
         set((s) => ({ stageStars: { ...s.stageStars, [stageId]: Math.max(stars, s.stageStars[stageId] ?? 0) } })),

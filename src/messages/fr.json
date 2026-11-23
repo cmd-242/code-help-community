@@ -94,19 +94,22 @@
     "stars": "{count} étoiles sur {max}",
     "guardianAwaits": "Le gardien t'attend",
     "explore": "{done} salles sur {total}",
-    "youAreHere": "Tu es ici"
+    "youAreHere": "Tu es ici",
+    "soon": "En cours d'écriture : bientôt ouvert"
   },
   "camp": {
     "metaTitle": "Le camp",
-    "demoNotice": "Version de démonstration : ta progression est enregistrée sur cet appareil. Les comptes et les classes arrivent bientôt.",
-    "questLabel": "Quête de la semaine",
+    "demoNotice": "Version de démonstration : ta progression est enregistrée sur cet appareil. Les comptes arrivent bientôt.",
     "questTitle": "Étage {floor} : {room}",
     "questProgress": "{done} / {total} salles",
     "faceGuardian": "Affronter {name}",
     "continue": "Reprendre l'exploration",
     "start": "Commencer l'exploration",
     "allDoneTitle": "Tous les étages ouverts sont conquis",
-    "allDoneBody": "Ton enseignant ouvrira le prochain étage lundi. En attendant, rejoue les salles pour décrocher toutes les étoiles."
+    "questLabelFree": "Ta quête en cours",
+    "questLabelClass": "Quête de la semaine (ta classe)",
+    "allDoneBodyFree": "Tu as conquis tous les étages disponibles. De nouveaux étages et de nouveaux royaumes arrivent : en attendant, rejoue les salles pour décrocher toutes les étoiles.",
+    "allDoneBodyClass": "Ton enseignant ouvrira le prochain étage lundi. En attendant, rejoue les salles pour décrocher toutes les étoiles."
   },
   "floor": {
     "depth": "Étage −{floor}",
@@ -129,7 +132,8 @@
     "guardianClosed": "La salle du gardien est fermée. Demande à ton enseignant de la rouvrir.",
     "guardianReady": "Il t'attend. Si tu le bats, l'étage suivant s'ouvre.",
     "guardianRematch": "Le réaffronter",
-    "guardianFace": "Affronter le gardien"
+    "guardianFace": "Affronter le gardien",
+    "soon": "Cet étage est en cours d'écriture. Il s'ouvrira dès que son contenu sera prêt."
   },
   "grimoire": {
     "chapter": "Étage {floor} · {room}",
@@ -142,23 +146,23 @@
   },
   "home": {
     "brand": "Code Help Community",
-    "headline": "Chaque semaine, une nouvelle porte s'ouvre.",
-    "lede": "Apprends Linux, le code, Git, les réseaux et le cloud en descendant dans un donjon. Ton enseignant ouvre les étages, toi tu affrontes les gardiens.",
+    "headline": "Apprends l'informatique en conquérant un donjon.",
+    "lede": "Linux, le code, Git, les réseaux, la sécurité, le cloud : chaque domaine est un donjon, chaque étage une notion. Seul à ton rythme, ou avec ta classe.",
     "enter": "Entrer dans le donjon",
     "teacher": "Je suis enseignant",
     "torchHint": "Promène ta torche sur le mur : tout ce qui y est gravé, tu vas l'apprendre.",
-    "weekTitle": "Une semaine dans le donjon",
+    "weekTitle": "Comment on progresse",
     "steps": {
-      "monday": {
-        "title": "La porte s'ouvre",
-        "body": "Ton enseignant débloque un nouvel étage pour toute la classe : une nouvelle notion à maîtriser."
+      "choose": {
+        "title": "Choisis ton royaume",
+        "body": "Linux, Python, Git, réseaux, cloud… Tu commences où tu veux, sans inscription dans une école."
       },
-      "week": {
-        "title": "Tu explores",
+      "explore": {
+        "title": "Explore et apprends",
         "body": "Des salles à conquérir en jouant, et un grimoire pour comprendre. À ton rythme, depuis chez toi, même sur téléphone."
       },
-      "friday": {
-        "title": "Le gardien t'attend",
+      "guardian": {
+        "title": "Bats le gardien",
         "body": "Un combat chronométré valide la notion. Tu le bats : l'escalier vers l'étage suivant s'ouvre."
       }
     },
@@ -175,7 +179,7 @@
     },
     "kingdomOpen": "Ouvert",
     "kingdomSoon": "Bientôt",
-    "teachersTitle": "Pour les enseignants et les mentors",
+    "teachersTitle": "Tu enseignes ? Amène ta classe",
     "roles": {
       "rhythm": {
         "title": "Tu donnes le rythme",
@@ -187,10 +191,36 @@
       },
       "mentors": {
         "title": "Les mentors coachent",
-        "body": "Des équipes encadrées par un mentor qui suit leur avancée et les aide à passer les gardiens."
+        "body": "Des équipes encadrées par un mentor, pour les classes comme pour les autodidactes."
       }
     },
-    "teachersSoon": "L'espace enseignant est en cours de construction.",
-    "footerTitle": "La torche est allumée. Il ne manque que toi."
+    "teachersSoon": "Les classes sont une option : sans enseignant, tout le donjon reste accessible. L'espace enseignant est en cours de construction.",
+    "footerTitle": "Pas besoin d'école pour entrer. La torche est allumée."
+  },
+  "rhythm": {
+    "label": "Ton rythme",
+    "goalTitle": "Ton objectif de la semaine",
+    "goalProgress": "{earned} / {target} XP",
+    "goalHint": "Personne ne te presse : tu choisis ton objectif, la flamme fait le reste.",
+    "goalReached": "Objectif atteint. Tout ce que tu gagnes en plus est du bonus.",
+    "goalPick": "Choisir ton objectif",
+    "goals": {
+      "calm": "Tranquille, {xp} XP",
+      "steady": "Régulier, {xp} XP",
+      "intense": "Acharné, {xp} XP"
+    },
+    "classTitle": "Ton enseignant donne le rythme",
+    "classBody": "Les étages s'ouvrent selon le planning de ta classe, et le gardien se réveille aux dates prévues.",
+    "modeTitle": "Comment tu apprends",
+    "modes": {
+      "free": {
+        "title": "Librement",
+        "body": "Seul, à ton rythme : chaque gardien vaincu ouvre l'étage suivant."
+      },
+      "classroom": {
+        "title": "Avec ma classe (démo)",
+        "body": "Ton enseignant ouvre un étage par semaine."
+      }
+    }
   }
 }

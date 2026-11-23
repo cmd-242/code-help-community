@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { floorSummaries, getTrack } from "@/features/catalog/queries";
 import { DescentMap } from "@/features/map/descent-map";
+import { RhythmPanel } from "@/features/map/rhythm-panel";
 import { WeekQuest } from "@/features/map/week-quest";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -18,6 +19,7 @@ export default async function CampPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 pb-24 pt-8">
       <WeekQuest floors={floors} />
+      <RhythmPanel />
 
       <section className="mt-16" aria-labelledby="map-title">
         <div className="text-center">

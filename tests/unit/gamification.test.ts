@@ -6,6 +6,8 @@ import {
   levelFromXp,
   stageXp,
   starsFromHearts,
+  weeklyXp,
+  weekStart,
   xpForLevel,
 } from "@/features/gamification/rules";
 
@@ -65,5 +67,23 @@ describe("série de jours", () => {
   it("tombe à zéro après un jour manqué", () => {
     expect(currentStreak(["2026-11-20"], "2026-11-23")).toBe(0);
     expect(currentStreak([], "2026-11-23")).toBe(0);
+  });
+});
+
+describe("objectif hebdomadaire", () => {
+  it("commence la semaine le lundi à minuit", () => {
+    const start = weekStart(new Date("2026-11-26T15:00:00"));
+    expect(start.getDay()).toBe(1);
+    expect(start.getDate()).toBe(23);
+    expect(start.getHours()).toBe(0);
+    expect(weekStart(new Date("2026-11-29T23:00:00")).getDate()).toBe(23);
+  });
+  it("ne compte que les XP de la semaine en cours", () => {
+    const events = [
+      { amount: 40, at: new Date("2026-11-22T20:00:00").toISOString() },
+      { amount: 50, at: new Date("2026-11-23T09:00:00").toISOString() },
+      { amount: 10, at: new Date("2026-11-25T09:00:00").toISOString() },
+    ];
+    expect(weeklyXp(events, new Date("2026-11-26T12:00:00"))).toBe(60);
   });
 });

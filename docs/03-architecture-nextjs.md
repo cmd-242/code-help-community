@@ -72,7 +72,7 @@
 │  ├─ app/
 │  │  ├─ (public)/             # accueil, à propos, vérification de certificat
 │  │  ├─ (auth)/               # connexion, inscription, rejoindre une classe
-│  │  ├─ (etudiant)/app/       # tableau de bord, carte, jeu, cours, challenge
+│  │  ├─ (etudiant)/app/       # espace de l'apprenant (libre ou en classe) : camp, carte, jeu, grimoire, gardien
 │  │  ├─ (enseignant)/prof/    # classes, planning, suivi, contenus
 │  │  ├─ (mentor)/mentor/      # équipes, revues
 │  │  ├─ (admin)/admin/        # établissement, utilisateurs
@@ -123,12 +123,17 @@
 - **Route Handlers** uniquement pour ce qui n'est pas une action de formulaire : SSE, exports de fichiers, cron, webhooks, API publique éventuelle.
 
 ### 4.2 Permissions (point critique)
-- La règle « un enseignant ne voit que ses classes » est appliquée **côté serveur, dans les requêtes**, jamais uniquement en masquant des éléments d'interface.
+- La règle « un enseignant ne voit que ses classes » est appliquée **côté serveur, dans les requêtes**, jamais uniquement en masquant des éléments d'interface. Un enseignant ne voit un étudiant que sur les parcours assignés à sa classe, jamais sa progression libre ailleurs.
+- Un apprenant libre n'est visible d'aucun enseignant ; seuls les membres et le mentor de sa guilde voient ce qu'il partage avec elle.
 - Toute requête sur des étudiants passe par un filtre de portée, par exemple `studentScopeFor(user)` qui renvoie la clause Prisma `where` adaptée au rôle.
 - `proxy.ts` ne fait que des redirections rapides (non connecté → connexion, mauvais espace → accueil) ; il n'est **pas** la seule barrière.
 
 ### 4.3 Déblocage des notions sans tâche planifiée
-Le statut « débloqué » est **calculé à la lecture** : une notion est ouverte si `opensAt <= maintenant` dans le planning de la classe **et** si les prérequis sont validés. Aucune tâche cron n'est nécessaire pour ouvrir une notion, donc rien ne peut « oublier » de la débloquer.
+Le statut « débloqué » est **calculé à la lecture** (`src/features/progression/unlock.ts`) :
+- **apprenant libre** (cas par défaut, aucun planning) : une notion est ouverte dès que ses prérequis sont validés (gardien précédent vaincu) ;
+- **en classe** (option) : il faut en plus que `opensAt <= maintenant` dans le planning de la classe, sauf dérogation.
+
+Aucune tâche cron n'est nécessaire pour ouvrir une notion, donc rien ne peut « oublier » de la débloquer.
 
 Les tâches planifiées (Route Handler `/api/cron/*`, appelé par Vercel Cron ou par le cron du serveur) servent seulement aux **rappels**, **alertes de décrochage** et **rapports hebdomadaires**.
 

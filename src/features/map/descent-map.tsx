@@ -51,7 +51,7 @@ function FloorRoom({ floor, state, depth, ready, side }: { floor: FloorSummary; 
 
       <div className="relative">
         <p className={`font-display text-lg ${current ? "text-torch" : "text-parchment-dim"}`}>{t("depth", { floor: floor.floor })}</p>
-        <h3 className={`carved mt-1 text-3xl leading-tight ${state.status === "sealed" || state.status === "blocked" ? "text-parchment-dim" : "text-parchment"}`}>
+        <h3 className={`carved mt-1 text-3xl leading-tight ${state.status === "sealed" || state.status === "blocked" || state.status === "soon" ? "text-parchment-dim" : "text-parchment"}`}>
           {floor.room}
         </h3>
         <p className="mt-1 text-parchment-dim">{floor.concept}</p>
@@ -60,7 +60,12 @@ function FloorRoom({ floor, state, depth, ready, side }: { floor: FloorSummary; 
           {!ready ? null : state.status === "sealed" ? (
             <span className="flex items-center gap-2 text-parchment-dim">
               <ChainIcon className="size-5" />
-              {t("opensOn", { date: format.dateTime(state.release.gameOpensAt, { weekday: "long", day: "numeric", month: "long" }) })}
+              {t("opensOn", { date: state.release ? format.dateTime(state.release.gameOpensAt, { weekday: "long", day: "numeric", month: "long" }) : "" })}
+            </span>
+          ) : state.status === "soon" ? (
+            <span className="flex items-center gap-2 text-parchment-dim">
+              <ChainIcon className="size-5" />
+              {t("soon")}
             </span>
           ) : state.status === "blocked" ? (
             <span className="flex items-center gap-2 text-parchment-dim">

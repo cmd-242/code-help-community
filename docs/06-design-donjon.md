@@ -2,7 +2,7 @@
 
 ## Concept
 
-La progression est une **descente dans un donjon**. Chaque notion est un **étage** ; chaque semaine l'enseignant en ouvre un nouveau. Le grand challenge est le **gardien** qui garde l'escalier vers l'étage suivant.
+La progression est une **descente dans un donjon**. Chaque notion est un **étage**. Le grand challenge est le **gardien** qui garde l'escalier vers l'étage suivant. Un apprenant libre descend à son rythme ; en classe, l'enseignant ouvre un étage par semaine.
 
 | Concept pédagogique | Dans le jeu |
 |---|---|

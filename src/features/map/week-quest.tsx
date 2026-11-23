@@ -5,12 +5,14 @@ import { useTranslations } from "next-intl";
 import { ScrollIcon, SkullIcon, TorchIcon } from "@/components/icons";
 import { RuneLink } from "@/components/ui/rune-button";
 import type { FloorSummary } from "@/features/catalog/queries";
+import { useProgress } from "@/features/progression/progress-store";
 import { useFloorStates } from "@/features/progression/use-floor-states";
 
 /** La quête de la semaine : ce que l'enseignant a ouvert et ce qu'il reste à faire. */
 export function WeekQuest({ floors }: { floors: FloorSummary[] }) {
   const t = useTranslations("camp");
   const { ready, states } = useFloorStates(floors);
+  const mode = useProgress((s) => s.mode);
   const i = states.findIndex((s) => s.status === "open" || s.status === "guardian");
   const floor = i >= 0 ? floors[i] : null;
   const state = i >= 0 ? states[i] : null;
@@ -25,7 +27,7 @@ export function WeekQuest({ floors }: { floors: FloorSummary[] }) {
       <span aria-hidden className="absolute -right-10 -top-10 size-48 animate-flicker rounded-full bg-[radial-gradient(circle,rgba(242,165,65,0.35),transparent_70%)]" />
       <p className="relative flex items-center gap-2 text-torch">
         <ScrollIcon className="size-5" />
-        {t("questLabel")}
+        {mode === "classroom" ? t("questLabelClass") : t("questLabelFree")}
       </p>
 
       {!ready ? (
@@ -70,7 +72,7 @@ export function WeekQuest({ floors }: { floors: FloorSummary[] }) {
           <h1 id="quest-title" className="carved mt-2 text-4xl text-parchment">
             {t("allDoneTitle")}
           </h1>
-          <p className="mt-2 text-lg text-parchment-dim">{t("allDoneBody")}</p>
+          <p className="mt-2 text-lg text-parchment-dim">{mode === "classroom" ? t("allDoneBodyClass") : t("allDoneBodyFree")}</p>
         </div>
       )}
     </motion.section>

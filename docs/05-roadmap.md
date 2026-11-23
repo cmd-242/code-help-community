@@ -16,46 +16,51 @@ Durées indicatives pour une petite équipe (1 à 2 développeurs). Chaque phase
 - [ ] Mise en page des espaces enseignant, mentor, admin.
 - [ ] Intégration continue (GitHub Actions : lint, types, tests, build).
 
-## Phase 1 — MVP « une classe pilote » (semaines 3-10)
+## Phase 1 — MVP « apprentissage libre » (semaines 3-10)
 
-Objectif : une classe réelle utilise la plateforme pendant 4 semaines sur **un parcours** (proposé : *Linux débutant* ou *Python débutant*).
+Objectif : n'importe qui peut créer un compte, choisir un parcours et progresser seul, sans école. Pilote : un parcours complet (*Linux débutant*) puis *Python débutant*.
 
-- [ ] Organisation : établissement, niveaux, classes, code d'invitation, import CSV.
-- [ ] Catalogue : domaines, parcours, notions, leçons MDX.
+- [ ] Comptes (e-mail + Google), profil, pseudonyme.
+- [ ] Progression enregistrée en base (`TrackEnrollment`, `NotionProgress`, `StageAttempt`, `XpEvent`) à la place du stockage local de la démo.
+- [x] Déblocage libre : un étage s'ouvre dès que le gardien précédent est vaincu.
+- [x] Objectif hebdomadaire personnel, série de jours, XP, niveaux, étoiles (en démo).
+- [ ] Badges.
 - [x] Moteurs de jeu : QCM, Parsons, texte à trous, prédire la sortie.
 - [ ] Moteurs : écrire du code (Python via Pyodide), terminal Linux simulé.
-- [x] Carte de progression, étoiles, XP, niveaux, série quotidienne (stockés sur l'appareil en démo).
-- [ ] Badges ; progression enregistrée en base.
-- [ ] Planning hebdomadaire par classe et déblocage automatique.
 - [x] Grand challenge : tirage aléatoire et correction côté serveur, chronomètre, combat de gardien.
-- [ ] Grand challenge : tentatives enregistrées en base, sauvegarde auto, rattrapage ciblé.
-- [ ] Dérogations individuelles.
-- [ ] Tableau de bord enseignant + fiche étudiant + alertes de décrochage.
-- [ ] Annonces de classe.
-- [ ] Contenu d'un parcours complet (6 à 8 notions) rédigé. *Linux débutant : étages 1 à 3 rédigés, 4 à 6 à écrire.*
+- [ ] Grand challenge : tentatives enregistrées, délai de recharge après une défaite, rattrapage ciblé.
+- [ ] Catalogue : choisir parmi plusieurs royaumes et parcours.
+- [ ] Contenu Linux débutant complet (étages 1 à 3 rédigés, 4 à 6 à écrire), puis Python débutant.
+- [ ] Rappels choisis par l'apprenant (notifications, e-mail).
+
+**Critère de sortie** : 40 % des nouveaux apprenants encore actifs après 4 semaines.
+
+## Phase 2 — Classes, enseignants et communauté (semaines 11-20)
+
+Objectif : une classe pilote utilise la plateforme 4 semaines ; les autodidactes trouvent de l'entraide.
+
+- [ ] Classes (avec ou sans établissement), code d'invitation, import CSV, parcours assignés.
+- [ ] Planning hebdomadaire par classe, dérogations individuelles. *(logique de déblocage déjà prête et testée)*
+- [ ] Tableau de bord enseignant, fiche étudiant, alertes de décrochage, annonces.
+- [ ] Permissions serveur (`src/server/permissions.ts`) et journal d'audit.
+- [ ] Guildes ouvertes, équipes de classe, mentors (de classe ou bénévoles), revue de code.
+- [ ] Ligues hebdomadaires publiques, quêtes, monnaie virtuelle, gel de série.
+- [ ] Forum par notion avec réponses validées.
+- [ ] Anti-triche pour les classes : événements d'intégrité, similarité de code.
+- [ ] Assistant IA : indices progressifs, explication d'erreurs.
+- [ ] Nouveaux moteurs : Git visuel, sous-réseaux, mini-CTF, SQL (PGlite), répétition espacée.
+- [ ] PWA installable + révision hors-ligne. Attestations PDF avec QR code.
 
 **Critère de sortie** : > 70 % des étudiants pilotes actifs chaque semaine pendant 4 semaines.
 
-## Phase 2 — Engagement et collaboration (semaines 11-20)
-
-- [ ] Équipes, mentors, revue de code, prise de rendez-vous.
-- [ ] Quêtes, ligues hebdomadaires, monnaie virtuelle, gel de série.
-- [ ] Forum par notion avec réponses validées.
-- [ ] Notifications (in-app, e-mail, push) et rappels automatiques.
-- [ ] Anti-triche : événements d'intégrité, correction serveur, similarité de code.
-- [ ] Assistant IA : indices progressifs, explication d'erreurs, aide à la création de questions.
-- [ ] Nouveaux moteurs : Git visuel, sous-réseaux, mini-CTF, SQL (PGlite), cartes à répétition espacée.
-- [ ] PWA installable + révision hors-ligne.
-- [ ] Exports CSV/Excel, carte de chaleur des difficultés, statistiques par question.
-- [ ] Attestations PDF avec QR code.
-
 ## Phase 3 — Échelle et nouveaux domaines (semaines 21+)
 
+- [ ] Test de positionnement, parcours « carrière » multi-royaumes, projets guidés pour le portfolio.
 - [ ] Simulateurs réseau (topologie) et cloud (console AWS/GCP simulée, diagrammes d'architecture).
 - [ ] Langages compilés via exécuteur isolé (Judge0 auto-hébergé).
-- [ ] Bibliothèque partagée de parcours entre enseignants.
-- [ ] Multi-établissements (SaaS).
+- [ ] Bibliothèque partagée de parcours (enseignants et contributeurs).
+- [ ] Multi-établissements (SaaS), statistiques d'établissement, exports.
 - [ ] Score de risque prédictif et rapports hebdomadaires automatiques.
 - [ ] Programmation en binôme temps réel, projets d'équipe, événements.
-- [ ] Portfolio public de l'étudiant, Open Badges.
+- [ ] Portfolio public, Open Badges.
 - [ ] Traduction anglaise.

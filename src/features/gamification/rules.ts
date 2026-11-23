@@ -76,3 +76,21 @@ export function toDayKey(d: Date): string {
 
 /** XP pour une page du grimoire lue (une seule fois) */
 export const LESSON_XP = 10;
+
+/** Objectifs hebdomadaires proposés à l'apprenant libre (XP par semaine) */
+export const WEEKLY_GOALS = { calm: 100, steady: 250, intense: 500 } as const;
+export type WeeklyGoal = keyof typeof WEEKLY_GOALS;
+
+/** Lundi 00:00 (heure locale) de la semaine de `now` */
+export function weekStart(now: Date): Date {
+  const d = new Date(now);
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+/** XP gagnés depuis le début de la semaine */
+export function weeklyXp(events: readonly { amount: number; at: string }[], now: Date): number {
+  const start = weekStart(now).getTime();
+  return events.reduce((n, e) => (new Date(e.at).getTime() >= start ? n + e.amount : n), 0);
+}
