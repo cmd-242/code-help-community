@@ -54,6 +54,17 @@ export const co = (
   explanation,
 });
 
+/** Terminal simulé : `files` initiaux, `goal` vérifié sur l'état final, `solution` = commandes de référence. */
+export const tm = (
+  skill: string,
+  prompt: string,
+  files: Record<string, string>,
+  goal: Record<string, unknown>,
+  solution: string[],
+  explanation: string,
+  cwd?: string,
+): Enc => ({ type: "terminal", skill, prompt, files, ...(cwd ? { cwd } : {}), goal, solution, explanation });
+
 export const fl = (skill: string, prompt: string, template: string, answer: string | string[], bank: string[], explanation: string): Enc => ({
   type: "fill",
   skill,

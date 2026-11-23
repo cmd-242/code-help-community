@@ -62,7 +62,7 @@ export const notion3: NotionInput = {
         { id: "s3-2-a", type: "qcm", prompt: "Quelle commande affiche les lignes contenant « troll » dans bestiaire.txt ?", choices: ["cat troll bestiaire.txt", "grep troll bestiaire.txt", "find troll", "ls troll"], answer: [1], explanation: "grep motif fichier affiche les lignes qui contiennent le motif.", skill: "grep" },
         { id: "s3-2-b", type: "predict", prompt: "bestiaire.txt contient : Troll des cavernes, gobelin, troll des marais. Qu'affiche la commande ?", code: "$ grep troll bestiaire.txt", accepted: ["troll des marais"], explanation: "grep respecte la casse : « Troll » avec majuscule ne correspond pas.", skill: "grep" },
         { id: "s3-2-c", type: "fill", prompt: "Cherche « troll » sans tenir compte des majuscules.", template: "grep {{0}} troll bestiaire.txt", answers: ["-i"], bank: ["-i", "-n", "-r", "-l"], explanation: "-i (ignore case) ignore les majuscules et minuscules.", skill: "grep" },
-        { id: "s3-2-d", type: "qcm", prompt: "Quelle option de grep affiche le numéro des lignes trouvées ?", choices: ["-c", "-n", "-v", "-l"], answer: [1], explanation: "-n affiche le numéro de chaque ligne.", skill: "grep" },
+        {"id": "s3-2-d", "type": "terminal", "prompt": "Dans bestiaire.txt, affiche les lignes contenant « troll » (majuscules ignorées) avec leur numéro.", "files": {"/home/aya/bestiaire.txt": "Troll des cavernes\ngobelin\ntroll des marais"}, "goal": {"lastOutput": ["1:Troll des cavernes\n3:troll des marais"]}, "solution": ["grep -in troll bestiaire.txt"], "explanation": "-i ignore la casse, -n ajoute le numéro de ligne.", "skill": "grep"},
       ],
     },
     {
@@ -74,7 +74,7 @@ export const notion3: NotionInput = {
         { id: "s3-3-a", type: "qcm", prompt: "Que fait le symbole | entre deux commandes ?", choices: ["Il exécute les deux en même temps", "Il envoie la sortie de la première à la seconde", "Il écrit dans un fichier", "Il annule la première"], answer: [1], explanation: "Le tuyau relie la sortie d'une commande à l'entrée de la suivante.", skill: "pipe" },
         { id: "s3-3-b", type: "parsons", prompt: "Compte combien de lignes de journal.log contiennent « erreur ».", lines: ["grep erreur journal.log", "| wc -l"], distractors: ["| head -n 1", "cat erreur"], explanation: "grep filtre les lignes, wc -l les compte.", skill: "pipe" },
         { id: "s3-3-c", type: "predict", prompt: "journal.log contient 3 lignes avec « erreur » parmi 50. Qu'affiche la commande ?", code: "$ grep erreur journal.log | wc -l", accepted: ["3"], explanation: "grep garde 3 lignes, wc -l les compte : 3.", skill: "pipe" },
-        { id: "s3-3-d", type: "fill", prompt: "Affiche les 2 premières lignes contenant « or ».", template: "grep or tresor.txt {{0}} {{1}} -n 2", answers: ["|", "head"], bank: ["|", "head", "tail", ">", "wc"], explanation: "On filtre avec grep, puis head garde les 2 premières lignes.", skill: "pipe" },
+        {"id": "s3-3-d", "type": "terminal", "prompt": "Compte, en une seule commande avec un pipe, les lignes de journal.log qui contiennent « erreur ».", "files": {"/home/aya/journal.log": "ok\nerreur disque\nok\nerreur réseau\nerreur mémoire"}, "goal": {"lastOutput": ["3"]}, "solution": ["grep erreur journal.log | wc -l"], "explanation": "grep filtre, le pipe envoie le résultat à wc -l qui compte les lignes.", "skill": "pipe"},
       ],
     },
   ],

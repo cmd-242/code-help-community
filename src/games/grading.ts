@@ -10,7 +10,10 @@ import type {
   PredictResponse,
   QcmEncounter,
   QcmResponse,
+  TerminalEncounter,
+  TerminalResponse,
 } from "./schemas";
+import { initShell, replayAndCheck } from "./terminal/shell";
 
 /**
  * Correcteurs purs : aucune dépendance au navigateur.
@@ -54,6 +57,11 @@ export function gradeCode(e: CodeEncounter, r: CodeResponse): boolean {
   return e.accepted.some((a) => normalizeOutput(a) === given);
 }
 
+/** Rejoue les commandes dans le shell simulé et vérifie l'état final. */
+export function gradeTerminal(e: TerminalEncounter, r: TerminalResponse): boolean {
+  return replayAndCheck(initShell(e.files, e.cwd), r, e.goal, normalizeOutput);
+}
+
 export type AnyResponse = QcmResponse | ParsonsResponse | FillResponse | PredictResponse;
 
 export function grade(e: Encounter, r: AnyResponse): boolean {
@@ -68,6 +76,8 @@ export function grade(e: Encounter, r: AnyResponse): boolean {
       return typeof r === "string" && gradePredict(e, r);
     case "code":
       return typeof r === "string" && gradeCode(e, r);
+    case "terminal":
+      return Array.isArray(r) && r.every((x) => typeof x === "string") && gradeTerminal(e, r as string[]);
   }
 }
 

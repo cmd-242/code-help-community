@@ -37,7 +37,7 @@ Objectif : n'importe qui peut créer un compte, choisir un parcours et progresse
 - [ ] Badges.
 - [x] Moteurs de jeu : QCM, Parsons, texte à trous, prédire la sortie.
 - [x] Moteur « écrire du code » (JavaScript et Python via Pyodide, dans un Web Worker, correction sur la sortie).
-- [ ] Moteur : terminal Linux simulé.
+- [x] Moteur terminal Linux simulé (shell pur rejoué côté serveur pour la correction).
 - [x] Grand challenge : tirage aléatoire et correction côté serveur, chronomètre, combat de gardien.
 - [ ] Grand challenge : tentatives enregistrées, délai de recharge après une défaite, rattrapage ciblé.
 - [ ] Catalogue : choisir parmi plusieurs royaumes et parcours.

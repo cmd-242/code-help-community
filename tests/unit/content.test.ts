@@ -81,6 +81,9 @@ describe.each(tracks)("contenu $slug", (track) => {
         expect(countBlanks(e.template), e.id).toBe(e.answers.length);
         expect(e.answers.every((a) => e.bank.includes(a)), e.id).toBe(true);
         expect(grade(e, e.answers), e.id).toBe(true);
+      } else if (e.type === "terminal") {
+        expect(grade(e, e.solution), e.id).toBe(true);
+        expect(grade(e, ["pwd"]), `${e.id} : réussi sans rien faire`).toBe(false);
       } else if (e.type === "code") {
         // On exécute vraiment la solution de référence, puis on corrige sa sortie
         const out = runReference(e.language, `${e.solution}\n${e.harness ?? ""}`);
