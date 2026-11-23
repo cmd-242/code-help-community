@@ -86,7 +86,27 @@ export const terminalSchema = z.object({
   solution: z.array(z.string()).min(1).max(12),
 });
 
-export const encounterSchema = z.discriminatedUnion("type", [qcmSchema, parsonsSchema, fillSchema, predictSchema, codeSchema, terminalSchema]);
+/**
+ * SQL : la requête s'exécute dans le navigateur (PGlite, un vrai PostgreSQL en
+ * WebAssembly, dans un Web Worker). Le résultat est transmis en texte, une ligne
+ * par ligne de résultat, cellules séparées par « | ». `verify` (public) est une
+ * requête lancée après celle de l'apprenant, pour juger un INSERT / UPDATE.
+ */
+export const sqlSchema = z.object({
+  ...base,
+  type: z.literal("sql"),
+  /** Schéma et données de départ (public : l'apprenant le consulte) */
+  setup: z.string().min(1),
+  starter: z.string().default(""),
+  verify: z.string().optional(),
+  /** Résultats acceptés, au format texte décrit ci-dessus */
+  accepted: z.array(z.string()).min(1),
+  /** Faux : l'ordre des lignes est ignoré */
+  ordered: z.boolean().default(false),
+  solution: z.string().min(1),
+});
+
+export const encounterSchema = z.discriminatedUnion("type", [qcmSchema, parsonsSchema, fillSchema, predictSchema, codeSchema, terminalSchema, sqlSchema]);
 
 export type QcmEncounter = z.infer<typeof qcmSchema>;
 export type ParsonsEncounter = z.infer<typeof parsonsSchema>;
@@ -94,6 +114,7 @@ export type FillEncounter = z.infer<typeof fillSchema>;
 export type PredictEncounter = z.infer<typeof predictSchema>;
 export type CodeEncounter = z.infer<typeof codeSchema>;
 export type TerminalEncounter = z.infer<typeof terminalSchema>;
+export type SqlEncounter = z.infer<typeof sqlSchema>;
 export type Encounter = z.infer<typeof encounterSchema>;
 export type EncounterInput = z.input<typeof encounterSchema>;
 export type GameType = Encounter["type"];
@@ -107,6 +128,7 @@ export type PredictResponse = string;
 export type CodeResponse = string;
 /** Les commandes tapées, dans l'ordre */
 export type TerminalResponse = string[];
+export type SqlResponse = string;
 
 export type ResponseFor<E extends Encounter> = E extends QcmEncounter
   ? QcmResponse
@@ -118,4 +140,6 @@ export type ResponseFor<E extends Encounter> = E extends QcmEncounter
         ? CodeResponse
         : E extends TerminalEncounter
           ? TerminalResponse
-          : PredictResponse;
+          : E extends SqlEncounter
+            ? SqlResponse
+            : PredictResponse;

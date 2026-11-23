@@ -81,6 +81,8 @@ describe.each(tracks)("contenu $slug", (track) => {
         expect(countBlanks(e.template), e.id).toBe(e.answers.length);
         expect(e.answers.every((a) => e.bank.includes(a)), e.id).toBe(true);
         expect(grade(e, e.answers), e.id).toBe(true);
+      } else if (e.type === "sql") {
+        expect(e.accepted.length, e.id).toBeGreaterThan(0); // exécuté pour de vrai dans sql-content.test.ts
       } else if (e.type === "terminal") {
         expect(grade(e, e.solution), e.id).toBe(true);
         expect(grade(e, ["pwd"]), `${e.id} : réussi sans rien faire`).toBe(false);

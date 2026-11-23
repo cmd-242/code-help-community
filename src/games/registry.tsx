@@ -8,6 +8,7 @@ import { FillPlay } from "./fill/fill-play";
 import { ParsonsPlay } from "./parsons/parsons-play";
 import { PredictPlay } from "./predict/predict-play";
 import { QcmPlay } from "./qcm/qcm-play";
+import { SqlPlay } from "./sql/sql-play";
 import { TerminalPlay } from "./terminal/terminal-play";
 
 /**
@@ -32,6 +33,7 @@ export const engines: Record<PublicEncounter["type"], ComponentType<EngineProps>
   parsons: ({ encounter, ...p }) => (encounter.type === "parsons" ? <ParsonsPlay encounter={encounter} {...p} /> : null),
   fill: ({ encounter, ...p }) => (encounter.type === "fill" ? <FillPlay encounter={encounter} {...p} /> : null),
   code: ({ encounter, ...p }) => (encounter.type === "code" ? <CodePlay encounter={encounter} {...p} /> : null),
+  sql: ({ encounter, ...p }) => (encounter.type === "sql" ? <SqlPlay encounter={encounter} {...p} /> : null),
   terminal: ({ encounter, ...p }) => (encounter.type === "terminal" ? <TerminalPlay encounter={encounter} {...p} /> : null),
   predict: ({ encounter, ...p }) => (encounter.type === "predict" ? <PredictPlay encounter={encounter} {...p} /> : null),
 };

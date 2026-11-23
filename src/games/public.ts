@@ -12,7 +12,8 @@ export type PublicEncounter =
   | { id: string; type: "fill"; prompt: string; template: string; bank: string[] }
   | { id: string; type: "predict"; prompt: string; code: string; placeholder?: string }
   | { id: string; type: "code"; prompt: string; language: "javascript" | "python"; starter: string; harness?: string }
-  | { id: string; type: "terminal"; prompt: string; files: Record<string, string>; cwd: string };
+  | { id: string; type: "terminal"; prompt: string; files: Record<string, string>; cwd: string }
+  | { id: string; type: "sql"; prompt: string; setup: string; starter: string; verify?: string };
 
 /** Verdict d'une réponse. `skill` sert à la maîtrise des cartes (ce n'est pas un secret). */
 export type CheckResult = { correct: boolean; explanation: string; solution: string; skill?: string };
@@ -57,6 +58,8 @@ export function toPublicEncounter(e: Encounter): PublicEncounter {
       return { id: e.id, type: "fill", prompt: e.prompt, template: e.template, bank: seededShuffle(e.bank, e.id) };
     case "predict":
       return { id: e.id, type: "predict", prompt: e.prompt, code: e.code, placeholder: e.placeholder };
+    case "sql":
+      return { id: e.id, type: "sql", prompt: e.prompt, setup: e.setup, starter: e.starter, verify: e.verify };
     case "terminal":
       return { id: e.id, type: "terminal", prompt: e.prompt, files: e.files, cwd: e.cwd };
     case "code":
@@ -75,6 +78,8 @@ export function solutionOf(e: Encounter): string {
     case "predict":
       return e.accepted[0];
     case "code":
+      return e.solution;
+    case "sql":
       return e.solution;
     case "terminal":
       return e.solution.join("\n");

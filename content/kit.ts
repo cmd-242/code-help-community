@@ -65,6 +65,29 @@ export const tm = (
   cwd?: string,
 ): Enc => ({ type: "terminal", skill, prompt, files, ...(cwd ? { cwd } : {}), goal, solution, explanation });
 
+/** SQL : `setup` = schéma + données ; `accepted` = résultats attendus (lignes « a|b »). */
+export const sq = (
+  skill: string,
+  prompt: string,
+  setup: string,
+  starter: string,
+  accepted: string | string[],
+  solution: string,
+  explanation: string,
+  opts: { verify?: string; ordered?: boolean } = {},
+): Enc => ({
+  type: "sql",
+  skill,
+  prompt,
+  setup,
+  starter,
+  accepted: Array.isArray(accepted) ? accepted : [accepted],
+  solution,
+  explanation,
+  ...(opts.verify ? { verify: opts.verify } : {}),
+  ...(opts.ordered ? { ordered: true } : {}),
+});
+
 export const fl = (skill: string, prompt: string, template: string, answer: string | string[], bank: string[], explanation: string): Enc => ({
   type: "fill",
   skill,

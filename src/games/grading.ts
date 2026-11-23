@@ -10,6 +10,8 @@ import type {
   PredictResponse,
   QcmEncounter,
   QcmResponse,
+  SqlEncounter,
+  SqlResponse,
   TerminalEncounter,
   TerminalResponse,
 } from "./schemas";
@@ -62,6 +64,16 @@ export function gradeTerminal(e: TerminalEncounter, r: TerminalResponse): boolea
   return replayAndCheck(initShell(e.files, e.cwd), r, e.goal, normalizeOutput);
 }
 
+/** SQL : compare le résultat (lignes de texte), dans l'ordre seulement si `ordered`. */
+export function gradeSql(e: SqlEncounter, r: SqlResponse): boolean {
+  const norm = (s: string) => {
+    const l = normalizeOutput(s).split("\n").filter(Boolean);
+    if (!e.ordered) l.sort();
+    return l.join("\n");
+  };
+  return e.accepted.some((a) => norm(a) === norm(r));
+}
+
 export type AnyResponse = QcmResponse | ParsonsResponse | FillResponse | PredictResponse;
 
 export function grade(e: Encounter, r: AnyResponse): boolean {
@@ -76,6 +88,8 @@ export function grade(e: Encounter, r: AnyResponse): boolean {
       return typeof r === "string" && gradePredict(e, r);
     case "code":
       return typeof r === "string" && gradeCode(e, r);
+    case "sql":
+      return typeof r === "string" && gradeSql(e, r);
     case "terminal":
       return Array.isArray(r) && r.every((x) => typeof x === "string") && gradeTerminal(e, r as string[]);
   }
