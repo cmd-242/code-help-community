@@ -44,9 +44,9 @@ Objectif : n'importe qui peut créer un compte, choisir un parcours et progresse
 
 Objectif : une classe pilote utilise la plateforme 4 semaines ; les autodidactes trouvent de l'entraide.
 
-- [ ] Classes (avec ou sans établissement), code d'invitation, import CSV, parcours assignés.
-- [ ] Planning hebdomadaire par classe, dérogations individuelles. *(logique de déblocage déjà prête et testée)*
-- [ ] Tableau de bord enseignant, fiche étudiant, alertes de décrochage, annonces.
+- [x] Classes (sans établissement), code d'invitation, parcours assigné. *(import CSV et établissements : à venir)*
+- [x] Planning hebdomadaire par classe. *(dérogations individuelles : à venir)*
+- [x] Tableau de bord enseignant et alertes de décrochage (inactif, en retard, en difficulté). *(fiche étudiant détaillée et annonces : à venir)*
 - [ ] Permissions serveur (`src/server/permissions.ts`) et journal d'audit.
 - [ ] Guildes ouvertes, équipes de classe, mentors (de classe ou bénévoles), revue de code.
 - [ ] Ligues hebdomadaires publiques, quêtes, monnaie virtuelle, gel de série.

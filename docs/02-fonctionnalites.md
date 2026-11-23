@@ -190,3 +190,12 @@ Une classe ajoute un rythme et un suivi. Un étudiant en classe reste aussi un a
 - **[V2]** Application installable (PWA) avec révision hors-ligne et synchronisation au retour du réseau.
 - **[MVP]** Protection des données personnelles : consentement, export et suppression des données d'un utilisateur, données de mineurs protégées.
 - **[V2]** Mode sombre, mode « économie de données » (pas de vidéo automatique, images réduites).
+
+## Espace enseignant (livré, première version)
+
+- Création de classes ; code d'invitation à 6 caractères et lien `/rejoindre/<code>`.
+- Un étudiant rejoint avec son compte : il garde sa progression et sa collection ; la classe ajoute le planning par-dessus (règle 10 bis).
+- Planning hebdomadaire : ouverture de l'île, réveil et fin du gardien ; une île non programmée reste fermée en classe. Le serveur ignore un combat de gardien hors fenêtre.
+- Tableau de bord : étudiants triés par alertes, avec XP, criques réussies et état de chaque île.
+- Permissions vérifiées côté serveur (`src/server/permissions.ts`) : un enseignant ne voit que ses classes.
+- Données de démonstration : `pnpm db:seed` (prof@demo.test).

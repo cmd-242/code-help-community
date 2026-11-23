@@ -147,15 +147,14 @@ model Classroom {
   assignedTracks   ClassroomTrack[]
 }
 
-// Parcours assignés à une classe par l'enseignant
+// Parcours assignés à une classe par l'enseignant (le parcours est défini dans content/)
 model ClassroomTrack {
   classroomId String
-  trackId     String
+  trackSlug   String
 
-  classroom Classroom @relation(fields: [classroomId], references: [id])
-  track     Track     @relation(fields: [trackId], references: [id])
+  classroom Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
 
-  @@id([classroomId, trackId])
+  @@id([classroomId, trackSlug])
 }
 
 enum TeacherRole {
@@ -168,8 +167,8 @@ model ClassroomTeacher {
   userId      String
   role        TeacherRole @default(OWNER)
 
-  classroom Classroom @relation(fields: [classroomId], references: [id])
-  user      User      @relation(fields: [userId], references: [id])
+  classroom Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([classroomId, userId])
 }
@@ -179,8 +178,8 @@ model Enrollment {
   userId      String
   joinedAt    DateTime @default(now())
 
-  classroom Classroom @relation(fields: [classroomId], references: [id])
-  user      User      @relation(fields: [userId], references: [id])
+  classroom Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([classroomId, userId])
 }
@@ -245,7 +244,6 @@ model Track {
   domain      Domain       @relation(fields: [domainId], references: [id])
   institution Institution? @relation(fields: [institutionId], references: [id])
   notions     Notion[]
-  classrooms  ClassroomTrack[]
 
   @@unique([domainId, slug])
 }
@@ -268,7 +266,6 @@ model Notion {
   stages        Stage[]
   questions     Question[]
   challenge     Challenge?
-  releases      NotionRelease[]
   forumThreads  ForumThread[]
 
   @@unique([trackId, slug])
@@ -363,8 +360,7 @@ model TrackEnrollment {
 model NotionRelease {
   id                String   @id @default(cuid())
   classroomId       String
-  notionId          String
-  week              Int?
+  notionSlug        String   // notion définie dans content/
   gameOpensAt       DateTime
   courseOpensAt     DateTime
   challengeOpensAt  DateTime
@@ -373,16 +369,15 @@ model NotionRelease {
   maxAttempts       Int      @default(2)
   instructions      String?  // consignes de la semaine (MDX)
 
-  classroom Classroom @relation(fields: [classroomId], references: [id])
-  notion    Notion    @relation(fields: [notionId], references: [id])
+  classroom Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
 
-  @@unique([classroomId, notionId])
+  @@unique([classroomId, notionSlug])
 }
 
 model StudentOverride {
   id           String   @id @default(cuid())
   studentId    String
-  notionId     String
+  notionSlug   String // notion définie dans content/
   grantedById  String
   reason       String
   unlock       Boolean  @default(false)

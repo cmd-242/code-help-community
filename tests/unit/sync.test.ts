@@ -14,6 +14,7 @@ const guest: ProgressSnapshot = {
   cards: { pwd: { at: "x" }, "guardian:se-reperer": { at: "x" } },
   shiny: {},
   boosterWeeks: ["2026-11-23"],
+  classroom: null,
 };
 
 describe("import de la progression d'un invité", () => {

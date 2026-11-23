@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { googleEnabled } from "@/env";
 import { BoatArt } from "@/universes/archipel/boat-art";
@@ -22,7 +23,10 @@ export async function AuthPage({ mode }: { mode: "signin" | "signup" }) {
           <h1 className="font-display text-3xl font-bold">{mode === "signup" ? t("signupTitle") : t("signinTitle")}</h1>
           <p className="mt-1 text-muted">{mode === "signup" ? t("signupLede") : t("signinLede")}</p>
           <div className="mt-6">
-            <AuthForm mode={mode} google={googleEnabled()} />
+            {/* AuthForm lit ?next= : paramètre de requête, donc derrière une frontière Suspense */}
+            <Suspense fallback={<div className="h-72 animate-pulse rounded-2xl bg-surface-sunk" />}>
+              <AuthForm mode={mode} google={googleEnabled()} />
+            </Suspense>
           </div>
         </div>
         <p className="mt-6 text-center text-muted">

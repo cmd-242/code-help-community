@@ -1,7 +1,9 @@
 import "server-only";
 import type { PrismaClient } from "@/generated/prisma/client";
 import { findCardById, findLessonById, findStageById, getNotion } from "@/features/catalog/queries";
+import { guardianWindowOpen } from "@/features/classroom/rules";
 import { BOOSTER_XP, guardianCardId, weekKey } from "@/features/collection/rules";
+import { getStudentClassroom } from "./classroom";
 import { LESSON_XP, WEEKLY_GOALS, challengeXp, stageXp, weekStart, type WeeklyGoal } from "@/features/gamification/rules";
 import {
   GOAL_FROM_XP,
@@ -22,7 +24,7 @@ const XP_REASONS = ["stage", "guardian", "lesson", "booster"] as const;
 type XpReason = (typeof XP_REASONS)[number];
 
 export async function getSnapshot(db: Db, userId: string, trackSlug = "linux-debutant"): Promise<ProgressSnapshot> {
-  const [user, xp, stages, notions, attempts, lessons, days, enrollment, hits, cards, boosters] = await Promise.all([
+  const [user, xp, stages, notions, attempts, lessons, days, enrollment, hits, cards, boosters, classroom] = await Promise.all([
     db.user.findUniqueOrThrow({ where: { id: userId }, select: { weeklyGoalXp: true } }),
     db.xpEvent.findMany({ where: { userId }, orderBy: { createdAt: "asc" } }),
     db.stageAttempt.groupBy({ by: ["stageId"], where: { userId, success: true }, _max: { stars: true } }),
@@ -34,6 +36,7 @@ export async function getSnapshot(db: Db, userId: string, trackSlug = "linux-deb
     db.skillHit.findMany({ where: { userId } }),
     db.userCard.findMany({ where: { userId } }),
     db.boosterOpening.findMany({ where: { userId } }),
+    getStudentClassroom(db, userId, trackSlug),
   ]);
 
   return {
@@ -51,6 +54,18 @@ export async function getSnapshot(db: Db, userId: string, trackSlug = "linux-deb
     cards: Object.fromEntries(cards.map((c) => [c.cardId, { at: c.obtainedAt.toISOString() }])),
     shiny: Object.fromEntries(cards.filter((c) => c.shiny).map((c) => [c.cardId, true as const])),
     boosterWeeks: boosters.map((b) => b.week),
+    classroom: classroom
+      ? {
+          id: classroom.id,
+          name: classroom.name,
+          releases: Object.fromEntries(
+            Object.entries(classroom.releases).map(([slug, r]) => [
+              slug,
+              { gameOpensAt: r.gameOpensAt.toISOString(), challengeOpensAt: r.challengeOpensAt.toISOString(), challengeClosesAt: r.challengeClosesAt.toISOString() },
+            ]),
+          ),
+        }
+      : null,
   };
 }
 
@@ -104,6 +119,9 @@ export async function applyOps(db: Db, userId: string, ops: ProgressOp[], now = 
       case "guardian": {
         const challenge = getNotion(op.notionSlug)?.notion.challenge;
         if (!challenge) break;
+        // En classe, le gardien n'est disponible que pendant la fenêtre fixée par l'enseignant
+        const classroom = await getStudentClassroom(db, userId, trackSlug);
+        if (classroom && !guardianWindowOpen(classroom.releases[op.notionSlug], now)) break;
         const passed = op.score >= challenge.passingScore;
         const progress = await db.notionProgress.findUnique({ where: { userId_notionSlug: { userId, notionSlug: op.notionSlug } } });
         const already = progress?.status === "PASSED";
@@ -164,14 +182,7 @@ export async function applyOps(db: Db, userId: string, ops: ProgressOp[], now = 
         if (op.weeklyGoal) {
           await db.user.update({ where: { id: userId }, data: { weeklyGoalXp: WEEKLY_GOALS[op.weeklyGoal as WeeklyGoal] } });
         }
-        if (op.mode) {
-          const mode = op.mode === "classroom" ? "CLASSROOM" : "FREE";
-          await db.trackEnrollment.upsert({
-            where: { userId_trackSlug: { userId, trackSlug } },
-            create: { userId, trackSlug, mode },
-            update: { mode },
-          });
-        }
+        // Le mode (libre / en classe) ne se choisit pas : il découle de l'inscription à une classe.
         break;
       }
     }

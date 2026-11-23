@@ -77,7 +77,7 @@ describe("service de progression", () => {
   it("enregistre les réglages et les jours actifs", async () => {
     await applyOps(db, userId, [{ type: "settings", mode: "classroom", weeklyGoal: "calm" }, { type: "day", day: "2026-11-23" }, { type: "day", day: "2026-11-23" }], now);
     const s = await getSnapshot(db, userId);
-    expect(s.mode).toBe("classroom");
+    expect(s.mode).toBe("free"); // le mode découle de l'inscription à une classe, pas d'un réglage
     expect(s.weeklyGoal).toBe("calm");
     expect(s.activeDays).toEqual(["2026-11-23"]);
   });
@@ -108,6 +108,7 @@ describe("service de progression", () => {
       cards: { ls: { at: now.toISOString() } },
       shiny: {},
       boosterWeeks: [],
+      classroom: null,
     };
     expect(await importGuestProgress(db, userId, guest, now)).toBe(true);
     const s = await getSnapshot(db, userId);

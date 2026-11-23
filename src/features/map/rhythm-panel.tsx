@@ -4,7 +4,8 @@ import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { FlameIcon } from "@/components/icons";
 import { WEEKLY_GOALS, weeklyXp, type WeeklyGoal } from "@/features/gamification/rules";
-import { useProgress, type LearningMode } from "@/features/progression/progress-store";
+import Link from "next/link";
+import { useProgress } from "@/features/progression/progress-store";
 import { useHydratedProgress } from "@/features/progression/use-hydrated-progress";
 import { useSound } from "@/features/sound/sound-provider";
 
@@ -17,7 +18,7 @@ export function RhythmPanel() {
   const t = useTranslations("rhythm");
   const ready = useHydratedProgress();
   const { play } = useSound();
-  const mode = useProgress((s) => s.mode);
+  const classroom = useProgress((s) => s.classroom);
   const goal = useProgress((s) => s.weeklyGoal);
   const events = useProgress((s) => s.xpEvents);
 
@@ -27,11 +28,6 @@ export function RhythmPanel() {
   const target = WEEKLY_GOALS[goal];
   const reached = earned >= target;
 
-  const pickMode = (m: LearningMode) => {
-    if (m === mode) return;
-    play(m === "classroom" ? "enter" : "whoosh");
-    useProgress.getState().setMode(m);
-  };
   const pickGoal = (g: WeeklyGoal) => {
     play("pick");
     useProgress.getState().setWeeklyGoal(g);
@@ -39,7 +35,7 @@ export function RhythmPanel() {
 
   return (
     <section className="mt-4 grid gap-4 sm:grid-cols-[1.3fr_1fr]" aria-label={t("label")}>
-      {mode === "free" ? (
+      {!classroom ? (
         <div className="paper rounded-[2rem] p-5">
           <div className="flex items-baseline justify-between gap-3">
             <h2 className="font-display text-2xl font-semibold">{t("goalTitle")}</h2>
@@ -76,30 +72,20 @@ export function RhythmPanel() {
         </div>
       ) : (
         <div className="paper rounded-[2rem] p-5">
-          <h2 className="font-display text-2xl font-semibold">{t("classTitle")}</h2>
+          <p className="font-bold text-info-deep">{t("classLabel")}</p>
+          <h2 className="font-display text-2xl font-semibold">{classroom.name}</h2>
           <p className="mt-2 text-muted">{t("classBody")}</p>
         </div>
       )}
 
       <div className="rounded-[2rem] border-2 border-line p-5">
         <h2 className="font-display text-2xl font-semibold">{t("modeTitle")}</h2>
-        <div className="mt-3 grid gap-2" role="radiogroup" aria-label={t("modeTitle")}>
-          {(["free", "classroom"] as const).map((m) => (
-            <button
-              key={m}
-              type="button"
-              role="radio"
-              aria-checked={mode === m}
-              onClick={() => pickMode(m)}
-              className={`rounded-2xl border-2 px-4 py-2.5 text-left transition ${
-                mode === m ? "border-info-deep bg-info/10" : "border-line hover:border-info"
-              }`}
-            >
-              <span className="block font-display text-xl font-semibold">{t(`modes.${m}.title`)}</span>
-              <span className="block text-sm text-muted">{t(`modes.${m}.body`)}</span>
-            </button>
-          ))}
-        </div>
+        <p className="mt-2 text-muted">{classroom ? t("modeClass") : t("modeFree")}</p>
+        {!classroom && (
+          <Link href="/rejoindre" onClick={() => play("click")} className="mt-3 inline-flex min-h-11 items-center rounded-full bg-surface-sunk px-4 font-bold text-info-deep">
+            {t("joinClass")}
+          </Link>
+        )}
       </div>
     </section>
   );

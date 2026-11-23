@@ -4,6 +4,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { toDayKey, type WeeklyGoal } from "@/features/gamification/rules";
 import { enqueue } from "./sync-queue";
+import type { ClassroomInfo } from "./sync-schema";
 
 /**
  * Progression de l'apprenant, côté navigateur.
@@ -40,6 +41,8 @@ export type ProgressState = {
   shiny: Record<string, true>;
   /** Semaines dont le coffre a déjà été ouvert (clé = lundi) */
   boosterWeeks: string[];
+  /** Classe de l'apprenant (reçue du serveur) ; null en apprentissage libre */
+  classroom: ClassroomInfo | null;
   addSkillHit: (skill: string) => void;
   unlockCards: (ids: string[]) => void;
   openBooster: (week: string, shinyCardId: string | null) => void;
@@ -66,6 +69,7 @@ const initial = {
   cards: {} as Record<string, { at: string }>,
   shiny: {} as Record<string, true>,
   boosterWeeks: [] as string[],
+  classroom: null as ClassroomInfo | null,
 };
 
 export const useProgress = create<ProgressState>()(
@@ -156,5 +160,6 @@ export function snapshotOf(s: ProgressState) {
     cards: s.cards,
     shiny: s.shiny,
     boosterWeeks: s.boosterWeeks,
+    classroom: s.classroom,
   };
 }

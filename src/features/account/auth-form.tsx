@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -21,9 +21,15 @@ const signupSchema = signinSchema.extend({
 });
 type Values = z.infer<typeof signupSchema>;
 
+/** Destination après connexion : uniquement un chemin interne (pas de redirection ouverte) */
+function safeNext(value: string | null): string {
+  return value && value.startsWith("/") && !value.startsWith("//") ? value : "/app";
+}
+
 export function AuthForm({ mode, google }: { mode: Mode; google: boolean }) {
   const t = useTranslations("auth");
   const router = useRouter();
+  const next = safeNext(useSearchParams().get("next"));
   const [error, setError] = useState<string | null>(null);
   const {
     register,
@@ -51,7 +57,7 @@ export function AuthForm({ mode, google }: { mode: Mode; google: boolean }) {
       );
       return;
     }
-    router.push("/app");
+    router.push(next);
     router.refresh();
   };
 
@@ -64,7 +70,7 @@ export function AuthForm({ mode, google }: { mode: Mode; google: boolean }) {
           <GameButton
             variant="secondary"
             className="w-full"
-            onClick={() => void authClient.signIn.social({ provider: "google", callbackURL: "/app" })}
+            onClick={() => void authClient.signIn.social({ provider: "google", callbackURL: next })}
           >
             <svg viewBox="0 0 24 24" className="size-5" aria-hidden>
               <path fill="#4285F4" d="M22.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h5.9a5 5 0 01-2.2 3.3v2.7h3.6c2-1.9 3.2-4.7 3.2-8.1z" />
@@ -125,7 +131,7 @@ export function AuthForm({ mode, google }: { mode: Mode; google: boolean }) {
 
       <p className="mt-6 text-center">
         {mode === "signup" ? t("haveAccount") : t("noAccount")}{" "}
-        <Link href={mode === "signup" ? "/connexion" : "/inscription"} className="font-bold text-info-deep underline underline-offset-4">
+        <Link href={`${mode === "signup" ? "/connexion" : "/inscription"}${next !== "/app" ? `?next=${encodeURIComponent(next)}` : ""}`} className="font-bold text-info-deep underline underline-offset-4">
           {mode === "signup" ? t("toSignin") : t("toSignup")}
         </Link>
       </p>

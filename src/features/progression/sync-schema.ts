@@ -43,8 +43,18 @@ export const progressSnapshotSchema = z.object({
   cards: z.record(z.string(), z.object({ at: z.string() })),
   shiny: z.record(z.string(), z.literal(true)),
   boosterWeeks: z.array(day).max(1000),
+  /** Classe de l'apprenant pour ce parcours (null : apprentissage libre) */
+  classroom: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      releases: z.record(z.string(), z.object({ gameOpensAt: z.string(), challengeOpensAt: z.string(), challengeClosesAt: z.string() })),
+    })
+    .nullable()
+    .default(null),
 });
 export type ProgressSnapshot = z.infer<typeof progressSnapshotSchema>;
+export type ClassroomInfo = NonNullable<ProgressSnapshot["classroom"]>;
 
 /** Une progression vide (apprenant qui n'a encore rien fait) ? */
 export function isEmptySnapshot(s: Pick<ProgressSnapshot, "stageStars" | "lessonsRead" | "cleared" | "skillHits">): boolean {

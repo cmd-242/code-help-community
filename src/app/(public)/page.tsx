@@ -101,6 +101,9 @@ export default async function HomePage() {
             ))}
           </div>
           <p className="mt-10 text-muted">{t("teachersSoon")}</p>
+          <GameLink href="/prof" className="mt-6">
+            {t("teacherCta")}
+          </GameLink>
         </section>
 
         <footer className="sea px-5 py-16 text-center">

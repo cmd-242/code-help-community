@@ -44,7 +44,9 @@ export function NotionView({ notions, index, stages, lessons }: Props) {
             ? t("soon")
             : state.status === "sealed" && state.release
               ? t("sealed", { date: format.dateTime(state.release.gameOpensAt, { weekday: "long", day: "numeric", month: "long" }) })
-              : t("blocked", { name: notions[index - 1]?.guardian.name ?? "" })}
+              : state.status === "sealed"
+                ? t("notScheduled")
+                : t("blocked", { name: notions[index - 1]?.guardian.name ?? "" })}
         </p>
         <GameLink href="/app" variant="secondary" className="mt-6">
           {t("backToMap")}

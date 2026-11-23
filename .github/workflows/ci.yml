@@ -53,6 +53,16 @@ jobs:
           test "$code" = "200"
           curl -sf -b cookies.txt http://localhost:3000/api/auth/get-session | tee session.json
           grep -q "aya.ci@example.com" session.json
+      - name: Captures de l'espace enseignant
+        run: |
+          pnpm db:seed
+          npm install --prefix /tmp/pw playwright
+          /tmp/pw/node_modules/.bin/playwright install --with-deps chromium
+          node scripts/screenshots-teacher.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: captures-enseignant
+          path: screenshots/
       - name: Journal du serveur en cas d'échec
         if: failure()
         run: cat server.log || true

@@ -44,6 +44,14 @@ export function AccountPanel() {
         <span className="font-bold">{t("sound")}</span>
         <SoundToggle />
       </div>
+      <div className="mt-5 grid gap-2">
+        <GameLink href="/rejoindre" variant="secondary">
+          {t("joinClass")}
+        </GameLink>
+        <GameLink href="/prof" variant="secondary">
+          {t("teacherSpace")}
+        </GameLink>
+      </div>
       <GameButton
         variant="secondary"
         className="mt-6 w-full"

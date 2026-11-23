@@ -98,7 +98,8 @@
     "opensOn": "Accessible le {date}",
     "soon": "Encore dans la brume",
     "blocked": "Bats d'abord le gardien précédent",
-    "youAreHere": "Ton bateau est ici"
+    "youAreHere": "Ton bateau est ici",
+    "notScheduled": "Pas encore ouverte par ton enseignant"
   },
   "camp": {
     "metaTitle": "Le port",
@@ -124,19 +125,12 @@
       "steady": "Régulier, {xp} XP",
       "intense": "Acharné, {xp} XP"
     },
-    "classTitle": "Ton enseignant donne le rythme",
-    "classBody": "Les îles s'ouvrent selon le planning de ta classe, et le gardien se réveille aux dates prévues.",
+    "classBody": "Ton enseignant ouvre les îles et réveille les gardiens selon le planning de la classe.",
     "modeTitle": "Comment tu apprends",
-    "modes": {
-      "free": {
-        "title": "Librement",
-        "body": "Seul, à ton rythme : chaque gardien vaincu ouvre la route vers l'île suivante."
-      },
-      "classroom": {
-        "title": "Avec ma classe (démo)",
-        "body": "Ton enseignant ouvre une île par semaine."
-      }
-    }
+    "classLabel": "Ta classe",
+    "modeFree": "Librement, à ton rythme : chaque gardien vaincu ouvre la route vers l'île suivante.",
+    "modeClass": "Avec ta classe : en plus de tes progrès, les dates fixées par ton enseignant s'appliquent.",
+    "joinClass": "J'ai un code de classe"
   },
   "notion": {
     "stop": "Île {position}",
@@ -160,7 +154,8 @@
     "guardianClosed": "Le gardien est reparti au large. Demande à ton enseignant de rouvrir le défi.",
     "guardianReady": "Il t'attend. Si tu le bats, la route vers l'île suivante s'ouvre.",
     "guardianRematch": "Le réaffronter",
-    "guardianFace": "Affronter le gardien"
+    "guardianFace": "Affronter le gardien",
+    "notScheduled": "Ton enseignant n'a pas encore ouvert cette île pour la classe."
   },
   "course": {
     "chapter": "Journal de bord, {place}",
@@ -222,8 +217,9 @@
         "body": "Des équipes encadrées par un mentor, pour les classes comme pour les autodidactes."
       }
     },
-    "teachersSoon": "Les classes sont une option : sans enseignant, tout l'archipel reste accessible. L'espace enseignant est en cours de construction.",
-    "footerTitle": "Pas besoin d'école pour embarquer."
+    "teachersSoon": "Les classes sont une option : sans enseignant, tout l'archipel reste accessible.",
+    "footerTitle": "Pas besoin d'école pour embarquer.",
+    "teacherCta": "Créer ma classe"
   },
   "collection": {
     "metaTitle": "Ma collection",
@@ -300,6 +296,87 @@
     "signout": "Me déconnecter",
     "bannerTitle": "Sauvegarde ta progression",
     "bannerBody": "Tu joues en invité. Crée un compte gratuit : ce que tu as déjà fait sera repris.",
-    "bannerCta": "Créer mon compte"
+    "bannerCta": "Créer mon compte",
+    "joinClass": "Rejoindre une classe",
+    "teacherSpace": "Espace enseignant"
+  },
+  "join": {
+    "title": "Rejoindre une classe",
+    "lede": "Entre le code donné par ton enseignant.",
+    "codeLabel": "Code de la classe",
+    "continue": "Continuer",
+    "notFoundTitle": "Code introuvable",
+    "notFoundBody": "Ce code ne correspond à aucune classe. Vérifie-le avec ton enseignant.",
+    "retry": "Saisir un autre code",
+    "invited": "Tu es invité dans la classe",
+    "teacher": "Enseignant : {name}",
+    "explain": "Tu gardes ta progression et ta collection. Ton enseignant pourra suivre ton avancée sur ce parcours, et ouvrira les îles selon le planning de la classe.",
+    "join": "Rejoindre la classe",
+    "joining": "Un instant…",
+    "signupToJoin": "Créer un compte pour rejoindre",
+    "signinToJoin": "J'ai déjà un compte",
+    "error": "Impossible de rejoindre cette classe pour le moment. Réessaie."
+  },
+  "teacher": {
+    "space": "Espace enseignant",
+    "brand": "Code Help Community",
+    "toGame": "Retour au jeu",
+    "signinTitle": "Connecte-toi pour gérer tes classes",
+    "signinBody": "Créer une classe est gratuit. Tes étudiants la rejoignent avec un code.",
+    "signup": "Créer un compte",
+    "signin": "Me connecter",
+    "homeTitle": "Bonjour {name}",
+    "homeLede": "Crée une classe, partage son code avec tes étudiants, programme les îles semaine après semaine et repère ceux qui décrochent.",
+    "myClasses": "Mes classes",
+    "studentCount": "{count, plural, =0 {Aucun étudiant} one {# étudiant} other {# étudiants}}",
+    "codeLabel": "Code :",
+    "createFirst": "Créer ma première classe",
+    "createAnother": "Créer une autre classe",
+    "createLede": "Tu pourras partager son code juste après.",
+    "className": "Nom de la classe",
+    "classNamePlaceholder": "ex. L1 Informatique, groupe A",
+    "classNameError": "Donne un nom d'au moins 2 caractères.",
+    "schoolYear": "Année scolaire (facultatif)",
+    "schoolYearPlaceholder": "ex. 2026-2027",
+    "trackNote": "Parcours : Linux débutant (d'autres parcours arrivent).",
+    "create": "Créer la classe",
+    "creating": "Création…",
+    "classTitle": "Ma classe",
+    "inviteLabel": "Code de la classe",
+    "copyLink": "Copier le lien",
+    "linkCopied": "Lien copié",
+    "tabsLabel": "Vues de la classe",
+    "tabStudents": "Étudiants ({count})",
+    "tabPlanning": "Planning",
+    "noStudentsTitle": "Aucun étudiant pour l'instant",
+    "noStudentsBody": "Donne le code de la classe à tes étudiants, ou partage le lien : ils apparaîtront ici dès qu'ils auront rejoint.",
+    "watchSummary": "{count, plural, one {# étudiant à surveiller} other {# étudiants à surveiller}}",
+    "allGood": "Personne n'est en difficulté pour le moment.",
+    "never": "jamais",
+    "lastActive": "Dernière activité : {when}",
+    "alert": {
+      "inactive": "Inactif",
+      "behind": "En retard",
+      "struggling": "En difficulté"
+    },
+    "xpWeek": "XP cette semaine",
+    "stagesDone": "Criques réussies",
+    "xpTotal": "XP au total",
+    "notionsLabel": "Îles du parcours",
+    "notionChip": "Île {position}",
+    "chipCleared": "validée",
+    "chipFails": "{count, plural, one {# échec} other {# échecs}}",
+    "fillLabel": "Programmer une île par semaine à partir du",
+    "fillHint": "Chaque île s'ouvre le jour choisi, le gardien se réveille 4 jours plus tard et reste disponible 2 semaines. Tu peux ajuster chaque date ensuite.",
+    "fill": "Remplir le planning",
+    "opensOn": "Ouverture de l'île",
+    "guardianFrom": "Gardien à partir du",
+    "guardianUntil": "Gardien jusqu'au",
+    "notScheduled": "Pas encore programmée : l'île reste fermée pour la classe.",
+    "unsavedHint": "Les modifications s'appliquent dès l'enregistrement.",
+    "saving": "Enregistrement…",
+    "saved": "Planning enregistré.",
+    "invalid": "Une date manque ou n'est pas dans l'ordre : ouverture, puis gardien, puis fin du gardien.",
+    "save": "Enregistrer le planning"
   }
 }
