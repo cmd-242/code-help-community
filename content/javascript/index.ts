@@ -1,4 +1,4 @@
-import { C, fl, P, ps, pr, q, T, track, W } from "../kit";
+import { C, co, fl, P, ps, pr, q, T, track, W } from "../kit";
 
 export const javascriptTrack = track(
   {
@@ -89,7 +89,7 @@ export const javascriptTrack = track(
           pr("js-func", "Qu'affiche ce script ?", "function carre(n) {\n  return n * n;\n}\nconsole.log(carre(3));", "9", "3 × 3."),
           pr("js-func", "Qu'affiche ce script ?", "const double = (n) => n * 2;\nconsole.log(double(4));", "8", "La flèche renvoie n * 2."),
           q("js-func", "Que renvoie une fonction sans return ?", ["undefined", "0", "null", "Une erreur"], 0, "Par défaut : undefined."),
-          fl("js-func", "Déclare une fonction.", "{{0}} saluer(nom) {", "function", ["function", "def", "fn", "func"], "Le mot-clé est function."),
+          co("js-func", "Écris la fonction triple : elle renvoie le triple de son argument.", "javascript", "function triple(n) {\n  // ton code ici\n}", "console.log(triple(4));\nconsole.log(triple(0));", "12\n0", "function triple(n) {\n  return n * 3;\n}", "return n * 3 renvoie le triple."),
         ]],
         ["Les tableaux", "Range et retrouve.", [
           pr("js-array", "Qu'affiche ce script ?", "const t = [\"a\", \"b\", \"c\"];\nconsole.log(t[1]);", "b", "Indices depuis 0."),

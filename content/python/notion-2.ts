@@ -48,7 +48,7 @@ export const pyNotion2: NotionInput = {
         { id: "y2-1-a", type: "predict", prompt: "Qu'affiche ce programme ?", code: "age = 20\nif age >= 18:\n    print(\"majeur\")\nelse:\n    print(\"mineur\")", accepted: ["majeur"], explanation: "20 >= 18 est vrai.", skill: "py-if" },
         { id: "y2-1-b", type: "qcm", prompt: "Quel caractère termine la ligne d'un if ?", choices: [":", ";", "{", "then"], answer: [0], explanation: "Les deux-points ouvrent le bloc.", skill: "py-if" },
         { id: "y2-1-c", type: "qcm", prompt: "Quel mot-clé ajoute une deuxième condition ?", choices: ["elif", "elseif", "else if", "orif"], answer: [0], explanation: "En Python on écrit elif.", skill: "py-if" },
-        { id: "y2-1-d", type: "predict", prompt: "Qu'affiche ce programme ?", code: "n = 5\nif n > 10:\n    print(\"grand\")\nelif n > 3:\n    print(\"moyen\")\nelse:\n    print(\"petit\")", accepted: ["moyen"], explanation: "n > 10 est faux, n > 3 est vrai.", skill: "py-if" },
+        { id: "y2-1-d", type: "code", language: "python", prompt: "Écris la fonction signe : elle renvoie \"positif\" si n > 0, sinon \"négatif ou nul\".", starter: "def signe(n):\n    # ton code ici\n    pass", harness: "print(signe(3))\nprint(signe(0))", accepted: ["positif\nnégatif ou nul"], solution: "def signe(n):\n    if n > 0:\n        return \"positif\"\n    return \"négatif ou nul\"", explanation: "Un if teste n > 0 ; sinon on renvoie l'autre texte.", skill: "py-if" },
       ],
     },
     {

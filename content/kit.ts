@@ -32,6 +32,28 @@ export const pr = (skill: string, prompt: string, code: string, accepted: string
   ...(placeholder ? { placeholder } : {}),
 });
 
+/** Écrire du code : `harness` est ajouté après le code ; `accepted` = sortie attendue. */
+export const co = (
+  skill: string,
+  prompt: string,
+  language: "javascript" | "python",
+  starter: string,
+  harness: string,
+  accepted: string | string[],
+  solution: string,
+  explanation: string,
+): Enc => ({
+  type: "code",
+  skill,
+  prompt,
+  language,
+  starter,
+  ...(harness ? { harness } : {}),
+  accepted: Array.isArray(accepted) ? accepted : [accepted],
+  solution,
+  explanation,
+});
+
 export const fl = (skill: string, prompt: string, template: string, answer: string | string[], bank: string[], explanation: string): Enc => ({
   type: "fill",
   skill,
