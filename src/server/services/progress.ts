@@ -3,7 +3,7 @@ import type { PrismaClient } from "@/generated/prisma/client";
 import { findCardById, findLessonById, findStageById, getNotion } from "@/features/catalog/queries";
 import { guardianWindowOpen } from "@/features/classroom/rules";
 import { BOOSTER_XP, guardianCardId, weekKey } from "@/features/collection/rules";
-import { getStudentClassroom } from "./classroom";
+import { getStudentClassroom, getStudentClassrooms } from "./classroom";
 import { LESSON_XP, WEEKLY_GOALS, challengeXp, stageXp, weekStart, type WeeklyGoal } from "@/features/gamification/rules";
 import {
   GOAL_FROM_XP,
@@ -23,8 +23,8 @@ type Db = PrismaClient;
 const XP_REASONS = ["stage", "guardian", "lesson", "booster"] as const;
 type XpReason = (typeof XP_REASONS)[number];
 
-export async function getSnapshot(db: Db, userId: string, trackSlug = "linux-debutant"): Promise<ProgressSnapshot> {
-  const [user, xp, stages, notions, attempts, lessons, days, enrollment, hits, cards, boosters, classroom] = await Promise.all([
+export async function getSnapshot(db: Db, userId: string): Promise<ProgressSnapshot> {
+  const [user, xp, stages, notions, attempts, lessons, days, hits, cards, boosters, classroom] = await Promise.all([
     db.user.findUniqueOrThrow({ where: { id: userId }, select: { weeklyGoalXp: true } }),
     db.xpEvent.findMany({ where: { userId }, orderBy: { createdAt: "asc" } }),
     db.stageAttempt.groupBy({ by: ["stageId"], where: { userId, success: true }, _max: { stars: true } }),
@@ -32,11 +32,10 @@ export async function getSnapshot(db: Db, userId: string, trackSlug = "linux-deb
     db.challengeAttempt.groupBy({ by: ["notionSlug"], where: { userId }, _count: { _all: true } }),
     db.lessonView.findMany({ where: { userId, completedAt: { not: null } } }),
     db.activeDay.findMany({ where: { userId }, orderBy: { day: "asc" } }),
-    db.trackEnrollment.findUnique({ where: { userId_trackSlug: { userId, trackSlug } } }),
     db.skillHit.findMany({ where: { userId } }),
     db.userCard.findMany({ where: { userId } }),
     db.boosterOpening.findMany({ where: { userId } }),
-    getStudentClassroom(db, userId, trackSlug),
+    getStudentClassrooms(db, userId),
   ]);
 
   return {
@@ -48,7 +47,7 @@ export async function getSnapshot(db: Db, userId: string, trackSlug = "linux-deb
     guardianAttempts: Object.fromEntries(attempts.map((a) => [a.notionSlug, a._count._all])),
     lessonsRead: Object.fromEntries(lessons.map((l) => [l.lessonId, true as const])),
     activeDays: days.map((d) => d.day),
-    mode: enrollment?.mode === "CLASSROOM" ? "classroom" : "free",
+    mode: classroom ? "classroom" : "free",
     weeklyGoal: GOAL_FROM_XP[user.weeklyGoalXp as keyof typeof GOAL_FROM_XP] ?? "steady",
     skillHits: Object.fromEntries(hits.map((h) => [h.skill, h.count])),
     cards: Object.fromEntries(cards.map((c) => [c.cardId, { at: c.obtainedAt.toISOString() }])),

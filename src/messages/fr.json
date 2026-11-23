@@ -14,7 +14,8 @@
     "xpTitle": "{current} XP sur {needed} pour le prochain niveau",
     "xp": "{current} / {needed} XP",
     "streakTitle": "{count, plural, =0 {Aucune série en cours : joue aujourd'hui pour l'allumer} one {# jour d'affilée} other {# jours d'affilée}}",
-    "collection": "Ma collection de cartes"
+    "collection": "Ma collection de cartes",
+    "catalogue": "Tous les parcours"
   },
   "ranks": {
     "novice": "Moussaillon",
@@ -379,7 +380,6 @@
     "classNameError": "Donne un nom d'au moins 2 caractères.",
     "schoolYear": "Année scolaire (facultatif)",
     "schoolYearPlaceholder": "ex. 2026-2027",
-    "trackNote": "Parcours : Linux débutant (d'autres parcours arrivent).",
     "create": "Créer la classe",
     "creating": "Création…",
     "classTitle": "Ma classe",
@@ -418,11 +418,20 @@
     "saving": "Enregistrement…",
     "saved": "Planning enregistré.",
     "invalid": "Une date manque ou n'est pas dans l'ordre : ouverture, puis gardien, puis fin du gardien.",
-    "save": "Enregistrer le planning"
+    "save": "Enregistrer le planning",
+    "tracksLegend": "Parcours suivis par la classe",
+    "tracksHint": "Choisis ce que tes étudiants doivent suivre avec toi. Ils restent libres d'apprendre tout le reste, sans planning.",
+    "tracksError": "Choisis au moins un parcours.",
+    "classTracksTitle": "Parcours de la classe",
+    "classTracksHint": "Le planning ci-dessous s'applique à ces parcours. Les étudiants peuvent aussi suivre les autres parcours du catalogue en toute liberté.",
+    "addTrack": "Ajouter un parcours à la classe",
+    "addTrackNamed": "Ajouter : {title}",
+    "addTrackFailed": "Impossible d'ajouter ce parcours. Réessaie dans un instant.",
+    "planningTracksLabel": "Planning par parcours"
   },
   "metroMap": {
     "metaTitle": "Néo-Métro",
-    "backToArchipel": "Retour à l'archipel",
+    "backToArchipel": "Retour au catalogue",
     "entrance": "Entrée de la station",
     "planTitle": "Plan du réseau",
     "planLabel": "Plan du réseau {name}",
@@ -445,5 +454,25 @@
     "line": "{title} · {count} stations",
     "go": "Descendre dans le métro",
     "going": "Les portes se ferment…"
+  },
+  "catalogue": {
+    "metaTitle": "Catalogue des parcours",
+    "title": "Que veux-tu apprendre ?",
+    "lede": "Choisis un parcours et commence quand tu veux. Aucun compte, aucune école, aucun ordre imposé : tu peux suivre plusieurs parcours à la fois.",
+    "domains": {
+      "linux": "Linux",
+      "php": "PHP",
+      "git": "Git"
+    },
+    "universe": {
+      "archipel": "Archipel · pour débuter",
+      "metro": "Néo-Métro · pour aller plus loin"
+    },
+    "places": "{count, plural, one {# étape} other {# étapes}}",
+    "start": "Commencer",
+    "more": "D'autres parcours arrivent : réseau, sécurité, cloud… Ton niveau et tes cartes te suivent d'un parcours à l'autre.",
+    "linkTitle": "Un autre parcours ?",
+    "linkBody": "Linux, PHP, Git… Choisis ce que tu veux apprendre, dans l'ordre que tu veux.",
+    "linkCta": "Voir tous les parcours"
   }
 }

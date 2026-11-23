@@ -3,12 +3,15 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { MetroIcon } from "@/components/icons";
 import { GameLink } from "@/components/ui/game-button";
+import { DEFAULT_TRACK_SLUG } from "@/features/catalog/paths";
 import { getTrack, getTracks, notionSummaries } from "@/features/catalog/queries";
+import { ArchipelCamp } from "@/features/map/archipel-camp";
+import { CatalogueLink } from "@/features/catalog/catalogue-link";
 import { CityScene } from "@/universes/metro/city-scene";
 import { MetroMap } from "@/universes/metro/metro-map";
 
 export function generateStaticParams() {
-  return getTracks().filter((t) => t.universe !== "archipel").map((t) => ({ trackSlug: t.slug }));
+  return getTracks().filter((t) => t.slug !== DEFAULT_TRACK_SLUG).map((t) => ({ trackSlug: t.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps<"/app/parcours/[trackSlug]">): Promise<Metadata> {
@@ -20,7 +23,15 @@ export async function generateMetadata({ params }: PageProps<"/app/parcours/[tra
 export default async function TrackPage({ params }: PageProps<"/app/parcours/[trackSlug]">) {
   const { trackSlug } = await params;
   const track = getTrack(trackSlug);
-  if (!track || track.universe !== "metro") notFound();
+  if (!track || track.slug === DEFAULT_TRACK_SLUG) notFound();
+  if (track.universe === "archipel") {
+    return (
+      <div className="mx-auto max-w-3xl px-3 pb-24 pt-5">
+        <ArchipelCamp track={track} />
+        <CatalogueLink />
+      </div>
+    );
+  }
   const t = await getTranslations("metroMap");
   const notions = notionSummaries(track);
   const hasBranch = notions.some((n) => n.lane === 1);
@@ -65,7 +76,7 @@ export default async function TrackPage({ params }: PageProps<"/app/parcours/[tr
       </section>
 
       <div className="mt-8">
-        <GameLink href="/app" variant="secondary">
+        <GameLink href="/app/catalogue" variant="secondary">
           {t("backToArchipel")}
         </GameLink>
       </div>

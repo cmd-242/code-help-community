@@ -32,8 +32,9 @@ describe("catalogue", () => {
     }
   });
   it("renvoie la bonne page de carte selon l'univers", () => {
-    expect(mapHref({ slug: "linux-debutant", universe: "archipel" })).toBe("/app");
-    expect(mapHref({ slug: "git-metro", universe: "metro" })).toBe("/app/parcours/git-metro");
+    expect(mapHref({ slug: "linux-debutant" })).toBe("/app");
+    expect(mapHref({ slug: "php-debutant" })).toBe("/app/parcours/php-debutant");
+    expect(mapHref({ slug: "git-metro" })).toBe("/app/parcours/git-metro");
   });
   it("a une carte pour chaque compétence travaillée et pour chaque gardien", () => {
     for (const t of tracks) {

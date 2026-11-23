@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/server/db";
 import { ForbiddenError } from "@/server/permissions";
-import { createClassroom, joinClassroom, previewInvite, saveSchedule } from "@/server/services/classroom";
+import { addClassroomTrack, createClassroom, joinClassroom, previewInvite, saveSchedule, UnknownTrackError } from "@/server/services/classroom";
 import { getSession, requireUserId } from "@/server/session";
 import { isValidInviteCode, normalizeInviteCode } from "./rules";
 
@@ -17,14 +17,36 @@ import { isValidInviteCode, normalizeInviteCode } from "./rules";
 const createSchema = z.object({
   name: z.string().trim().min(2).max(80),
   schoolYear: z.string().trim().max(20).default(""),
+  trackSlugs: z.array(z.string().min(1)).min(1).max(12),
 });
 
-export async function createClassroomAction(input: unknown) {
+export async function createClassroomAction(input: unknown): Promise<{ ok: true; id: string } | { ok: false; reason: "unknown-track" }> {
   const userId = await requireUserId();
   const data = createSchema.parse(input);
-  const c = await createClassroom(db, userId, { name: data.name, schoolYear: data.schoolYear, trackSlug: "linux-debutant" });
-  revalidatePath("/prof");
-  return { id: c.id };
+  try {
+    const c = await createClassroom(db, userId, data);
+    revalidatePath("/prof");
+    return { ok: true, id: c.id };
+  } catch (e) {
+    if (e instanceof UnknownTrackError) return { ok: false, reason: "unknown-track" };
+    throw e;
+  }
+}
+
+const addTrackSchema = z.object({ classroomId: z.string().min(1), trackSlug: z.string().min(1) });
+
+export async function addClassroomTrackAction(input: unknown): Promise<{ ok: true } | { ok: false; reason: "forbidden" | "unknown-track" }> {
+  const userId = await requireUserId();
+  const { classroomId, trackSlug } = addTrackSchema.parse(input);
+  try {
+    await addClassroomTrack(db, userId, classroomId, trackSlug);
+  } catch (e) {
+    if (e instanceof ForbiddenError) return { ok: false, reason: "forbidden" };
+    if (e instanceof UnknownTrackError) return { ok: false, reason: "unknown-track" };
+    throw e;
+  }
+  revalidatePath(`/prof/classes/${classroomId}`);
+  return { ok: true };
 }
 
 const iso = z.string().datetime({ offset: true });

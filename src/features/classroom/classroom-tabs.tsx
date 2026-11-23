@@ -5,24 +5,29 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { GameButton } from "@/components/ui/game-button";
 import type { StudentRow } from "@/server/services/classroom";
-import { saveScheduleAction } from "./actions";
+import { addClassroomTrackAction, saveScheduleAction } from "./actions";
 import { isValidRelease, weeklySchedule, type RiskAlert } from "./rules";
 import { useMounted } from "./use-mounted";
 
 type NotionInfo = { slug: string; place: string; position: number; concept: string };
 type ReleaseIso = { gameOpensAt: string; challengeOpensAt: string; challengeClosesAt: string };
 
+type TrackInfo = { slug: string; title: string; notions: NotionInfo[] };
+
 type Props = {
   classroomId: string;
   students: StudentRow[];
-  notions: NotionInfo[];
+  tracks: TrackInfo[];
+  /** Parcours du catalogue que la classe ne suit pas encore */
+  available: { slug: string; title: string }[];
   releases: Record<string, ReleaseIso>;
 };
 
-export function ClassroomTabs({ classroomId, students, notions, releases }: Props) {
+export function ClassroomTabs({ classroomId, students, tracks, available, releases }: Props) {
   const t = useTranslations("teacher");
   const [tab, setTab] = useState<"students" | "planning">("students");
   const watched = students.filter((s) => s.alerts.length > 0).length;
+  const notions = tracks.flatMap((track) => track.notions);
 
   return (
     <div>
@@ -47,7 +52,10 @@ export function ClassroomTabs({ classroomId, students, notions, releases }: Prop
         {tab === "students" ? (
           <StudentsPanel students={students} notions={notions} watched={watched} />
         ) : (
-          <PlanningPanel classroomId={classroomId} notions={notions} releases={releases} />
+          <div className="space-y-5">
+            <TracksBar classroomId={classroomId} tracks={tracks} available={available} />
+            <PlanningTracks classroomId={classroomId} tracks={tracks} releases={releases} />
+          </div>
         )}
       </div>
     </div>
@@ -139,6 +147,88 @@ function StudentsPanel({ students, notions, watched }: { students: StudentRow[];
   );
 }
 
+/** Les parcours suivis par la classe, et l'ajout d'un nouveau parcours. */
+function TracksBar({ classroomId, tracks, available }: { classroomId: string; tracks: TrackInfo[]; available: Props["available"] }) {
+  const t = useTranslations("teacher");
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  const add = async (trackSlug: string) => {
+    setPending(true);
+    setFailed(false);
+    const res = await addClassroomTrackAction({ classroomId, trackSlug });
+    setPending(false);
+    if (res.ok) router.refresh();
+    else setFailed(true);
+  };
+
+  return (
+    <section className="paper rounded-3xl p-5" aria-labelledby="class-tracks-title">
+      <h2 id="class-tracks-title" className="font-display text-xl font-bold">
+        {t("classTracksTitle")}
+      </h2>
+      <p className="text-sm text-muted">{t("classTracksHint")}</p>
+      <ul className="mt-3 flex flex-wrap gap-2">
+        {tracks.map((track) => (
+          <li key={track.slug} className="rounded-full bg-success px-3 py-1.5 text-sm font-bold text-ink">
+            {track.title}
+          </li>
+        ))}
+      </ul>
+      {available.length > 0 && (
+        <div className="mt-4">
+          <p className="mb-1.5 text-sm font-bold">{t("addTrack")}</p>
+          <ul className="flex flex-wrap gap-2">
+            {available.map((track) => (
+              <li key={track.slug}>
+                <GameButton variant="secondary" className="min-h-11 px-4 py-1.5 text-base" disabled={pending} onClick={() => add(track.slug)}>
+                  {t("addTrackNamed", { title: track.title })}
+                </GameButton>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {failed && (
+        <p className="mt-2 text-sm font-bold text-danger-text" role="alert">
+          {t("addTrackFailed")}
+        </p>
+      )}
+    </section>
+  );
+}
+
+/** Un planning par parcours : un onglet par parcours quand la classe en suit plusieurs. */
+function PlanningTracks({ classroomId, tracks, releases }: { classroomId: string; tracks: TrackInfo[]; releases: Record<string, ReleaseIso> }) {
+  const t = useTranslations("teacher");
+  const [slug, setSlug] = useState(tracks[0]?.slug);
+  const track = tracks.find((tr) => tr.slug === slug) ?? tracks[0];
+  if (!track) return null;
+
+  return (
+    <div className="space-y-4">
+      {tracks.length > 1 && (
+        <div role="tablist" aria-label={t("planningTracksLabel")} className="flex flex-wrap gap-2">
+          {tracks.map((tr) => (
+            <button
+              key={tr.slug}
+              type="button"
+              role="tab"
+              aria-selected={tr.slug === track.slug}
+              onClick={() => setSlug(tr.slug)}
+              className={`min-h-11 rounded-full px-4 font-bold transition ${tr.slug === track.slug ? "bg-info-deep text-white" : "bg-surface-sunk text-ink"}`}
+            >
+              {tr.title}
+            </button>
+          ))}
+        </div>
+      )}
+      <PlanningPanel key={track.slug} classroomId={classroomId} notions={track.notions} releases={releases} />
+    </div>
+  );
+}
+
 /** Dates locales AAAA-MM-JJ pour les champs de date */
 function toInput(iso: string | undefined): string {
   if (!iso) return "";
@@ -190,7 +280,9 @@ function PlanningPanel({ classroomId, notions, releases }: { classroomId: string
   };
 
   const save = async () => {
-    const payload: Record<string, ReleaseIso> = {};
+    // Le planning est enregistré d'un bloc : on garde tel quel celui des autres parcours.
+    const own = new Set(notions.map((n) => n.slug));
+    const payload: Record<string, ReleaseIso> = Object.fromEntries(Object.entries(releases).filter(([slug]) => !own.has(slug)));
     for (const [slug, r] of Object.entries(current)) {
       if (!r.open && !r.guardian && !r.close) continue;
       const open = fromInput(r.open);

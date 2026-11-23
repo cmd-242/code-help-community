@@ -39,7 +39,7 @@ async function main() {
     return;
   }
 
-  const classroom = await createClassroom(db, teacher.id, { name: "L1 Informatique — groupe A", schoolYear: "2026-2027", trackSlug: "linux-debutant" });
+  const classroom = await createClassroom(db, teacher.id, { name: "L1 Informatique — groupe A", schoolYear: "2026-2027", trackSlugs: ["linux-debutant"] });
   const start = daysAgo(8);
   await saveSchedule(db, teacher.id, classroom.id, weeklySchedule(["se-reperer", "fichiers-et-dossiers", "lire-les-fichiers"], start));
 
