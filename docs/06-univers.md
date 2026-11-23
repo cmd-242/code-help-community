@@ -13,7 +13,7 @@
 | Grand challenge | Le gardien de l'île (créature marine) | Le pare-feu à pirater |
 | Ambiance | Plein jour, lagon, sable, bois | Ville de nuit, néons |
 
-Le passage de l'Archipel à la ville est un **grand moment** (le bateau accoste au port de Néo-Métro). Un apprenant déjà avancé peut commencer directement en ville (test de positionnement, phase 3). Une **collection de cartes** (une commande maîtrisée = une carte) fera le lien entre les deux univers (à venir).
+Le passage de l'Archipel à la ville est un **grand moment** (le bateau accoste au port de Néo-Métro). Un apprenant déjà avancé peut commencer directement en ville (test de positionnement, phase 3). Une **collection de cartes** fait le lien entre les deux univers : une compétence réussie = une carte, un gardien vaincu = une carte légendaire, le coffre de la semaine rend une carte brillante. Règles dans `src/features/collection/rules.ts`, cartes du parcours dans `content/<parcours>/cards.ts`.
 
 ## Comment c'est construit
 

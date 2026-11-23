@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getTrack, notionSummaries } from "@/features/catalog/queries";
+import { CollectionTeaser } from "@/features/collection/collection-teaser";
 import { NextStop } from "@/features/map/next-stop";
 import { RhythmPanel } from "@/features/map/rhythm-panel";
 import { ArchipelagoMap } from "@/universes/archipel/archipelago-map";
@@ -20,6 +21,7 @@ export default async function CampPage() {
     <div className="mx-auto max-w-3xl px-3 pb-24 pt-5">
       <NextStop notions={notions} />
       <RhythmPanel />
+      <CollectionTeaser cards={track.cards} positions={Object.fromEntries(track.notions.map((n) => [n.slug, n.position]))} />
 
       <section className="mt-10" aria-labelledby="map-title">
         <div className="px-2">

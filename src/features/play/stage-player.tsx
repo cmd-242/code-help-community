@@ -2,17 +2,19 @@
 
 import { AnimatePresence, motion, useAnimate } from "motion/react";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { fireConfetti } from "@/components/fx/confetti";
 import { CloseIcon, FlameIcon, LifebuoyIcon, StarIcon } from "@/components/icons";
 import { GameButton, GameLink } from "@/components/ui/game-button";
-import type { Stage } from "@/features/catalog/types";
+import type { Card, Stage } from "@/features/catalog/types";
+import { CardReveal, type RevealedCard } from "@/features/collection/card-reveal";
+import { cardsEarnedFromSkills } from "@/features/collection/rules";
 import { MAX_HEARTS, stageXp, starsFromHearts } from "@/features/gamification/rules";
 import { useProgress } from "@/features/progression/progress-store";
 import { useHydratedProgress } from "@/features/progression/use-hydrated-progress";
 import { useSound } from "@/features/sound/sound-provider";
 import { EncounterView } from "@/games/encounter-view";
-import { check, toPublicEncounter } from "@/games/public";
+import { check, toPublicEncounter, type CheckResult } from "@/games/public";
 import { BoatArt } from "@/universes/archipel/boat-art";
 import { SeaWaves } from "@/universes/archipel/sea-waves";
 
@@ -22,11 +24,14 @@ type Props = {
   stage: Stage;
   stageNumber: number;
   nextStageId: string | null;
+  /** Cartes de la notion (pour révéler celles gagnées) */
+  cards: Card[];
+  position: number;
 };
 
 type Phase = "intro" | "play" | "victory" | "defeat";
 
-export function StagePlayer({ notionSlug, place, stage, stageNumber, nextStageId }: Props) {
+export function StagePlayer({ notionSlug, place, stage, stageNumber, nextStageId, cards, position }: Props) {
   const t = useTranslations("stage");
   const { play } = useSound();
   useHydratedProgress();
@@ -39,18 +44,25 @@ export function StagePlayer({ notionSlug, place, stage, stageNumber, nextStageId
   const [scope, animate] = useAnimate();
   const publicEncounters = useMemo(() => stage.encounters.map(toPublicEncounter), [stage]);
   const total = publicEncounters.length;
+  const succeeded = useRef<string[]>([]);
+  const [reveal, setReveal] = useState<RevealedCard[] | null>(null);
 
   const restart = () => {
     setIndex(0);
     setLives(MAX_HEARTS);
     setCombo(0);
     setReward(null);
+    succeeded.current = [];
     setRun((r) => r + 1);
     setPhase("play");
   };
 
-  const onResolved = (correct: boolean) => {
+  const onResolved = ({ correct, skill }: CheckResult) => {
     if (correct) {
+      if (skill) {
+        succeeded.current.push(skill);
+        useProgress.getState().addSkillHit(skill);
+      }
       play("correct");
       setCombo((c) => c + 1);
     } else {
@@ -77,6 +89,13 @@ export function StagePlayer({ notionSlug, place, stage, stageNumber, nextStageId
     const xp = stageXp(stage.xp, previous, stars);
     state.recordStage(stage.id, stars);
     state.addXp({ amount: xp, reason: "stage", ref: stage.id });
+    // Cartes gagnées : une par compétence réussie, si elle n'est pas déjà dans la collection
+    const earned = cardsEarnedFromSkills(cards, succeeded.current, state.cards);
+    if (earned.length) {
+      state.unlockCards(earned);
+      const items = earned.map((id) => ({ card: cards.find((c) => c.id === id)!, position }));
+      window.setTimeout(() => setReveal(items), 2600);
+    }
     setReward({ stars, xp });
     setPhase("victory");
     play("victory");
@@ -144,7 +163,7 @@ export function StagePlayer({ notionSlug, place, stage, stageNumber, nextStageId
                 key={`${run}-${index}`}
                 encounter={publicEncounters[index]}
                 check={(r) => check(stage.encounters[index], r)}
-                onResolved={(r) => onResolved(r.correct)}
+                onResolved={onResolved}
                 onContinue={onContinue}
               />
             </div>
@@ -180,6 +199,7 @@ export function StagePlayer({ notionSlug, place, stage, stageNumber, nextStageId
           </motion.section>
         )}
       </AnimatePresence>
+      {reveal && <CardReveal items={reveal} title={t("newCards", { count: reveal.length })} onClose={() => setReveal(null)} />}
     </div>
   );
 }

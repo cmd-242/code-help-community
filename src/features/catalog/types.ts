@@ -55,6 +55,25 @@ export const notionSchema = z.object({
   challenge: challengeSchema.optional(),
 });
 
+/** Rareté d'une carte de collection */
+export const raritySchema = z.enum(["common", "rare", "epic", "legendary"]);
+export type Rarity = z.infer<typeof raritySchema>;
+
+/**
+ * Carte de collection.
+ * kind "command" : liée à une compétence (`skill` des épreuves), gagnée en la réussissant.
+ * kind "guardian" : gagnée en battant le gardien de la notion (id = "guardian:<slug>").
+ */
+export const cardSchema = z.object({
+  id: z.string(),
+  kind: z.enum(["command", "guardian"]),
+  notion: z.string(),
+  title: z.string(),
+  rarity: raritySchema,
+  text: z.string(),
+});
+export type Card = z.infer<typeof cardSchema>;
+
 /**
  * Univers visuel d'un parcours.
  * archipel : les débuts (îles, mer, bateau) ; metro : les parcours avancés (à venir).
@@ -71,6 +90,7 @@ export const trackSchema = z.object({
   world: z.string(),
   tagline: z.string(),
   notions: z.array(notionSchema).min(1),
+  cards: z.array(cardSchema).default([]),
 });
 
 export type LessonBlock = z.infer<typeof lessonBlockSchema>;

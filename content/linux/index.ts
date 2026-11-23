@@ -1,4 +1,5 @@
 import type { TrackInput } from "@/features/catalog/types";
+import { linuxCards } from "./cards";
 import { notion1 } from "./notion-1";
 import { notion2 } from "./notion-2";
 import { notion3 } from "./notion-3";
@@ -22,6 +23,7 @@ export const linuxTrack: TrackInput = {
   universe: "archipel",
   world: "L'Archipel du Shell",
   tagline: "Six îles à conquérir, un gardien sur chaque rivage.",
+  cards: linuxCards,
   notions: [
     notion1,
     notion2,

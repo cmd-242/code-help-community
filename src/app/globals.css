@@ -27,6 +27,12 @@
   --color-info-deep: #147a91;
   --color-danger-text: #b5442f;
 
+  /* rareté des cartes (commune à tous les univers) */
+  --color-rarity-common: #147a91;
+  --color-rarity-rare: #2f62c9;
+  --color-rarity-epic: #7c4dc4;
+  --color-rarity-legendary: #9a6512;
+
   /* décor de l'Archipel */
   --color-sea: #2ec4d6;
   --color-sea-light: #5fe0ea;
@@ -43,6 +49,7 @@
   --animate-sway: sway 5s ease-in-out infinite;
   --animate-waves: waves 9s linear infinite;
   --animate-twinkle: twinkle 2.6s ease-in-out infinite;
+  --animate-sheen: sheen 2.8s ease-in-out infinite;
 }
 
 @keyframes bob {
@@ -58,6 +65,11 @@
 @keyframes waves {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
+}
+
+@keyframes sheen {
+  from { transform: translateX(-120%) rotate(20deg); }
+  to { transform: translateX(220%) rotate(20deg); }
 }
 
 @keyframes twinkle {

@@ -81,6 +81,8 @@ Chaque moteur est générique ; le contenu (JSON) dit quoi afficher et comment c
 - **[V2]** **Quêtes quotidiennes et hebdomadaires** (« Termine 3 étapes », « Aide un camarade sur le forum »).
 - **[V2]** ✨ **Ligues hebdomadaires** : groupes de 15 à 20 étudiants de niveau proche ; on monte ou descend chaque semaine. Évite que les plus faibles se comparent toujours aux meilleurs.
 - **[V2]** Classement de classe avec option **pseudonyme** et affichage du **progrès personnel** (« +40 % cette semaine »).
+- **[MVP]** ✨ **Collection de cartes** : chaque compétence réussie devient une carte (commune, rare, épique), qui monte en maîtrise (1 à 3) quand on la réussit encore ; chaque gardien vaincu donne sa carte légendaire ; le **coffre de la semaine** s'ouvre quand l'objectif hebdomadaire est atteint et rend une carte brillante. *(fait en démo)*
+- **[V2]** ✨ Duels de cartes entre apprenants et deck à composer.
 - **[V2]** ✨ Monnaie virtuelle (gemmes) pour personnaliser l'avatar, acheter des gels de série ou des indices. Aucune valeur réelle.
 - **[V3]** ✨ Événements : « semaine Linux », double XP le week-end, défis inter-classes.
 

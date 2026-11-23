@@ -13,7 +13,8 @@
     "level": "Niveau {level}",
     "xpTitle": "{current} XP sur {needed} pour le prochain niveau",
     "xp": "{current} / {needed} XP",
-    "streakTitle": "{count, plural, =0 {Aucune série en cours : joue aujourd'hui pour l'allumer} one {# jour d'affilée} other {# jours d'affilée}}"
+    "streakTitle": "{count, plural, =0 {Aucune série en cours : joue aujourd'hui pour l'allumer} one {# jour d'affilée} other {# jours d'affilée}}",
+    "collection": "Ma collection de cartes"
   },
   "ranks": {
     "novice": "Moussaillon",
@@ -65,7 +66,8 @@
     "starsHint3": "Sans une goutte d'eau dans la cale. Trois étoiles.",
     "nextStage": "Crique suivante",
     "backToNotion": "Retour à l'île",
-    "replay": "Rejouer"
+    "replay": "Rejouer",
+    "newCards": "{count, plural, one {Nouvelle carte !} other {# nouvelles cartes !}}"
   },
   "guardian": {
     "label": "Le gardien de l'île",
@@ -85,7 +87,8 @@
     "lostBody": "Tu as obtenu {score} %. Il faut {needed} % pour le vaincre.",
     "lostXp": "Ton courage te rapporte quand même {xp} XP.",
     "trainAgain": "S'entraîner encore",
-    "retry": "Retenter"
+    "retry": "Retenter",
+    "trophy": "Carte légendaire !"
   },
   "map": {
     "stop": "Île {position}",
@@ -222,5 +225,41 @@
     },
     "teachersSoon": "Les classes sont une option : sans enseignant, tout l'archipel reste accessible. L'espace enseignant est en cours de construction.",
     "footerTitle": "Pas besoin d'école pour embarquer."
+  },
+  "collection": {
+    "metaTitle": "Ma collection",
+    "title": "Ma collection",
+    "lede": "Chaque commande que tu maîtrises devient une carte. Rejoue pour les faire monter en maîtrise, bats les gardiens pour gagner leurs cartes légendaires.",
+    "progress": "{owned} cartes sur {total}",
+    "rarity": {
+      "common": "Commune",
+      "rare": "Rare",
+      "epic": "Épique",
+      "legendary": "Légendaire"
+    },
+    "shiny": "Brillante",
+    "cardLabel": "Carte {title}, {rarity}",
+    "lockedLabel": "Carte pas encore gagnée",
+    "masteryLabel": "Maîtrise {level} sur 3",
+    "masteryNext": "{count, plural, one {Encore # bonne réponse} other {Encore # bonnes réponses}} pour monter en maîtrise.",
+    "masteryMax": "Maîtrise maximale atteinte.",
+    "openCard": "Voir la carte {title}",
+    "hintCommand": "À gagner dans les criques",
+    "hintGuardian": "Bats le gardien",
+    "close": "Fermer",
+    "revealCount": "Carte {current} sur {total}",
+    "revealNext": "Carte suivante",
+    "revealDone": "Ranger dans ma collection",
+    "chestTitle": "Le coffre de la semaine",
+    "chestLocked": "Encore {left} XP pour atteindre ton cap et l'ouvrir.",
+    "chestReady": "Ton cap est atteint : le coffre est à toi.",
+    "chestDone": "Coffre ouvert cette semaine. Rendez-vous lundi pour le suivant.",
+    "chestBonus": "Toutes tes cartes brillent déjà : le coffre te donne {xp} XP.",
+    "chestOpen": "Ouvrir le coffre",
+    "chestReveal": "Une carte devient brillante !",
+    "chestHint": "Gagne tes premières cartes dans les criques.",
+    "teaserTitle": "Ma collection",
+    "teaserEmpty": "Réussis ta première crique pour gagner tes premières cartes.",
+    "teaserBody": "Voir toutes mes cartes et le coffre de la semaine."
   }
 }
