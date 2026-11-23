@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getStage, getTrack } from "@/features/catalog/queries";
+import { cardsOfNotion, getStage, getTrack } from "@/features/catalog/queries";
 import { StagePlayer } from "@/features/play/stage-player";
 
 export function generateStaticParams() {
@@ -21,7 +21,7 @@ export default async function StagePage({ params }: PageProps<"/app/notion/[slug
   const { slug, stageId } = await params;
   const found = getStage(slug, stageId);
   if (!found) notFound();
-  const { notion, stage, index } = found;
+  const { track, notion, stage, index } = found;
   return (
     <StagePlayer
       notionSlug={notion.slug}
@@ -29,6 +29,8 @@ export default async function StagePage({ params }: PageProps<"/app/notion/[slug
       stage={stage}
       stageNumber={index + 1}
       nextStageId={notion.stages[index + 1]?.id ?? null}
+      cards={cardsOfNotion(track, notion.slug)}
+      position={notion.position}
     />
   );
 }

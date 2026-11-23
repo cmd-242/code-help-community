@@ -7,11 +7,14 @@ import { fireConfetti } from "@/components/fx/confetti";
 import { SailIcon } from "@/components/icons";
 import { GameButton, GameLink } from "@/components/ui/game-button";
 import { challengeScore, challengeXp } from "@/features/gamification/rules";
+import type { Card } from "@/features/catalog/types";
+import { CardReveal } from "@/features/collection/card-reveal";
+import { guardianCardId } from "@/features/collection/rules";
 import { useProgress } from "@/features/progression/progress-store";
 import { useHydratedProgress } from "@/features/progression/use-hydrated-progress";
 import { useSound } from "@/features/sound/sound-provider";
 import { EncounterView } from "@/games/encounter-view";
-import type { PublicEncounter } from "@/games/public";
+import type { CheckResult, PublicEncounter } from "@/games/public";
 import { CreatureArt } from "@/universes/archipel/creature-art";
 import { SeaWaves } from "@/universes/archipel/sea-waves";
 import { answerGuardian, startGuardianFight } from "./actions";
@@ -21,12 +24,14 @@ type Props = {
   position: number;
   guardian: { name: string; title: string; taunt: string };
   next: { slug: string; place: string } | null;
+  /** Carte légendaire gagnée en battant ce gardien */
+  guardianCard: Card | null;
 };
 
 type Fight = { questions: PublicEncounter[]; durationSeconds: number; passingScore: number; xp: number };
 type Phase = "intro" | "loading" | "fight" | "won" | "lost";
 
-export function GuardianFight({ notionSlug, position, guardian, next }: Props) {
+export function GuardianFight({ notionSlug, position, guardian, next, guardianCard }: Props) {
   const t = useTranslations("guardian");
   const { play } = useSound();
   useHydratedProgress();
@@ -40,6 +45,7 @@ export function GuardianFight({ notionSlug, position, guardian, next }: Props) {
   const [creatureScope, animateCreature] = useAnimate();
   const [splash, setSplash] = useState(0);
   const hitsRef = useRef(0);
+  const [reveal, setReveal] = useState<Card | null>(null);
 
   const finish = useCallback(
     (correct: number, f: Fight) => {
@@ -52,6 +58,11 @@ export function GuardianFight({ notionSlug, position, guardian, next }: Props) {
       state.addXp({ amount: xp, reason: "guardian", ref: notionSlug });
       setResult({ score, xp });
       if (passed) {
+        const id = guardianCardId(notionSlug);
+        if (guardianCard && !state.cards[id]) {
+          state.unlockCards([id]);
+          window.setTimeout(() => setReveal(guardianCard), 3200);
+        }
         play("victory");
         window.setTimeout(() => play("unlock"), 1600);
         fireConfetti("gold");
@@ -62,7 +73,7 @@ export function GuardianFight({ notionSlug, position, guardian, next }: Props) {
         setPhase("lost");
       }
     },
-    [notionSlug, play],
+    [notionSlug, play, guardianCard],
   );
 
   // Sablier
@@ -94,8 +105,9 @@ export function GuardianFight({ notionSlug, position, guardian, next }: Props) {
     }
   };
 
-  const onResolved = (correct: boolean) => {
+  const onResolved = ({ correct, skill }: CheckResult) => {
     if (correct) {
+      if (skill) useProgress.getState().addSkillHit(skill);
       hitsRef.current += 1;
       setHits(hitsRef.current);
       play("bossHit");
@@ -200,7 +212,7 @@ export function GuardianFight({ notionSlug, position, guardian, next }: Props) {
                 key={fight.questions[index].id}
                 encounter={fight.questions[index]}
                 check={(response) => answerGuardian({ notionSlug, questionId: fight.questions[index].id, response })}
-                onResolved={(r) => onResolved(r.correct)}
+                onResolved={onResolved}
                 onContinue={onContinue}
                 submitLabel={t("strike")}
               />
@@ -261,6 +273,7 @@ export function GuardianFight({ notionSlug, position, guardian, next }: Props) {
           </motion.section>
         )}
       </AnimatePresence>
+      {reveal && <CardReveal items={[{ card: reveal, position }]} title={t("trophy")} onClose={() => setReveal(null)} />}
     </div>
   );
 }

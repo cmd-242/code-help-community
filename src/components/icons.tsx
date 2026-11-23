@@ -119,3 +119,12 @@ export function WavesIcon({ className = "size-6", title }: IconProps) {
     </svg>
   );
 }
+
+export function CardsIcon({ className = "size-6", title }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" {...a11y(title)}>
+      <rect x="3" y="6" width="10" height="14" rx="2" transform="rotate(-10 8 13)" fill="currentColor" fillOpacity="0.12" />
+      <rect x="10" y="4" width="10" height="14" rx="2" transform="rotate(8 15 11)" fill="currentColor" fillOpacity="0.25" />
+    </svg>
+  );
+}

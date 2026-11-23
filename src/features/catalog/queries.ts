@@ -63,3 +63,8 @@ export function drawGuardianQuestions(notion: Notion, random: () => number = Mat
   }
   return pool.slice(0, count).map(toPublicEncounter);
 }
+
+/** Cartes d'une notion (non secrètes : envoyées au navigateur) */
+export function cardsOfNotion(track: Track, notionSlug: string) {
+  return track.cards.filter((c) => c.notion === notionSlug);
+}

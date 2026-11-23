@@ -19,7 +19,7 @@ import { toDayKey, type WeeklyGoal } from "@/features/gamification/rules";
  */
 export type LearningMode = "free" | "classroom";
 
-export type XpEvent = { amount: number; reason: "stage" | "guardian" | "lesson"; ref: string; at: string };
+export type XpEvent = { amount: number; reason: "stage" | "guardian" | "lesson" | "booster"; ref: string; at: string };
 
 type ProgressState = {
   xpEvents: XpEvent[];
@@ -30,6 +30,17 @@ type ProgressState = {
   activeDays: string[];
   mode: LearningMode;
   weeklyGoal: WeeklyGoal;
+  /** Bonnes réponses par compétence (sert à la maîtrise des cartes) */
+  skillHits: Record<string, number>;
+  /** Cartes possédées, avec leur date d'obtention */
+  cards: Record<string, { at: string }>;
+  /** Cartes rendues brillantes par un coffre de la semaine */
+  shiny: Record<string, true>;
+  /** Semaines dont le coffre a déjà été ouvert (clé = lundi) */
+  boosterWeeks: string[];
+  addSkillHit: (skill: string) => void;
+  unlockCards: (ids: string[]) => void;
+  openBooster: (week: string, shinyCardId: string | null) => void;
   setMode: (mode: LearningMode) => void;
   setWeeklyGoal: (goal: WeeklyGoal) => void;
   addXp: (e: Omit<XpEvent, "at">) => void;
@@ -49,6 +60,10 @@ const initial = {
   activeDays: [],
   mode: "free" as LearningMode,
   weeklyGoal: "steady" as WeeklyGoal,
+  skillHits: {} as Record<string, number>,
+  cards: {} as Record<string, { at: string }>,
+  shiny: {} as Record<string, true>,
+  boosterWeeks: [] as string[],
 };
 
 export const useProgress = create<ProgressState>()(
@@ -57,6 +72,19 @@ export const useProgress = create<ProgressState>()(
       ...initial,
       setMode: (mode) => set({ mode }),
       setWeeklyGoal: (weeklyGoal) => set({ weeklyGoal }),
+      addSkillHit: (skill) => set((s) => ({ skillHits: { ...s.skillHits, [skill]: (s.skillHits[skill] ?? 0) + 1 } })),
+      unlockCards: (ids) =>
+        set((s) => {
+          const at = new Date().toISOString();
+          const next = { ...s.cards };
+          for (const id of ids) if (!next[id]) next[id] = { at };
+          return { cards: next };
+        }),
+      openBooster: (week, shinyCardId) =>
+        set((s) => ({
+          boosterWeeks: s.boosterWeeks.includes(week) ? s.boosterWeeks : [...s.boosterWeeks, week],
+          shiny: shinyCardId ? { ...s.shiny, [shinyCardId]: true } : s.shiny,
+        })),
       addXp: (e) => set((s) => ({ xpEvents: [...s.xpEvents, { ...e, at: new Date().toISOString() }] })),
       recordStage: (stageId, stars) =>
         set((s) => ({ stageStars: { ...s.stageStars, [stageId]: Math.max(stars, s.stageStars[stageId] ?? 0) } })),

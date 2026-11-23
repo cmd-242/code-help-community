@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getNotion, getTrack } from "@/features/catalog/queries";
+import { cardsOfNotion, getNotion, getTrack } from "@/features/catalog/queries";
+import { guardianCardId } from "@/features/collection/rules";
 import { GuardianFight } from "@/features/guardian/guardian-fight";
 
 export function generateStaticParams() {
@@ -25,6 +26,7 @@ export default async function GuardianPage({ params }: PageProps<"/app/notion/[s
       position={notion.position}
       guardian={notion.guardian}
       next={next ? { slug: next.slug, place: next.place } : null}
+      guardianCard={cardsOfNotion(track, notion.slug).find((c) => c.id === guardianCardId(notion.slug)) ?? null}
     />
   );
 }

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
-import { FlameIcon } from "@/components/icons";
+import { CardsIcon, FlameIcon } from "@/components/icons";
 import { currentStreak, levelFromXp, rankKey, toDayKey } from "@/features/gamification/rules";
 import { totalXp, useProgress } from "@/features/progression/progress-store";
 import { useHydratedProgress } from "@/features/progression/use-hydrated-progress";
@@ -54,6 +54,14 @@ export function PlayerHud() {
           <span className="tabular-nums leading-none">{streak}</span>
         </div>
 
+        <Link
+          href="/app/collection"
+          aria-label={t("collection")}
+          title={t("collection")}
+          className="grid size-11 shrink-0 place-items-center rounded-full bg-surface text-rarity-epic shadow-[0_0_0_2px_var(--color-line),0_4px_0_var(--color-line)] transition active:translate-y-[3px]"
+        >
+          <CardsIcon className="size-6" />
+        </Link>
         <SoundToggle />
       </div>
     </header>

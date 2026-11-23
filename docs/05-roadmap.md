@@ -14,7 +14,7 @@ Durées indicatives pour une petite équipe (1 à 2 développeurs). Chaque phase
 - [ ] `proxy.ts`, `src/server/permissions.ts` et tests des règles de visibilité.
 - [x] Univers Archipel (design, sons, animations) et structure multi-univers (voir `docs/06`).
 - [ ] Univers Néo-Métro pour les parcours avancés, passage du port à la ville.
-- [ ] Collection de cartes (une commande maîtrisée = une carte), commune aux deux univers.
+- [x] Collection de cartes : une compétence réussie = une carte, maîtrise 1 à 3, carte légendaire par gardien, coffre de la semaine (carte brillante). Stockée sur l'appareil en démo.
 - [ ] Mise en page des espaces enseignant, mentor, admin.
 - [ ] Intégration continue (GitHub Actions : lint, types, tests, build).
 
