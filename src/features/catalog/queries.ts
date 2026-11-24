@@ -47,7 +47,7 @@ export function notionSummaries(track: Track) {
     interchange: n.interchange ?? null,
     requires: n.requires.flatMap((slug) => {
       const found = getNotion(slug);
-      return found ? [{ slug, place: found.notion.place, trackTitle: found.track.title }] : [];
+      return found ? [{ slug, place: found.notion.place, trackTitle: found.track.title, guardian: found.notion.guardian.name }] : [];
     }),
     stageIds: n.stages.map((s) => s.id),
     hasGuardian: Boolean(n.challenge),

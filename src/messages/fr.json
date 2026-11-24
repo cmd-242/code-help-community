@@ -472,7 +472,13 @@
     "blocked": "Bats d'abord le gardien précédent",
     "notScheduled": "Pas encore ouverte par ton enseignant",
     "youAreHere": "Ton train est ici",
-    "legend": "Un trait plein et lumineux : la voie que tu as parcourue. Un trait sombre : la suite du trajet."
+    "legend": "Un trait plein et lumineux : la voie que tu as parcourue. Un trait sombre : la suite du trajet.",
+    "mustDefeat": "Il faut vaincre {names}",
+    "guardianOf": "le gardien de {place}",
+    "previousGuardian": "{name}, le gardien de la station précédente",
+    "goTo": "Aller à {place}",
+    "interchange": "Correspondance : {text}",
+    "networkLink": "Voir tout mon réseau"
   },
   "portal": {
     "title": "Néo-Métro",
@@ -509,5 +515,33 @@
     "linkTitle": "Un autre parcours ?",
     "linkBody": "Linux, PHP, Git… Choisis ce que tu veux apprendre, dans l'ordre que tu veux.",
     "linkCta": "Voir tous les parcours"
+  },
+  "metroNetwork": {
+    "metaTitle": "Mon réseau",
+    "title": "Mon réseau",
+    "lede": "Toutes les lignes de Néo-Métro. Ta ligne du moment est en couleur, les autres attendent en transparence.",
+    "yourLine": "Ta ligne du moment",
+    "otherLines": "Les autres lignes",
+    "lineLabel": "Ligne {letter} : {title}",
+    "progress": "{done} sur {total} stations",
+    "legendTitle": "Légende des stations",
+    "legendCleared": "Validée",
+    "legendCurrent": "En cours",
+    "legendLocked": "Verrouillée",
+    "legendSoon": "À venir",
+    "stationCleared": "{place} : validée",
+    "stationCurrent": "{place} : en cours",
+    "stationLocked": "{place} : verrouillée",
+    "stationSoon": "{place} : à venir",
+    "interchanges": "Correspondances",
+    "interchangeItem": "{place} : {text}",
+    "termini": "Terminus de l'Archipel",
+    "terminusHint": "Valide ces îles pour ouvrir cette ligne.",
+    "nextStop": "Prochain arrêt",
+    "board": "Monter à bord",
+    "nothingNext": "Toutes les stations ouvertes sont validées. Valide les prérequis pour en débloquer d'autres.",
+    "openLine": "Ouvrir la ligne",
+    "listLabel": "Liste des lignes du réseau",
+    "scrollHint": "Fais défiler le plan pour voir toutes les stations."
   }
 }

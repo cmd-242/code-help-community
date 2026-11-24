@@ -75,7 +75,8 @@ export default async function TrackPage({ params }: PageProps<"/app/parcours/[tr
         </div>
       </section>
 
-      <div className="mt-8">
+      <div className="mt-8 flex flex-wrap gap-3">
+        <GameLink href="/app/metro">{t("networkLink")}</GameLink>
         <GameLink href="/app/catalogue" variant="secondary">
           {t("backToArchipel")}
         </GameLink>
