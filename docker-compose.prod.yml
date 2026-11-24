@@ -1,11 +1,14 @@
-# Production (Coolify, ou n'importe quel serveur Docker) : l'application + sa base PostgreSQL.
-# Le développement local utilise docker-compose.yml (Postgres + MinIO).
+# Production : l'application + sa base PostgreSQL.
 #
-# Variables à définir (Coolify : onglet « Environment Variables ») :
-#   BETTER_AUTH_SECRET  obligatoire  (openssl rand -base64 32)
-#   BETTER_AUTH_URL     obligatoire  (https://ton-domaine.com, sans « / » final)
-#   POSTGRES_PASSWORD   obligatoire
-#   GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET   facultatives
+# Sur Coolify (type « Docker Compose », fichier docker-compose.prod.yml) : rien à saisir.
+#   Le domaine, le mot de passe de la base et le secret d'authentification sont générés
+#   par Coolify. Assigne ton domaine au service « app » dans l'interface ; BETTER_AUTH_URL
+#   suit automatiquement. Variables facultatives : GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET.
+#
+# Ailleurs (docker compose -f docker-compose.prod.yml up --build) : définis dans un fichier .env
+#   POSTGRES_PASSWORD, BETTER_AUTH_SECRET (openssl rand -base64 32) et BETTER_AUTH_URL.
+#
+# Le développement local utilise docker-compose.yml (Postgres + MinIO).
 services:
   app:
     build: .
@@ -15,9 +18,10 @@ services:
         condition: service_healthy
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgresql://chc:${POSTGRES_PASSWORD:?définir POSTGRES_PASSWORD}@db:5432/chc
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?définir BETTER_AUTH_SECRET}
-      BETTER_AUTH_URL: ${BETTER_AUTH_URL:?définir BETTER_AUTH_URL}
+      # Coolify remplit SERVICE_* tout seul (domaine, mots de passe) ; ailleurs, définis les trois variables du haut.
+      DATABASE_URL: postgresql://chc:${POSTGRES_PASSWORD:-${SERVICE_PASSWORD_DBPASSWORD}}@db:5432/chc
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-${SERVICE_PASSWORD_64_AUTHSECRET}}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-${SERVICE_URL_APP_3000}}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
     expose:
@@ -33,7 +37,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: chc
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?définir POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-${SERVICE_PASSWORD_DBPASSWORD}}
       POSTGRES_DB: chc
     volumes:
       - db-data:/var/lib/postgresql/data

@@ -18,5 +18,5 @@ FROM base AS run
 ENV NODE_ENV=production PORT=3000 HOSTNAME=0.0.0.0
 COPY --from=build /app /app
 EXPOSE 3000
-# Applique les migrations en attente, puis démarre. Échoue (et Coolify le signale) si la base est injoignable.
-CMD ["sh", "-c", "pnpm prisma migrate deploy && pnpm start"]
+# Prépare la base (migrations, ou création du schéma au tout premier lancement), puis démarre.
+CMD ["sh", "scripts/docker-start.sh"]
