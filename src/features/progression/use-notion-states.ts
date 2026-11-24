@@ -14,6 +14,10 @@ export type NotionState = {
   stagesDone: number;
   stars: number;
   maxStars: number;
+  /** Prérequis (stations d'autres lignes comprises) pas encore validés */
+  missing: { slug: string; place: string; trackTitle: string }[];
+  /** La station précédente de la ligne n'est pas validée */
+  previousMissing: boolean;
 };
 
 /** Statut de chaque notion pour l'étudiant courant (planning de démo + progression locale) */
@@ -36,10 +40,13 @@ export function useNotionStates(notions: NotionSummary[]): { ready: boolean; sta
       const unscheduled = Boolean(classroom?.notionSlugs.includes(f.slug)) && !raw;
       const stars = f.stageIds.reduce((n, id) => n + (stageStars[id] ?? 0), 0);
       const stagesDone = f.stageIds.filter((id) => (stageStars[id] ?? 0) > 0).length;
+      const missing = f.requires.filter((r) => !cleared[r.slug]);
+      const previousCleared = i === 0 || Boolean(cleared[notions[i - 1].slug]);
       const input = {
         release,
         now,
-        previousCleared: i === 0 || Boolean(cleared[notions[i - 1].slug]),
+        previousCleared,
+        requirementsMet: missing.length === 0,
         cleared: Boolean(cleared[f.slug]),
         stagesTotal: f.stageIds.length,
         stagesDone,
@@ -53,6 +60,8 @@ export function useNotionStates(notions: NotionSummary[]): { ready: boolean; sta
         stagesDone,
         stars,
         maxStars: f.stageIds.length * 3,
+        missing,
+        previousMissing: !previousCleared,
       } satisfies NotionState;
     });
   }, [notions, stageStars, cleared, ready, classroom]);

@@ -13,6 +13,8 @@ export const dockerTrack = track(
     {
       id: "dk1",
       slug: "docker-conteneurs",
+      requires: ["fichiers-et-dossiers"],
+      interchange: "Ligne Linux : les commandes du terminal.",
       place: "Gare du Premier Conteneur",
       concept: "Conteneurs et images",
       summary: "Comprendre ce qu'est un conteneur, une image, et lancer son premier conteneur.",
@@ -122,6 +124,8 @@ export const dockerTrack = track(
     {
       id: "dk3",
       slug: "docker-volumes-reseaux",
+      requires: ["reseau-adresses"],
+      interchange: "Ligne Réseaux : adresses et ports.",
       place: "Dépôt des Volumes",
       concept: "Volumes et réseaux",
       summary: "Garder des données et faire dialoguer des conteneurs.",

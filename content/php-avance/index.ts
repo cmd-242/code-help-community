@@ -13,6 +13,8 @@ export const phpAvanceTrack = track(
     {
       id: "pa1",
       slug: "php-poo",
+      requires: ["php-tableaux-fonctions"],
+      interchange: "Ligne PHP de l'Archipel : tableaux et fonctions.",
       place: "Gare des Objets",
       concept: "Classes et objets",
       summary: "Regrouper données et comportements dans des classes.",

@@ -29,6 +29,8 @@ export type NotionInput = {
   release: Release | null;
   now: Date;
   previousCleared: boolean;
+  /** Prérequis de la notion (autres lignes comprises) tous validés ; vrai par défaut */
+  requirementsMet?: boolean;
   cleared: boolean;
   stagesTotal: number;
   stagesDone: number;
@@ -39,7 +41,7 @@ export function notionStatus(i: NotionInput): NotionStatus {
   if (i.cleared) return "cleared";
   const forced = i.override?.unlock === true;
   if (!forced && i.release && i.release.gameOpensAt > i.now) return "sealed";
-  if (!forced && !i.previousCleared) return "blocked";
+  if (!forced && (!i.previousCleared || i.requirementsMet === false)) return "blocked";
   if (i.stagesTotal > 0 && i.stagesDone >= i.stagesTotal) return "guardian";
   return "open";
 }

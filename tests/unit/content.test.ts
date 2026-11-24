@@ -105,3 +105,16 @@ describe.each(tracks)("contenu $slug", (track) => {
     }
   });
 });
+
+describe("prérequis des stations", () => {
+  const slugs = new Set(allTracks.flatMap((t) => t.notions.map((n) => n.slug)));
+  it("pointent vers des notions existantes, jamais vers elles-mêmes", () => {
+    for (const t of allTracks)
+      for (const n of t.notions) {
+        for (const r of n.requires ?? []) {
+          expect(slugs.has(r), `${n.slug} → ${r}`).toBe(true);
+          expect(r).not.toBe(n.slug);
+        }
+      }
+  });
+});

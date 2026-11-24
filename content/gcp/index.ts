@@ -13,6 +13,8 @@ export const gcpTrack = track(
     {
       id: "gc1",
       slug: "gcp-projets-iam",
+      requires: ["secu-mots-de-passe"],
+      interchange: "Ligne Sécurité : mots de passe et accès.",
       place: "Gare des Projets",
       concept: "Projets, organisation et IAM",
       summary: "Comprendre comment Google Cloud range les ressources et qui a le droit de les utiliser.",
@@ -179,6 +181,8 @@ export const gcpTrack = track(
     {
       id: "gc4",
       slug: "gcp-reseau-observation",
+      requires: ["reseau-adresses"],
+      interchange: "Ligne Réseaux : adresses IP.",
       place: "Terminus Observatoire",
       concept: "Réseau, observabilité et coûts",
       summary: "Cloisonner le réseau, observer ce qui se passe et garder la facture sous contrôle.",

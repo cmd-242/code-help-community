@@ -125,6 +125,10 @@ export type NotionDef = {
   summary: string;
   /** Voie sur le plan Néo-Métro (0 par défaut) */
   lane?: number;
+  /** Notions (slugs, tous parcours) à valider en plus de la station précédente */
+  requires?: string[];
+  /** Correspondance avec une autre ligne, affichée sur le plan */
+  interchange?: string;
   guardian: { name: string; title: string; taunt: string };
   /** Texte de la carte du gardien vaincu */
   win: string;
@@ -145,6 +149,8 @@ export function notion(def: NotionDef): { notion: Omit<Notion, "position">; card
     concept: def.concept,
     summary: def.summary,
     lane: def.lane ?? 0,
+    requires: def.requires ?? [],
+    ...(def.interchange ? { interchange: def.interchange } : {}),
     guardian: def.guardian,
     lessons: def.lessons.map(([title, minutes, ...blocks], i) => ({ id: `l-${def.id}-${i + 1}`, title, minutes, blocks })),
     stages: def.stages.map(([title, description, encounters], i) => ({
