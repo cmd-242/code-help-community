@@ -1,8 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useId, useState } from "react";
+import { useState } from "react";
 import type { PublicEncounter } from "@/games/public";
+import { CodeEditor } from "@/games/shared/code-editor-lazy";
 import { CodeBlock } from "@/games/shared/code-block";
 import { runCode, type RunResult } from "./runner";
 
@@ -20,9 +21,9 @@ type Props = {
  */
 export function CodePlay({ encounter, disabled, onChange }: Props) {
   const t = useTranslations("game");
-  const id = useId();
   const [code, setCode] = useState(encounter.starter);
   const [running, setRunning] = useState(false);
+  const label = t("codeLabel", { language: encounter.language === "python" ? "Python" : "JavaScript" });
   const [result, setResult] = useState<RunResult | null>(null);
 
   const run = async () => {
@@ -38,40 +39,12 @@ export function CodePlay({ encounter, disabled, onChange }: Props) {
 
   return (
     <div>
-      <label htmlFor={id} className="mb-2 block text-sm font-bold text-info-deep">
-        {t("codeLabel", { language: encounter.language === "python" ? "Python" : "JavaScript" })}
-      </label>
-      <textarea
-        id={id}
-        value={code}
-        disabled={disabled}
-        spellCheck={false}
-        autoCapitalize="off"
-        autoCorrect="off"
-        rows={Math.min(14, Math.max(6, code.split("\n").length + 1))}
-        onChange={(e) => {
-          setCode(e.target.value);
-          setResult(null);
-          onChange(null);
-        }}
-        onKeyDown={(e) => {
-          if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-            e.preventDefault();
-            void run();
-          } else if (e.key === "Tab" && !e.shiftKey) {
-            // Tab insère deux espaces ; Échap puis Tab quitte le champ (accessibilité clavier)
-            e.preventDefault();
-            const el = e.currentTarget;
-            const { selectionStart: a, selectionEnd: b } = el;
-            const next = `${code.slice(0, a)}  ${code.slice(b)}`;
-            setCode(next);
-            setResult(null);
-            onChange(null);
-            requestAnimationFrame(() => el.setSelectionRange(a + 2, a + 2));
-          }
-        }}
-        className="w-full resize-y rounded-2xl bg-surface p-4 font-mono text-base leading-relaxed shadow-[0_0_0_2px_var(--color-line)] outline-none focus:shadow-[0_0_0_3px_var(--color-info-deep)]"
-      />
+      <p className="mb-2 text-sm font-bold text-info-deep">{label}</p>
+      <CodeEditor value={code} language={encounter.language} disabled={disabled} ariaLabel={label} onRun={() => void run()} onChange={(v) => {
+        setCode(v);
+        setResult(null);
+        onChange(null);
+      }} />
       {encounter.harness && (
         <div className="mt-3">
           <p className="mb-1 text-sm font-bold text-muted">{t("codeHarness")}</p>

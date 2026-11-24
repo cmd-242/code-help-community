@@ -62,7 +62,7 @@
     "codeHarness": "Ce code est ajouté après le tien :",
     "codeRun": "Exécuter",
     "codeRunning": "Exécution…",
-    "codeShortcut": "Ctrl + Entrée pour exécuter. Valide quand la sortie te convient.",
+    "codeShortcut": "Ctrl + Entrée pour exécuter. Échap pour sortir de l'éditeur au clavier.",
     "codeOutput": "Sortie",
     "codeNoOutput": "(aucune sortie)",
     "codeTimeout": "Ton programme a tourné trop longtemps et a été arrêté. Une boucle sans fin ?",

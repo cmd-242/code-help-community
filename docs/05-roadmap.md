@@ -39,6 +39,7 @@ Objectif : n'importe qui peut créer un compte, choisir un parcours et progresse
 - [x] Moteur « écrire du code » (JavaScript et Python via Pyodide, dans un Web Worker, correction sur la sortie).
 - [x] Moteur terminal Linux simulé (shell pur rejoué côté serveur pour la correction).
 - [x] Moteur SQL (PGlite : vraie base PostgreSQL dans le navigateur, correction sur le résultat).
+- [x] Éditeur CodeMirror 6 (coloration, indentation, autocomplétion) pour les défis de code et de SQL.
 - [x] Grand challenge : tirage aléatoire et correction côté serveur, chronomètre, combat de gardien.
 - [ ] Grand challenge : tentatives enregistrées, délai de recharge après une défaite, rattrapage ciblé.
 - [ ] Catalogue : choisir parmi plusieurs royaumes et parcours.

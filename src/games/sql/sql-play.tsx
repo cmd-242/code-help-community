@@ -1,8 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useId, useState } from "react";
+import { useState } from "react";
 import type { PublicEncounter } from "@/games/public";
+import { CodeEditor } from "@/games/shared/code-editor-lazy";
 import { CodeBlock } from "@/games/shared/code-block";
 import { runSql, type SqlRun } from "./runner";
 
@@ -20,7 +21,6 @@ type Props = {
  */
 export function SqlPlay({ encounter, disabled, onChange }: Props) {
   const t = useTranslations("game");
-  const id = useId();
   const [sql, setSql] = useState(encounter.starter);
   const [running, setRunning] = useState(false);
   const [run, setRun] = useState<SqlRun | null>(null);
@@ -42,30 +42,12 @@ export function SqlPlay({ encounter, disabled, onChange }: Props) {
         <summary className="cursor-pointer font-bold text-info-deep">{t("sqlSchema")}</summary>
         <CodeBlock code={encounter.setup} className="mt-3" />
       </details>
-      <label htmlFor={id} className="mb-2 block text-sm font-bold text-info-deep">
-        {t("sqlLabel")}
-      </label>
-      <textarea
-        id={id}
-        value={sql}
-        disabled={disabled}
-        spellCheck={false}
-        autoCapitalize="off"
-        autoCorrect="off"
-        rows={Math.min(10, Math.max(4, sql.split("\n").length + 1))}
-        onChange={(e) => {
-          setSql(e.target.value);
-          setRun(null);
-          onChange(null);
-        }}
-        onKeyDown={(e) => {
-          if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-            e.preventDefault();
-            void execute();
-          }
-        }}
-        className="w-full resize-y rounded-2xl bg-surface p-4 font-mono text-base leading-relaxed shadow-[0_0_0_2px_var(--color-line)] outline-none focus:shadow-[0_0_0_3px_var(--color-info-deep)]"
-      />
+      <p className="mb-2 text-sm font-bold text-info-deep">{t("sqlLabel")}</p>
+      <CodeEditor value={sql} language="sql" disabled={disabled} ariaLabel={t("sqlLabel")} onRun={() => void execute()} onChange={(v) => {
+        setSql(v);
+        setRun(null);
+        onChange(null);
+      }} />
       {encounter.verify && (
         <div className="mt-3">
           <p className="mb-1 text-sm font-bold text-muted">{t("sqlVerify")}</p>
