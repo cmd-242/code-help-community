@@ -10,7 +10,8 @@ export type PublicEncounter =
   | { id: string; type: "qcm"; prompt: string; code?: string; choices: string[]; multiple: boolean }
   | { id: string; type: "parsons"; prompt: string; pieces: string[]; slots: number }
   | { id: string; type: "fill"; prompt: string; template: string; bank: string[] }
-  | { id: string; type: "predict"; prompt: string; code: string; placeholder?: string };
+  | { id: string; type: "predict"; prompt: string; code: string; placeholder?: string }
+  | { id: string; type: "code"; prompt: string; language: "javascript" | "python"; starter: string; harness?: string };
 
 /** Verdict d'une réponse. `skill` sert à la maîtrise des cartes (ce n'est pas un secret). */
 export type CheckResult = { correct: boolean; explanation: string; solution: string; skill?: string };
@@ -55,6 +56,8 @@ export function toPublicEncounter(e: Encounter): PublicEncounter {
       return { id: e.id, type: "fill", prompt: e.prompt, template: e.template, bank: seededShuffle(e.bank, e.id) };
     case "predict":
       return { id: e.id, type: "predict", prompt: e.prompt, code: e.code, placeholder: e.placeholder };
+    case "code":
+      return { id: e.id, type: "code", prompt: e.prompt, language: e.language, starter: e.starter, harness: e.harness };
   }
 }
 
@@ -68,6 +71,8 @@ export function solutionOf(e: Encounter): string {
       return e.template.replace(/\{\{(\d+)\}\}/g, (_, i: string) => e.answers[Number(i)] ?? "");
     case "predict":
       return e.accepted[0];
+    case "code":
+      return e.solution;
   }
 }
 

@@ -10,6 +10,25 @@ const tracks = allTracks.map((t) => trackSchema.parse(t));
 const encountersOf = (track: (typeof tracks)[number]): Encounter[] =>
   track.notions.flatMap((n) => [...n.stages.flatMap((s) => s.encounters), ...(n.challenge?.bank ?? [])]);
 
+import { spawnSync } from "node:child_process";
+import vm from "node:vm";
+
+/** Exécute un programme de référence (JS dans vm, Python via python3) ; null si échec. */
+function runReference(language: "javascript" | "python", code: string): string | null {
+  if (language === "javascript") {
+    const lines: string[] = [];
+    const log = (...a: unknown[]) => lines.push(a.map(String).join(" "));
+    try {
+      vm.runInNewContext(code, { console: { log } }, { timeout: 2000 });
+    } catch {
+      return null;
+    }
+    return lines.join("\n");
+  }
+  const r = spawnSync("python3", ["-I", "-c", code], { encoding: "utf8", timeout: 5000 });
+  return r.status === 0 ? r.stdout : null;
+}
+
 describe("catalogue", () => {
   it("n'a aucun identifiant en double entre parcours (épreuves, étapes, leçons, cartes, notions)", () => {
     const ids = tracks.flatMap((t) => [
@@ -62,6 +81,14 @@ describe.each(tracks)("contenu $slug", (track) => {
         expect(countBlanks(e.template), e.id).toBe(e.answers.length);
         expect(e.answers.every((a) => e.bank.includes(a)), e.id).toBe(true);
         expect(grade(e, e.answers), e.id).toBe(true);
+      } else if (e.type === "code") {
+        // On exécute vraiment la solution de référence, puis on corrige sa sortie
+        const out = runReference(e.language, `${e.solution}\n${e.harness ?? ""}`);
+        expect(out, e.id).not.toBeNull();
+        expect(grade(e, out as string), e.id).toBe(true);
+        // Le code de départ seul ne doit pas réussir l'épreuve
+        const starter = runReference(e.language, `${e.starter}\n${e.harness ?? ""}`);
+        expect(starter === null || !grade(e, starter), `${e.id} : le code de départ réussit déjà`).toBe(true);
       } else {
         expect(grade(e, solutionOf(e)), e.id).toBe(true);
       }
