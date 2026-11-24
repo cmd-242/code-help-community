@@ -1,0 +1,46 @@
+# Production (Coolify, ou n'importe quel serveur Docker) : l'application + sa base PostgreSQL.
+# Le développement local utilise docker-compose.yml (Postgres + MinIO).
+#
+# Variables à définir (Coolify : onglet « Environment Variables ») :
+#   BETTER_AUTH_SECRET  obligatoire  (openssl rand -base64 32)
+#   BETTER_AUTH_URL     obligatoire  (https://ton-domaine.com, sans « / » final)
+#   POSTGRES_PASSWORD   obligatoire
+#   GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET   facultatives
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://chc:${POSTGRES_PASSWORD:?définir POSTGRES_PASSWORD}@db:5432/chc
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?définir BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:?définir BETTER_AUTH_URL}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+    expose:
+      - "3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.status<500?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 60s
+      retries: 3
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: chc
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?définir POSTGRES_PASSWORD}
+      POSTGRES_DB: chc
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chc -d chc"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  db-data:
