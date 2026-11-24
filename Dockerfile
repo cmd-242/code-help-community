@@ -10,8 +10,12 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 FROM deps AS build
 COPY . .
-# Valeur factice : seulement pour que `prisma generate` et le build démarrent, jamais utilisée pour se connecter
-ENV DATABASE_URL=postgresql://build:build@localhost:5432/build
+# Valeurs factices, valables pour cette étape de build seulement (l'image finale n'en hérite pas) :
+# le code d'authentification lit ces variables dès qu'il est chargé, donc le build en a besoin.
+# Les vraies valeurs sont fournies au démarrage par docker-compose.prod.yml.
+ENV DATABASE_URL=postgresql://build:build@localhost:5432/build \
+    BETTER_AUTH_SECRET=valeur-factice-pour-le-build-uniquement \
+    BETTER_AUTH_URL=http://localhost:3000
 RUN pnpm prisma generate && pnpm build
 
 FROM base AS run
