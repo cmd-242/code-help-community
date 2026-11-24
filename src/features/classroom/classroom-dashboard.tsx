@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { getTrack } from "@/features/catalog/queries";
+import { getTrack, getTracks } from "@/features/catalog/queries";
 import { db } from "@/server/db";
 import { ForbiddenError } from "@/server/permissions";
 import { getClassroomDashboard } from "@/server/services/classroom";
@@ -19,8 +19,14 @@ export async function ClassroomDashboard({ params }: { params: Promise<{ id: str
     if (e instanceof ForbiddenError) notFound();
     throw e;
   }
-  const track = getTrack(data.classroom.trackSlug);
-  const notions = (track?.notions ?? []).map((n) => ({ slug: n.slug, place: n.place, position: n.position, concept: n.concept }));
+  const tracks = data.classroom.trackSlugs.flatMap((slug) => getTrack(slug) ?? []).map((track) => ({
+    slug: track.slug,
+    title: track.title,
+    notions: track.notions.map((n) => ({ slug: n.slug, place: n.place, position: n.position, concept: n.concept })),
+  }));
+  const available = getTracks()
+    .filter((track) => !data.classroom.trackSlugs.includes(track.slug))
+    .map((track) => ({ slug: track.slug, title: track.title }));
 
   return (
     <div className="space-y-6">
@@ -28,13 +34,13 @@ export async function ClassroomDashboard({ params }: { params: Promise<{ id: str
         <div>
           <h1 className="font-display text-4xl font-bold leading-tight">{data.classroom.name}</h1>
           <p className="text-muted">
-            {track?.title}
+            {tracks.map((track) => track.title).join(", ")}
             {data.classroom.schoolYear ? `, ${data.classroom.schoolYear}` : ""}
           </p>
         </div>
         <InviteCard code={data.classroom.inviteCode} />
       </div>
-      <ClassroomTabs classroomId={data.classroom.id} students={data.students} notions={notions} releases={data.releases} />
+      <ClassroomTabs classroomId={data.classroom.id} students={data.students} tracks={tracks} available={available} releases={data.releases} />
     </div>
   );
 }

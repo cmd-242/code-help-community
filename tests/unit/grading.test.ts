@@ -8,6 +8,21 @@ const parsons = encounterSchema.parse({ id: "p", type: "parsons", prompt: "?", l
 const fill = encounterSchema.parse({ id: "f", type: "fill", prompt: "?", template: "ls {{0}}{{1}}", answers: ["-l", "a"], bank: ["-l", "a", "x"], explanation: "." });
 const predict = encounterSchema.parse({ id: "r", type: "predict", prompt: "?", code: "$ pwd", accepted: ["/home/aya"], explanation: "." });
 
+const code = encounterSchema.parse({ id: "c", type: "code", language: "javascript", prompt: "?", starter: "", harness: "console.log(f(2))", accepted: ["4"], solution: "const f = (n) => n * 2;", explanation: "." });
+
+describe("écrire du code", () => {
+  it("corrige la sortie, espaces normalisés", () => {
+    expect(grade(code, "4\n")).toBe(true);
+    expect(grade(code, "5")).toBe(false);
+    expect(grade(code, ["4"])).toBe(false);
+  });
+  it("ne divulgue ni sortie attendue ni solution au navigateur", () => {
+    const pub = JSON.stringify(toPublicEncounter(code));
+    expect(pub).not.toContain("accepted");
+    expect(pub).not.toContain("n * 2");
+  });
+});
+
 describe("correcteurs", () => {
   it("QCM : toutes les bonnes réponses, ordre indifférent", () => {
     expect(grade(qcm, [2, 0])).toBe(true);

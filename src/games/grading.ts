@@ -1,5 +1,7 @@
 import type {
   Encounter,
+  CodeEncounter,
+  CodeResponse,
   FillEncounter,
   FillResponse,
   ParsonsEncounter,
@@ -46,6 +48,12 @@ export function gradePredict(e: PredictEncounter, r: PredictResponse): boolean {
   return e.accepted.some((a) => normalizeOutput(a) === given);
 }
 
+/** Écrire du code : la réponse est la sortie du programme, comparée comme « prédire ». */
+export function gradeCode(e: CodeEncounter, r: CodeResponse): boolean {
+  const given = normalizeOutput(r);
+  return e.accepted.some((a) => normalizeOutput(a) === given);
+}
+
 export type AnyResponse = QcmResponse | ParsonsResponse | FillResponse | PredictResponse;
 
 export function grade(e: Encounter, r: AnyResponse): boolean {
@@ -58,6 +66,8 @@ export function grade(e: Encounter, r: AnyResponse): boolean {
       return Array.isArray(r) && gradeFill(e, r as string[]);
     case "predict":
       return typeof r === "string" && gradePredict(e, r);
+    case "code":
+      return typeof r === "string" && gradeCode(e, r);
   }
 }
 

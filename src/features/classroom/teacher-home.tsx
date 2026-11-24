@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { GameLink } from "@/components/ui/game-button";
+import { getTrack, getTracks } from "@/features/catalog/queries";
+import { DEFAULT_TRACK_SLUG } from "@/features/catalog/paths";
 import { db } from "@/server/db";
 import { listTeacherClassrooms } from "@/server/services/classroom";
 import { getSession } from "@/server/session";
@@ -46,6 +48,7 @@ export async function TeacherHome() {
                 <Link href={`/prof/classes/${c.id}`} className="paper block h-full rounded-3xl p-5 transition hover:-translate-y-0.5">
                   <p className="font-display text-2xl font-bold leading-tight">{c.name}</p>
                   {c.schoolYear && <p className="text-sm text-muted">{c.schoolYear}</p>}
+                  <p className="mt-1 text-sm text-muted">{c.trackSlugs.map((slug) => getTrack(slug)?.title ?? slug).join(", ")}</p>
                   <p className="mt-3 font-bold">{t("studentCount", { count: c.studentCount })}</p>
                   <p className="mt-1 text-sm text-muted">
                     {t("codeLabel")} <span className="font-mono font-semibold tracking-widest text-ink">{c.inviteCode}</span>
@@ -63,7 +66,7 @@ export async function TeacherHome() {
         </h2>
         <p className="mt-1 text-muted">{t("createLede")}</p>
         <div className="mt-5">
-          <CreateClassroomForm />
+          <CreateClassroomForm tracks={getTracks().map((t) => ({ slug: t.slug, title: t.title, domain: t.domain }))} defaultTrackSlug={DEFAULT_TRACK_SLUG} />
         </div>
       </section>
     </div>

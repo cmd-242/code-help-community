@@ -48,12 +48,29 @@ export const predictSchema = z.object({
   placeholder: z.string().optional(),
 });
 
-export const encounterSchema = z.discriminatedUnion("type", [qcmSchema, parsonsSchema, fillSchema, predictSchema]);
+/**
+ * Écrire du code : le programme s'exécute dans le navigateur (Web Worker),
+ * et c'est sa SORTIE qui est corrigée. `harness` est ajouté après le code de
+ * l'apprenant (appels de test) ; les sorties attendues restent côté serveur.
+ */
+export const codeSchema = z.object({
+  ...base,
+  type: z.literal("code"),
+  language: z.enum(["javascript", "python"]),
+  starter: z.string().default(""),
+  harness: z.string().optional(),
+  accepted: z.array(z.string()).min(1),
+  /** Programme de référence : affiché après une erreur, et vérifié par les tests de contenu */
+  solution: z.string().min(1),
+});
+
+export const encounterSchema = z.discriminatedUnion("type", [qcmSchema, parsonsSchema, fillSchema, predictSchema, codeSchema]);
 
 export type QcmEncounter = z.infer<typeof qcmSchema>;
 export type ParsonsEncounter = z.infer<typeof parsonsSchema>;
 export type FillEncounter = z.infer<typeof fillSchema>;
 export type PredictEncounter = z.infer<typeof predictSchema>;
+export type CodeEncounter = z.infer<typeof codeSchema>;
 export type Encounter = z.infer<typeof encounterSchema>;
 export type EncounterInput = z.input<typeof encounterSchema>;
 export type GameType = Encounter["type"];
@@ -64,10 +81,14 @@ export type ParsonsResponse = string[];
 export type FillResponse = string[];
 export type PredictResponse = string;
 
+export type CodeResponse = string;
+
 export type ResponseFor<E extends Encounter> = E extends QcmEncounter
   ? QcmResponse
   : E extends ParsonsEncounter
     ? ParsonsResponse
     : E extends FillEncounter
       ? FillResponse
-      : PredictResponse;
+      : E extends CodeEncounter
+        ? CodeResponse
+        : PredictResponse;

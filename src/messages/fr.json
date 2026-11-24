@@ -14,7 +14,8 @@
     "xpTitle": "{current} XP sur {needed} pour le prochain niveau",
     "xp": "{current} / {needed} XP",
     "streakTitle": "{count, plural, =0 {Aucune série en cours : joue aujourd'hui pour l'allumer} one {# jour d'affilée} other {# jours d'affilée}}",
-    "collection": "Ma collection de cartes"
+    "collection": "Ma collection de cartes",
+    "catalogue": "Tous les parcours"
   },
   "ranks": {
     "novice": "Moussaillon",
@@ -40,6 +41,14 @@
     "fillBank": "Touche une planche pour remplir le trou suivant.",
     "predictLabel": "Qu'affiche le terminal ?",
     "predictPlaceholder": "Écris la sortie",
+    "codeLabel": "Ton code {language}",
+    "codeHarness": "Ce code est ajouté après le tien :",
+    "codeRun": "Exécuter",
+    "codeRunning": "Exécution…",
+    "codeShortcut": "Ctrl + Entrée pour exécuter. Valide quand la sortie te convient.",
+    "codeOutput": "Sortie",
+    "codeNoOutput": "(aucune sortie)",
+    "codeTimeout": "Ton programme a tourné trop longtemps et a été arrêté. Une boucle sans fin ?",
     "checking": "Vérification…",
     "submit": "Valider",
     "correct": "Bien joué !",
@@ -234,6 +243,7 @@
     "seas": {
       "linux": "L'Archipel du Shell",
       "python": "Les Îles du Serpent",
+      "php": "L'Archipel du Serveur",
       "javascript": "Les Îles des Scripts",
       "git": "Git, à Néo-Métro",
       "network": "Le Détroit des Paquets",
@@ -379,7 +389,6 @@
     "classNameError": "Donne un nom d'au moins 2 caractères.",
     "schoolYear": "Année scolaire (facultatif)",
     "schoolYearPlaceholder": "ex. 2026-2027",
-    "trackNote": "Parcours : Linux débutant (d'autres parcours arrivent).",
     "create": "Créer la classe",
     "creating": "Création…",
     "classTitle": "Ma classe",
@@ -418,11 +427,20 @@
     "saving": "Enregistrement…",
     "saved": "Planning enregistré.",
     "invalid": "Une date manque ou n'est pas dans l'ordre : ouverture, puis gardien, puis fin du gardien.",
-    "save": "Enregistrer le planning"
+    "save": "Enregistrer le planning",
+    "tracksLegend": "Parcours suivis par la classe",
+    "tracksHint": "Choisis ce que tes étudiants doivent suivre avec toi. Ils restent libres d'apprendre tout le reste, sans planning.",
+    "tracksError": "Choisis au moins un parcours.",
+    "classTracksTitle": "Parcours de la classe",
+    "classTracksHint": "Le planning ci-dessous s'applique à ces parcours. Les étudiants peuvent aussi suivre les autres parcours du catalogue en toute liberté.",
+    "addTrack": "Ajouter un parcours à la classe",
+    "addTrackNamed": "Ajouter : {title}",
+    "addTrackFailed": "Impossible d'ajouter ce parcours. Réessaie dans un instant.",
+    "planningTracksLabel": "Planning par parcours"
   },
   "metroMap": {
     "metaTitle": "Néo-Métro",
-    "backToArchipel": "Retour à l'archipel",
+    "backToArchipel": "Retour au catalogue",
     "entrance": "Entrée de la station",
     "planTitle": "Plan du réseau",
     "planLabel": "Plan du réseau {name}",
@@ -445,5 +463,34 @@
     "line": "{title} · {count} stations",
     "go": "Descendre dans le métro",
     "going": "Les portes se ferment…"
+  },
+  "catalogue": {
+    "metaTitle": "Catalogue des parcours",
+    "title": "Que veux-tu apprendre ?",
+    "lede": "Choisis un parcours et commence quand tu veux. Aucun compte, aucune école, aucun ordre imposé : tu peux suivre plusieurs parcours à la fois.",
+    "domains": {
+      "linux": "Linux",
+      "python": "Python",
+      "php": "PHP",
+      "git": "Git",
+      "html-css": "HTML et CSS",
+      "javascript": "JavaScript",
+      "sql": "SQL",
+      "reseaux": "Réseaux",
+      "securite": "Sécurité",
+      "docker": "Docker",
+      "aws": "AWS",
+      "gcp": "Google Cloud"
+    },
+    "universe": {
+      "archipel": "Archipel · pour débuter",
+      "metro": "Néo-Métro · pour aller plus loin"
+    },
+    "places": "{count, plural, one {# étape} other {# étapes}}",
+    "start": "Commencer",
+    "more": "D'autres parcours arrivent : réseau, sécurité, cloud… Ton niveau et tes cartes te suivent d'un parcours à l'autre.",
+    "linkTitle": "Un autre parcours ?",
+    "linkBody": "Linux, PHP, Git… Choisis ce que tu veux apprendre, dans l'ordre que tu veux.",
+    "linkCta": "Voir tous les parcours"
   }
 }

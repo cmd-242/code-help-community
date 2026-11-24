@@ -18,8 +18,21 @@ export class InviteNotFoundError extends Error {
   }
 }
 
-export async function createClassroom(db: Db, teacherId: string, input: { name: string; schoolYear: string; trackSlug: string }) {
-  if (!getTrack(input.trackSlug)) throw new Error("Parcours inconnu.");
+export class UnknownTrackError extends Error {
+  constructor() {
+    super("Parcours inconnu.");
+  }
+}
+
+/** Parcours valides (connus du catalogue), sans doublon, dans l'ordre donné. */
+export function validTrackSlugs(slugs: string[]): string[] {
+  const unique = [...new Set(slugs)];
+  if (unique.length === 0 || unique.some((slug) => !getTrack(slug))) throw new UnknownTrackError();
+  return unique;
+}
+
+export async function createClassroom(db: Db, teacherId: string, input: { name: string; schoolYear: string; trackSlugs: string[] }) {
+  const trackSlugs = validTrackSlugs(input.trackSlugs);
   for (let attempt = 0; attempt < 8; attempt++) {
     const inviteCode = generateInviteCode();
     const taken = await db.classroom.findUnique({ where: { inviteCode } });
@@ -30,7 +43,7 @@ export async function createClassroom(db: Db, teacherId: string, input: { name: 
         schoolYear: input.schoolYear,
         inviteCode,
         teachers: { create: { userId: teacherId, role: "OWNER" } },
-        assignedTracks: { create: { trackSlug: input.trackSlug } },
+        assignedTracks: { create: trackSlugs.map((trackSlug) => ({ trackSlug })) },
       },
     });
   }
@@ -41,7 +54,7 @@ export async function listTeacherClassrooms(db: Db, teacherId: string) {
   const rows = await db.classroom.findMany({
     where: { teachers: { some: { userId: teacherId } }, archivedAt: null },
     orderBy: { createdAt: "desc" },
-    include: { _count: { select: { enrollments: true } }, assignedTracks: true },
+    include: { _count: { select: { enrollments: true } }, assignedTracks: { orderBy: { trackSlug: "asc" } } },
   });
   return rows.map((c) => ({
     id: c.id,
@@ -49,7 +62,7 @@ export async function listTeacherClassrooms(db: Db, teacherId: string) {
     schoolYear: c.schoolYear,
     inviteCode: c.inviteCode,
     studentCount: c._count.enrollments,
-    trackSlug: c.assignedTracks[0]?.trackSlug ?? null,
+    trackSlugs: c.assignedTracks.map((a) => a.trackSlug),
   }));
 }
 
@@ -76,10 +89,10 @@ export async function getClassroomDashboard(db: Db, teacherId: string, classroom
     where: { id: classroomId },
     include: { assignedTracks: true, releases: true, enrollments: { include: { user: { select: { id: true, name: true } } } } },
   });
-  const trackSlug = classroom.assignedTracks[0]?.trackSlug ?? "linux-debutant";
-  const track = getTrack(trackSlug);
-  const notionSlugs = new Set(track?.notions.map((n) => n.slug) ?? []);
-  const stageIds = new Set(track?.notions.flatMap((n) => n.stages.map((s) => s.id)) ?? []);
+  const trackSlugs = classroom.assignedTracks.map((a) => a.trackSlug);
+  const tracks = trackSlugs.flatMap((slug) => getTrack(slug) ?? []);
+  const notionSlugs = new Set(tracks.flatMap((t) => t.notions.map((n) => n.slug)));
+  const stageIds = new Set(tracks.flatMap((t) => t.notions.flatMap((n) => n.stages.map((s) => s.id))));
   const releases = Object.fromEntries(classroom.releases.map((r) => [r.notionSlug, toDates(r)]));
   const studentIds = classroom.enrollments.map((e) => e.userId);
 
@@ -114,12 +127,31 @@ export async function getClassroomDashboard(db: Db, teacherId: string, classroom
     .sort((a, b) => b.alerts.length - a.alerts.length || a.name.localeCompare(b.name, "fr"));
 
   return {
-    classroom: { id: classroom.id, name: classroom.name, schoolYear: classroom.schoolYear, inviteCode: classroom.inviteCode, trackSlug },
+    classroom: { id: classroom.id, name: classroom.name, schoolYear: classroom.schoolYear, inviteCode: classroom.inviteCode, trackSlugs },
     releases: Object.fromEntries(
       Object.entries(releases).map(([slug, r]) => [slug, { gameOpensAt: r.gameOpensAt.toISOString(), challengeOpensAt: r.challengeOpensAt.toISOString(), challengeClosesAt: r.challengeClosesAt.toISOString() }]),
     ),
     students,
   };
+}
+
+/** Ajoute un parcours à une classe : ses étudiants le suivent aussi, avec le planning de la classe. */
+export async function addClassroomTrack(db: Db, teacherId: string, classroomId: string, trackSlug: string) {
+  await assertTeacherOf(db, teacherId, classroomId);
+  const [slug] = validTrackSlugs([trackSlug]);
+  await db.classroomTrack.upsert({
+    where: { classroomId_trackSlug: { classroomId, trackSlug: slug } },
+    create: { classroomId, trackSlug: slug },
+    update: {},
+  });
+  const students = await db.enrollment.findMany({ where: { classroomId }, select: { userId: true } });
+  for (const { userId } of students) {
+    await db.trackEnrollment.upsert({
+      where: { userId_trackSlug: { userId, trackSlug: slug } },
+      create: { userId, trackSlug: slug, mode: "CLASSROOM", classroomId },
+      update: { mode: "CLASSROOM", classroomId },
+    });
+  }
 }
 
 /** Enregistre le planning de la classe (une ligne par notion programmée). */
@@ -177,5 +209,27 @@ export async function getStudentClassroom(db: Db, userId: string, trackSlug: str
     name: c.name,
     notionSlugs: getTrack(trackSlug)?.notions.map((n) => n.slug) ?? [],
     releases: Object.fromEntries(c.releases.map((r) => [r.notionSlug, toDates(r)])),
+  };
+}
+
+/**
+ * Toutes les classes d'un étudiant, fusionnées pour la carte : les notions encadrées
+ * (tous les parcours de ses classes) et leur planning. Les autres parcours restent libres.
+ */
+export async function getStudentClassrooms(db: Db, userId: string) {
+  const enrollments = await db.trackEnrollment.findMany({
+    where: { userId, mode: "CLASSROOM", classroomId: { not: null } },
+    include: { classroom: { include: { releases: true } } },
+    orderBy: { trackSlug: "asc" },
+  });
+  const rows = enrollments.filter((e) => e.classroom && !e.classroom.archivedAt);
+  if (rows.length === 0) return null;
+  const first = rows[0].classroom!;
+  const classrooms = new Map(rows.map((e) => [e.classroom!.id, e.classroom!]));
+  return {
+    id: first.id,
+    name: first.name,
+    notionSlugs: rows.flatMap((e) => getTrack(e.trackSlug)?.notions.map((n) => n.slug) ?? []),
+    releases: Object.fromEntries([...classrooms.values()].flatMap((c) => c.releases.map((r) => [r.notionSlug, toDates(r)] as const))),
   };
 }
