@@ -22,6 +22,11 @@ describe("statut d'une notion", () => {
   it("est bloqué tant que le gardien précédent n'est pas vaincu", () => {
     expect(notionStatus({ ...base, previousCleared: false })).toBe("blocked");
   });
+  it("reste bloqué tant qu'un prérequis d'une autre ligne n'est pas validé", () => {
+    expect(notionStatus({ ...base, requirementsMet: false })).toBe("blocked");
+    expect(notionStatus({ ...base, requirementsMet: true })).toBe("open");
+    expect(notionStatus({ ...base, requirementsMet: false, override: { unlock: true } })).toBe("open");
+  });
   it("est ouvert puis attend le gardien quand toutes les salles sont faites", () => {
     expect(notionStatus(base)).toBe("open");
     expect(notionStatus({ ...base, stagesDone: 3 })).toBe("guardian");

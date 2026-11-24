@@ -54,6 +54,40 @@ export const co = (
   explanation,
 });
 
+/** Terminal simulé : `files` initiaux, `goal` vérifié sur l'état final, `solution` = commandes de référence. */
+export const tm = (
+  skill: string,
+  prompt: string,
+  files: Record<string, string>,
+  goal: Record<string, unknown>,
+  solution: string[],
+  explanation: string,
+  cwd?: string,
+): Enc => ({ type: "terminal", skill, prompt, files, ...(cwd ? { cwd } : {}), goal, solution, explanation });
+
+/** SQL : `setup` = schéma + données ; `accepted` = résultats attendus (lignes « a|b »). */
+export const sq = (
+  skill: string,
+  prompt: string,
+  setup: string,
+  starter: string,
+  accepted: string | string[],
+  solution: string,
+  explanation: string,
+  opts: { verify?: string; ordered?: boolean } = {},
+): Enc => ({
+  type: "sql",
+  skill,
+  prompt,
+  setup,
+  starter,
+  accepted: Array.isArray(accepted) ? accepted : [accepted],
+  solution,
+  explanation,
+  ...(opts.verify ? { verify: opts.verify } : {}),
+  ...(opts.ordered ? { ordered: true } : {}),
+});
+
 export const fl = (skill: string, prompt: string, template: string, answer: string | string[], bank: string[], explanation: string): Enc => ({
   type: "fill",
   skill,
@@ -91,6 +125,10 @@ export type NotionDef = {
   summary: string;
   /** Voie sur le plan Néo-Métro (0 par défaut) */
   lane?: number;
+  /** Notions (slugs, tous parcours) à valider en plus de la station précédente */
+  requires?: string[];
+  /** Correspondance avec une autre ligne, affichée sur le plan */
+  interchange?: string;
   guardian: { name: string; title: string; taunt: string };
   /** Texte de la carte du gardien vaincu */
   win: string;
@@ -111,6 +149,8 @@ export function notion(def: NotionDef): { notion: Omit<Notion, "position">; card
     concept: def.concept,
     summary: def.summary,
     lane: def.lane ?? 0,
+    requires: def.requires ?? [],
+    ...(def.interchange ? { interchange: def.interchange } : {}),
     guardian: def.guardian,
     lessons: def.lessons.map(([title, minutes, ...blocks], i) => ({ id: `l-${def.id}-${i + 1}`, title, minutes, blocks })),
     stages: def.stages.map(([title, description, encounters], i) => ({

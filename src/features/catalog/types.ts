@@ -66,6 +66,14 @@ export const notionSchema = z.object({
    * ou une jonction. Ignoré dans l'Archipel.
    */
   lane: z.number().int().min(0).max(1).default(0),
+  /**
+   * Prérequis au niveau de la notion (slugs, dans n'importe quel parcours) : en plus de la
+   * notion précédente de la ligne, ces notions doivent être validées. C'est ce qui relie
+   * l'Archipel au Néo-Métro sans obliger à tout finir avant de monter à bord.
+   */
+  requires: z.array(z.string()).default([]),
+  /** Correspondance : ce que cette station partage avec une autre ligne (texte affiché sur le plan) */
+  interchange: z.string().optional(),
 });
 
 /** Rareté d'une carte de collection */

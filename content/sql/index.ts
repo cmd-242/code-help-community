@@ -1,4 +1,14 @@
-import { C, fl, P, ps, pr, q, T, track, W } from "../kit";
+import { C, fl, P, ps, pr, q, T, track, W, sq } from "../kit";
+
+const SETUP_JOUEURS = [
+  "CREATE TABLE joueurs (id SERIAL PRIMARY KEY, nom TEXT NOT NULL, niveau INT NOT NULL, ville TEXT NOT NULL);",
+  "INSERT INTO joueurs (nom, niveau, ville) VALUES ('Aya', 3, 'Lagos'), ('Koffi', 5, 'Accra'), ('Lina', 2, 'Lagos'), ('Omar', 5, 'Dakar');",
+].join("\n");
+const SETUP_SCORES = [
+  SETUP_JOUEURS,
+  "CREATE TABLE scores (id SERIAL PRIMARY KEY, joueur_id INT REFERENCES joueurs(id), points INT NOT NULL);",
+  "INSERT INTO scores (joueur_id, points) VALUES (1, 120), (1, 80), (2, 200), (4, 50);",
+].join("\n");
 
 const TABLE = "joueurs\n id | nom   | niveau | ville\n 1  | Aya   | 3      | Lagos\n 2  | Koffi | 5      | Accra\n 3  | Lina  | 2      | Lagos\n 4  | Omar  | 5      | Dakar";
 
@@ -38,13 +48,13 @@ export const sqlTrack = track(
           q("sql-select", "Dans quelle clause nomme-t-on la table ?", ["FROM", "WHERE", "ORDER BY", "LIMIT"], 0, "FROM."),
         ]],
         ["WHERE", "Garde seulement les bonnes lignes.", [
-          pr("sql-where", "Combien de lignes renvoie cette requête ?\n" + TABLE, "SELECT nom FROM joueurs WHERE niveau >= 3;", "3", "Aya (3), Koffi (5) et Omar (5)."),
+          sq("sql-where", "Affiche le nom des joueurs de niveau 3 ou plus.", SETUP_JOUEURS, "SELECT nom FROM joueurs", "Aya\nKoffi\nOmar", "SELECT nom FROM joueurs WHERE niveau >= 3;", "WHERE niveau >= 3 garde Aya (3), Koffi (5) et Omar (5)."),
           q("sql-where", "Comment écrire un texte dans une condition ?", ["'Lagos'", "\"Lagos\"", "Lagos", "[Lagos]"], 0, "Entre apostrophes."),
           q("sql-where", "Quel mot combine deux conditions qui doivent être vraies ?", ["AND", "OR", "ALSO", "PLUS"], 0, "AND."),
           q("sql-where", "Quel opérateur signifie « différent de » ?", ["<> (ou !=)", "=!", "NOT=", "=/"], 0, "<> ou !="),
         ]],
         ["Trier", "ORDER BY et LIMIT.", [
-          q("sql-order", "Quelle clause trie le résultat ?", ["ORDER BY", "SORT", "GROUP", "ARRANGE"], 0, "ORDER BY."),
+          sq("sql-order", "Affiche les noms du plus haut niveau au plus bas ; à niveau égal, par ordre alphabétique.", SETUP_JOUEURS, "SELECT nom FROM joueurs", "Koffi\nOmar\nAya\nLina", "SELECT nom FROM joueurs ORDER BY niveau DESC, nom;", "ORDER BY niveau DESC trie du plus grand au plus petit, puis nom départage.", { ordered: true }),
           q("sql-order", "Quel mot-clé trie du plus grand au plus petit ?", ["DESC", "ASC", "DOWN", "MAX"], 0, "DESC."),
           q("sql-order", "Que fait LIMIT 3 ?", ["Garde les 3 premières lignes", "Ajoute 3 lignes", "Trie par 3", "Garde 3 colonnes"], 0, "Limite le nombre de lignes."),
           ps("sql-order", "Les 2 joueurs de plus haut niveau.", ["SELECT nom FROM joueurs", "ORDER BY niveau DESC", "LIMIT 2;"], ["SORT niveau DESC"], "SELECT, puis tri, puis limite."),
@@ -92,7 +102,7 @@ export const sqlTrack = track(
         ]],
         ["GROUP BY", "Un résultat par groupe.", [
           q("sql-group", "Que fait GROUP BY ville ?", ["Regroupe les lignes de même ville", "Trie par ville", "Supprime les villes", "Filtre les villes"], 0, "Un groupe par valeur."),
-          pr("sql-group", "Combien de lignes renvoie cette requête ?\n" + TABLE, "SELECT ville, COUNT(*) FROM joueurs GROUP BY ville;", "3", "Lagos, Accra, Dakar."),
+          sq("sql-group", "Affiche chaque ville avec son nombre de joueurs.", SETUP_JOUEURS, "SELECT ville FROM joueurs", "Lagos|2\nAccra|1\nDakar|1", "SELECT ville, COUNT(*) FROM joueurs GROUP BY ville;", "GROUP BY regroupe les lignes par ville, COUNT(*) les compte."),
           q("sql-group", "Que fait AS nb ?", ["Nomme la colonne du résultat", "Ajoute une colonne", "Trie", "Supprime"], 0, "Un alias."),
           q("sql-group", "Combien de colonnes non agrégées doivent figurer dans GROUP BY ?", ["Toutes", "Aucune", "Une seule", "Ça n'a pas d'importance"], 0, "Toute colonne non agrégée est dans GROUP BY."),
         ]],
@@ -145,14 +155,14 @@ export const sqlTrack = track(
         ]],
         ["INNER JOIN", "Relie deux tables.", [
           fl("sql-join", "Relie les tables.", "FROM joueurs j JOIN scores s {{0}} s.joueur_id = j.id;", "ON", ["ON", "WHERE", "BY", "AND"], "ON donne la condition de jointure."),
-          q("sql-join", "Que garde un JOIN simple ?", ["Les lignes avec correspondance des deux côtés", "Toutes les lignes de gauche", "Toutes les lignes de droite", "Aucune"], 0, "Intersection."),
+          sq("sql-join", "Affiche le nom de chaque joueur avec chacun de ses scores (points).", SETUP_SCORES, "SELECT j.nom, s.points\nFROM joueurs j", "Aya|120\nAya|80\nKoffi|200\nOmar|50", "SELECT j.nom, s.points\nFROM joueurs j\nJOIN scores s ON s.joueur_id = j.id;", "JOIN … ON relie chaque score à son joueur ; Lina, sans score, n'apparaît pas."),
           q("sql-join", "Que veut dire j dans « joueurs j » ?", ["Un alias de la table", "Une colonne", "Une clé", "Un mot réservé"], 0, "Un surnom pour écrire moins."),
           q("sql-join", "Que se passe-t-il si on oublie ON ?", ["Chaque ligne est combinée avec chaque autre", "Rien", "Erreur de connexion", "Seul le premier résultat"], 0, "Produit cartésien."),
         ]],
         ["LEFT JOIN", "Garde aussi les orphelins.", [
           q("sql-left", "LEFT JOIN garde…", ["Toutes les lignes de la table de gauche", "Seulement les correspondances", "Toutes les lignes de droite", "Rien"], 0, "Gauche complète, droite si existe."),
           q("sql-left", "Quelle valeur apparaît quand il n'y a pas de correspondance à droite ?", ["NULL", "0", "Une chaîne vide", "Erreur"], 0, "NULL."),
-          q("sql-left", "Pour trouver les joueurs sans score, on utilise…", ["LEFT JOIN puis WHERE s.id IS NULL", "JOIN puis WHERE s.id = 0", "GROUP BY", "ORDER BY"], 0, "Les orphelins ont NULL à droite."),
+          sq("sql-left", "Affiche le nom des joueurs qui n'ont aucun score.", SETUP_SCORES, "SELECT j.nom\nFROM joueurs j", "Lina", "SELECT j.nom\nFROM joueurs j\nLEFT JOIN scores s ON s.joueur_id = j.id\nWHERE s.id IS NULL;", "LEFT JOIN garde tous les joueurs ; sans score, s.id vaut NULL."),
           q("sql-left", "Comment tester NULL ?", ["IS NULL", "= NULL", "== NULL", "EQUALS NULL"], 0, "= NULL ne marche pas."),
         ]],
       ],
@@ -191,14 +201,14 @@ export const sqlTrack = track(
       ],
       stages: [
         ["INSERT", "Ajoute des lignes.", [
-          fl("sql-insert", "Ajoute un joueur.", "{{0}} INTO joueurs (nom) VALUES ('Eli');", "INSERT", ["INSERT", "ADD", "PUT", "CREATE"], "INSERT INTO."),
+          sq("sql-insert", "Ajoute le joueur Eli, niveau 1, ville Lagos.", SETUP_JOUEURS, "INSERT INTO joueurs", "Eli|1|Lagos", "INSERT INTO joueurs (nom, niveau, ville) VALUES ('Eli', 1, 'Lagos');", "On nomme les colonnes, puis les VALUES dans le même ordre ; id est choisi par la base.", { verify: "SELECT nom, niveau, ville FROM joueurs WHERE nom = 'Eli';" }),
           q("sql-insert", "Que précise la liste de colonnes dans INSERT INTO t (a, b) ?", ["Dans quelles colonnes mettre les valeurs", "Le tri", "Le type", "Les clés"], 0, "L'ordre des VALUES suit cette liste."),
           q("sql-insert", "Comment écrire un texte dans VALUES ?", ["'Eli'", "\"Eli\"", "Eli", "(Eli)"], 0, "Apostrophes."),
           q("sql-insert", "Insérer sans préciser id quand la colonne est auto-incrémentée…", ["La base en choisit une", "Provoque une erreur", "Met 0", "Supprime la table"], 0, "Auto-incrément."),
         ]],
         ["UPDATE et DELETE", "Modifie sans tout casser.", [
           q("sql-update", "Que fait UPDATE joueurs SET niveau = 1 sans WHERE ?", ["Met niveau à 1 pour TOUTES les lignes", "Rien", "Une seule ligne", "Une erreur"], 0, "Sans WHERE, toutes les lignes."),
-          fl("sql-update", "Supprime seulement le joueur 3.", "DELETE FROM joueurs {{0}} id = 3;", "WHERE", ["WHERE", "ONLY", "IF", "AT"], "WHERE limite la suppression."),
+          sq("sql-update", "Supprime seulement le joueur dont l'id est 3.", SETUP_JOUEURS, "DELETE FROM joueurs", "Aya\nKoffi\nOmar", "DELETE FROM joueurs WHERE id = 3;", "WHERE id = 3 limite la suppression à Lina ; sans WHERE, tout partirait.", { verify: "SELECT nom FROM joueurs ORDER BY id;" }),
           q("sql-update", "Comment annuler des modifications d'une transaction ?", ["ROLLBACK", "UNDO", "CANCEL", "BACK"], 0, "ROLLBACK."),
           q("sql-update", "Quelle bonne pratique avant un DELETE important ?", ["Faire d'abord le même WHERE avec un SELECT", "Rien", "Éteindre la base", "Supprimer les index"], 0, "On vérifie ce qui sera touché."),
         ]],

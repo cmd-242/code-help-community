@@ -81,6 +81,11 @@ describe.each(tracks)("contenu $slug", (track) => {
         expect(countBlanks(e.template), e.id).toBe(e.answers.length);
         expect(e.answers.every((a) => e.bank.includes(a)), e.id).toBe(true);
         expect(grade(e, e.answers), e.id).toBe(true);
+      } else if (e.type === "sql") {
+        expect(e.accepted.length, e.id).toBeGreaterThan(0); // exécuté pour de vrai dans sql-content.test.ts
+      } else if (e.type === "terminal") {
+        expect(grade(e, e.solution), e.id).toBe(true);
+        expect(grade(e, ["pwd"]), `${e.id} : réussi sans rien faire`).toBe(false);
       } else if (e.type === "code") {
         // On exécute vraiment la solution de référence, puis on corrige sa sortie
         const out = runReference(e.language, `${e.solution}\n${e.harness ?? ""}`);
@@ -98,5 +103,18 @@ describe.each(tracks)("contenu $slug", (track) => {
     for (const n of track.notions) {
       if (n.challenge) expect(n.challenge.bank.length, n.slug).toBeGreaterThanOrEqual(n.challenge.questionCount);
     }
+  });
+});
+
+describe("prérequis des stations", () => {
+  const slugs = new Set(allTracks.flatMap((t) => t.notions.map((n) => n.slug)));
+  it("pointent vers des notions existantes, jamais vers elles-mêmes", () => {
+    for (const t of allTracks)
+      for (const n of t.notions) {
+        for (const r of n.requires ?? []) {
+          expect(slugs.has(r), `${n.slug} → ${r}`).toBe(true);
+          expect(r).not.toBe(n.slug);
+        }
+      }
   });
 });

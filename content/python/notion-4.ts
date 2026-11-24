@@ -43,7 +43,7 @@ export const pyNotion4: NotionInput = {
       description: "Écris tes premières fonctions.",
       xp: 40,
       encounters: [
-        { id: "y4-1-a", type: "fill", prompt: "Déclare une fonction nommée saluer.", template: "{{0}} saluer(nom):", answers: ["def"], bank: ["def", "function", "fn", "func"], explanation: "On déclare avec def.", skill: "py-def" },
+        {"id": "y4-1-a", "type": "code", "language": "python", "prompt": "Écris la fonction saluer(nom) qui renvoie « Salut » suivi d'un espace et du nom.", "starter": "def saluer(nom):\n    pass", "harness": "print(saluer(\"Aya\"))", "accepted": ["Salut Aya"], "solution": "def saluer(nom):\n    return \"Salut \" + nom", "explanation": "return renvoie la valeur ; + colle les textes.", "skill": "py-def"},
         { id: "y4-1-b", type: "predict", prompt: "Qu'affiche ce programme ?", code: "def doubler(n):\n    return n * 2\nprint(doubler(4))", accepted: ["8"], explanation: "doubler(4) renvoie 8.", skill: "py-def" },
         { id: "y4-1-c", type: "predict", prompt: "Qu'affiche ce programme ?", code: "def carre(n):\n    return n * n\nprint(carre(3) + 1)", accepted: ["10"], explanation: "carre(3) vaut 9.", skill: "py-return" },
         { id: "y4-1-d", type: "qcm", prompt: "Que fait return ?", choices: ["Renvoie une valeur et termine la fonction", "Affiche une valeur", "Déclare une variable", "Répète la fonction"], answer: [0], explanation: "return renvoie le résultat à l'appelant.", skill: "py-return" },
@@ -57,7 +57,7 @@ export const pyNotion4: NotionInput = {
       encounters: [
         { id: "y4-2-a", type: "predict", prompt: "Qu'affiche ce programme ?", code: "def f():\n    print(\"a\")\nx = f()\nprint(x)", accepted: ["a\nNone", "a None"], placeholder: "Deux lignes", explanation: "f affiche a mais ne renvoie rien : x vaut None.", skill: "py-return" },
         { id: "y4-2-b", type: "qcm", prompt: "Quelle fonction peut servir dans un calcul ?", choices: ["Celle qui fait return", "Celle qui fait print", "Aucune", "Les deux"], answer: [0], explanation: "Seul return rend une valeur utilisable.", skill: "py-return" },
-        { id: "y4-2-c", type: "predict", prompt: "Qu'affiche ce programme ?", code: "def saluer(nom=\"toi\"):\n    return \"Salut \" + nom\nprint(saluer())", accepted: ["Salut toi"], explanation: "Sans argument, la valeur par défaut s'applique.", skill: "py-def" },
+        {"id": "y4-2-c", "type": "code", "language": "python", "prompt": "Écris la fonction aire(l, h) qui renvoie l × h.", "starter": "def aire(l, h):\n    pass", "harness": "print(aire(3, 4))\nprint(aire(5, 0))", "accepted": ["12\n0"], "solution": "def aire(l, h):\n    return l * h", "explanation": "return l * h renvoie le produit.", "skill": "py-def"},
         { id: "y4-2-d", type: "qcm", prompt: "Que devient le code après un return ?", choices: ["Il n'est jamais exécuté", "Il est exécuté ensuite", "Il boucle", "Il provoque une erreur"], answer: [0], explanation: "return termine immédiatement la fonction.", skill: "py-return" },
       ],
     },
@@ -70,7 +70,7 @@ export const pyNotion4: NotionInput = {
         { id: "y4-3-a", type: "predict", prompt: "Qu'affiche ce programme ?", code: "perso = {\"nom\": \"Aya\", \"niveau\": 3}\nprint(perso[\"nom\"])", accepted: ["Aya"], explanation: "On retrouve la valeur par sa clé.", skill: "py-dict" },
         { id: "y4-3-b", type: "predict", prompt: "Qu'affiche ce programme ?", code: "d = {\"a\": 1}\nd[\"b\"] = 2\nprint(len(d))", accepted: ["2"], explanation: "On a ajouté une clé : deux entrées.", skill: "py-dict" },
         { id: "y4-3-c", type: "qcm", prompt: "Que provoque perso[\"age\"] si la clé n'existe pas ?", choices: ["Une KeyError", "None", "0", "Une chaîne vide"], answer: [0], explanation: "Utilise .get() pour éviter l'erreur.", skill: "py-dict" },
-        { id: "y4-3-d", type: "predict", prompt: "Qu'affiche ce programme ?", code: "d = {\"a\": 1}\nprint(d.get(\"z\", 0))", accepted: ["0"], explanation: "get renvoie la valeur par défaut.", skill: "py-dict" },
+        {"id": "y4-3-d", "type": "code", "language": "python", "prompt": "Crée le dictionnaire perso avec nom = \"Aya\" et niveau = 3, puis affiche le niveau.", "starter": "# ton code ici", "accepted": ["3"], "solution": "perso = {\"nom\": \"Aya\", \"niveau\": 3}\nprint(perso[\"niveau\"])", "explanation": "On lit une valeur avec sa clé entre crochets.", "skill": "py-dict"},
       ],
     },
   ],

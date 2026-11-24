@@ -13,6 +13,8 @@ export const awsTrack = track(
     {
       id: "aw1",
       slug: "aws-compte-iam",
+      requires: ["secu-mots-de-passe"],
+      interchange: "Ligne Sécurité : mots de passe et accès.",
       place: "Gare du Compte",
       concept: "Régions, comptes et IAM",
       summary: "Comprendre où vivent tes ressources et qui a le droit de faire quoi.",
@@ -123,6 +125,8 @@ export const awsTrack = track(
     {
       id: "aw3",
       slug: "aws-reseau-vpc",
+      requires: ["reseau-adresses"],
+      interchange: "Ligne Réseaux : adresses IP.",
       place: "Embranchement VPC",
       concept: "VPC, sous-réseaux et groupes de sécurité",
       summary: "Construire un réseau privé dans le cloud et contrôler ce qui entre et sort.",

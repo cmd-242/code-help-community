@@ -15,7 +15,7 @@ import { TrainArt } from "./train-art";
  * exactement comme une branche Git. Le trait s'allume derrière toi à mesure que tu valides les stations.
  */
 
-const ROW = 196;
+const ROW = 216;
 const LANE_X = [34, 92] as const;
 const LANE_COLOR = ["var(--color-line-main)", "var(--color-line-branch)"] as const;
 const R = 11;
@@ -78,7 +78,7 @@ export function MetroMap({ notions, name }: { notions: NotionSummary[]; name: st
 
       <ol className="absolute inset-0">
         {notions.map((n, i) => (
-          <StationCard key={n.slug} notion={n} state={states[i]} ready={ready} index={i} />
+          <StationCard key={n.slug} notion={n} state={states[i]} ready={ready} index={i} previous={i > 0 ? notions[i - 1] : null} />
         ))}
       </ol>
     </div>
@@ -103,7 +103,7 @@ function StationNode({ lane, y, state }: { lane: 0 | 1; y: number; state: Notion
   );
 }
 
-function StationCard({ notion, state, ready, index }: { notion: NotionSummary; state: NotionState; ready: boolean; index: number }) {
+function StationCard({ notion, state, ready, index, previous }: { notion: NotionSummary; state: NotionState; ready: boolean; index: number; previous: NotionSummary | null }) {
   const t = useTranslations("metroMap");
   const format = useFormatter();
   const { play } = useSound();
@@ -111,6 +111,12 @@ function StationCard({ notion, state, ready, index }: { notion: NotionSummary; s
   const reachable = state.status === "open" || state.status === "guardian" || state.status === "cleared";
   const current = state.status === "open" || state.status === "guardian";
   const left = LANE_X[lane] + 36;
+  // Ce qu'il faut vaincre pour ouvrir la station : le gardien précédent et/ou les prérequis des autres lignes
+  const needs = [
+    ...(state.previousMissing && previous ? [t("previousGuardian", { name: previous.guardian.name })] : []),
+    ...state.missing.map((m) => t("guardianOf", { place: m.place })),
+  ];
+  const missingLink = state.missing[0] ?? (state.previousMissing && previous ? { slug: previous.slug, place: previous.place } : null);
 
   const body = (
     <div
@@ -145,10 +151,16 @@ function StationCard({ notion, state, ready, index }: { notion: NotionSummary; s
                   ? t("notScheduled")
                   : state.status === "soon"
                     ? t("soon")
-                    : t("blocked")}
+                    : t("mustDefeat", { names: needs.join(" · ") })}
             </span>
           )}
         </p>
+      )}
+      {notion.interchange && <p className="mt-0.5 line-clamp-1 text-sm text-info-deep">{t("interchange", { text: notion.interchange })}</p>}
+      {ready && state.status === "blocked" && missingLink && (
+        <Link href={`/app/notion/${missingLink.slug}`} className="mt-1 text-sm font-bold text-primary underline focus-visible:outline-2 focus-visible:outline-offset-2" onClick={() => play("enter")}>
+          {t("goTo", { place: missingLink.place })}
+        </Link>
       )}
       {current && <TrainArt bobbing={false} className="absolute -top-5 right-3 w-14" title={t("youAreHere")} />}
     </div>

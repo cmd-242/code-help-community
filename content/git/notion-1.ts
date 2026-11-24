@@ -4,6 +4,8 @@ type NotionInput = TrackInput["notions"][number];
 
 export const gitNotion1: NotionInput = {
   slug: "premier-depot",
+  requires: ["se-reperer"],
+  interchange: "Ligne Linux : se repérer dans le terminal.",
   position: 1,
   place: "Gare du Dépôt",
   concept: "Ouvrir un dépôt et enregistrer ton travail",
